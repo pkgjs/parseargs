@@ -1,4 +1,4 @@
-# util-parseargs
+# parseArgs
 Polyfill of future proposal for `util.parseArgs()`
 
 ### Links & Resources
