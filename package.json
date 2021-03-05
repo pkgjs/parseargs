@@ -8,13 +8,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pkgjs/util-parseargs.git"
+    "url": "git+https://github.com/pkgjs/parseargs.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pkgjs/util-parseargs/issues"
+    "url": "https://github.com/pkgjs/parseargs/issues"
   },
-  "homepage": "https://github.com/pkgjs/util-parseargs#readme"
+  "homepage": "https://github.com/pkgjs/parseargs#readme"
 }
