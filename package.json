@@ -1,6 +1,6 @@
 {
-  "name": "util-parseargs",
-  "version": "1.0.0",
+  "name": "@pkgjs/parseargs",
+  "version": "0.0.1",
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
   "scripts": {
