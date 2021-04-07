@@ -14,11 +14,9 @@ const parseArgs = (
     positionals: []
   }
 
-  console.log('argv is: ', argv)
-
   let pos = 0
   while (pos < argv.length) {
-    const arg = argv[pos]
+    let arg = argv[pos]
 
     if (arg.startsWith('-')) {
       // Everything after a bare '--' is considered a positional argument
@@ -26,20 +24,36 @@ const parseArgs = (
       if (arg === '--') {
         result.positionals.push(...argv.slice(++pos))
 
-        console.log(result)
         return result
+      }
+      // look for shortcodes: -fXzy
+      else if (arg.charAt(1) !== '-') {
+        throw new Error('What are we doing with shortcodes!?!')
+      }
+
+      // Any number of leading dashes are allowed
+      // remove all leading dashes
+      arg = arg.replace(/^-+/, '')
+
+      if (arg.includes('=')) {
+        const argParts = arg.split('=')
+
+        result.args[argParts[0]] = true
+        if (options.withValue) {
+          result.values[argParts[0]] = argParts[1]
+        }
+      }
+      else {
+        result.args[arg] = true
+
       }
     }
 
     pos++
   }
 
-
-  console.log('final result if reached: ', result)
   return result
 }
-
-parseArgs()
 
 module.exports = {
   parseArgs

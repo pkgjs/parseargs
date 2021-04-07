@@ -4,7 +4,7 @@
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/pkgjs/parseargs/issues"
   },
-  "homepage": "https://github.com/pkgjs/parseargs#readme"
+  "homepage": "https://github.com/pkgjs/parseargs#readme",
+  "devDependencies": {
+    "tape": "^5.2.2"
+  }
 }
