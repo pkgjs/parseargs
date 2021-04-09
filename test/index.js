@@ -1,3 +1,5 @@
+'use strict';
+
 const test = require('tape')
 const {parseArgs} = require('../index.js')
 
