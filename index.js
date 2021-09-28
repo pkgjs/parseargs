@@ -7,7 +7,7 @@ const parseArgs = (
   if (typeof options !== 'object' || options === null) {
     throw new Error('Whoops!')
   }
-  if(options.withValue && !Array.isArray(options.withValue)) {
+  if(options.withValue !== undefined && !Array.isArray(options.withValue)) {
     throw new Error('Whoops! options.withValue should be an array.')
   }
 
