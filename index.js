@@ -58,12 +58,17 @@ const parseArgs = (
         //ie. --foo b --bar c, after setting b as the value for foo, evaluate --bar next and skip 'b'
         const val = options.withValue && options.withValue.includes(arg) ? argv[++pos] : undefined
         //Append value to previous arg values array for case of multiples option, else add to empty array
-        result.values[arg] = [...(options.multiples && options.multiples.includes(arg) && result.values[arg] ? result.values[arg] : []), val]
+        result.values[arg] = [].concat(
+          options.multiples && options.multiples.includes(arg) && result.values[arg] ? result.values[arg] : [],
+          val)
       } else {
         //cases when an arg is specified without a value, example '--foo --bar' <- 'foo' and 'bar' args should be set to true and have value as undefined
         result.args[arg] = true
         //Append undefined to previous arg values array for case of multiples option, else add to empty array
-        result.values[arg] = [...(options.multiples && options.multiples.includes(arg) && result.values[arg] ? result.values[arg] : []), undefined]
+        result.values[arg] = [].concat(
+          options.multiples && options.multiples.includes(arg) && result.values[arg] ? result.values[arg] : [],
+          undefined
+        )
       }
 
     } else {
