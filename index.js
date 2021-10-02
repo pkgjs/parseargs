@@ -45,7 +45,10 @@ const parseArgs = (
         //If withValue option is specified, take 2nd part after '=' as value, else set value as undefined
         const val = options.withValue && options.withValue.includes(argParts[0]) ? argParts[1] : undefined
         //Append value to previous arg values array for case of multiples option, else add to empty array
-        result.values[argParts[0]] = [...(options.multiples && options.multiples.includes(argParts[0]) && result.values[argParts[0]] ? result.values[argParts[0]] : []), val]
+        result.values[argParts[0]] = [].concat(
+          options.multiples && options.multiples.includes(argParts[0]) && result.values[argParts[0]] || [],
+          val,
+        )
       } else if (pos + 1 < argv.length && !argv[pos+1].startsWith('-')) {
         //withValue option should also support setting values when '=' isn't used
         //ie. both --foo=b and --foo b should work
