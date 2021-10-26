@@ -1,8 +1,14 @@
+<!-- omit in toc -->
 # parseArgs
 
-🚨  THIS REPO IS AN EARLY WIP -- DO NOT USE ... yet 🚨
+> 
+> 🚨  THIS REPO IS AN EARLY WIP -- DO NOT USE ... yet 🚨
+> 
 
-Polyfill of future proposal for `util.parseArgs()`
+Polyfill of future proposal to the [nodejs/tooling](https://github.com/nodejs/tooling) repo for `util.parseArgs()`
+
+
+This package was implemented using [tape](https://www.npmjs.com/package/tape) as its test harness.
 
 ### Links & Resources
 
@@ -11,7 +17,45 @@ Polyfill of future proposal for `util.parseArgs()`
 
 ----
 
-## `process.mainArgs` Proposal
+<!-- omit in toc -->
+## Table of Contents
+- [🚀 Getting Started](#-getting-started)
+- [🙌 Contributing](#-contributing)
+- [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
+  - [Implementation:](#implementation)
+- [💡 `util.parseArgs(argv)` Proposal](#-utilparseargsargv-proposal)
+- [📃 Examples w/ Output](#-examples-w-output)
+  - [F.A.Qs](#faqs)
+
+----
+
+## 🚀 Getting Started
+
+1. **Install dependencies.**
+
+   ```bash
+   npm install
+   ```
+
+2. **Open the index.js file and start editing!**
+
+3. **Test your code by calling parseArgs through our test file**
+
+   ```bash
+   npm test
+   ```
+
+----
+
+## 🙌 Contributing
+
+Any person who wants to contribute to the initiative is welcome! Please first read the [Contributing Guide](CONTRIBUTING.md)
+
+Additionally, reading the [`Examples w/ Output`](#-examples-w-output) section of this document will be the best way to familiarize yourself with the target expected behavior for parseArgs() once it is fully implemented.
+
+----
+
+## 💡 `process.mainArgs` Proposal
 
 > Note: This can be moved forward independently of the `util.parseArgs()` proposal/work.
  
@@ -21,9 +65,9 @@ Polyfill of future proposal for `util.parseArgs()`
 process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
 ```
 
----
+----
 
-## `util.parseArgs([argv][, options])` Proposal
+## 💡 `util.parseArgs([argv][, options])` Proposal
 
 * `argv` {string[]} (Optional) Array of argument strings; defaults
   to [`process.mainArgs`](process_argv)
@@ -42,9 +86,9 @@ into an `Array`
   * `values` {Object}, have properties and `String` values corresponding to parsed options passed
   * `positionals` {string[]}, containing [Positionals][]
 
----
+----
 
-## Examples w/ Output
+## 📃 Examples w/ Output
 
 ```js
 const { parseArgs } = require('util')
