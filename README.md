@@ -1,6 +1,8 @@
 <!-- omit in toc -->
 # parseArgs
 
+[![Coverage][coverage-image]][coverage-url]
+
 > 
 > 🚨  THIS REPO IS AN EARLY WIP -- DO NOT USE ... yet 🚨
 > 
@@ -194,3 +196,6 @@ positionals // ['b']
   - the second flag would be parsed as `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`
   - no
+
+[coverage-image]: https://img.shields.io/nycrc/pkgjs/parseargs
+[coverage-url]: https://github.com/pkgjs/parseargs/blob/main/.nycrc

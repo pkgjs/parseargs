@@ -4,7 +4,8 @@
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
   "scripts": {
-    "test": "node test/index.js"
+    "coverage": "c8 --check-coverage node test/index.js",
+    "test": "c8 node test/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/pkgjs/parseargs#readme",
   "devDependencies": {
+    "c8": "^7.10.0",
     "tape": "^5.2.2"
   }
 }
