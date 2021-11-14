@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "coverage": "c8 --check-coverage node test/index.js",
-    "test": "c8 node test/index.js"
+    "test": "c8 node test/index.js",
+    "posttest": "eslint index.js",
+    "fix": "eslint index.js --fix"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,8 @@
   "homepage": "https://github.com/pkgjs/parseargs#readme",
   "devDependencies": {
     "c8": "^7.10.0",
+    "eslint": "^8.2.0",
+    "eslint-plugin-node-core": "iansu/eslint-plugin-node-core",
     "tape": "^5.2.2"
   }
 }
