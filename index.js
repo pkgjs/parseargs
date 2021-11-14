@@ -55,7 +55,7 @@ const parseArgs = (
         );
       } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
         // withValue option should also support setting values when '=
-        //  isn't used ie. both --foo=b and --foo b should work
+        // isn't used ie. both --foo=b and --foo b should work
 
         result.args[arg] = true;
         // If withValue option is specified, take next position arguement as
