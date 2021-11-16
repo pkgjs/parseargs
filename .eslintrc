@@ -1,0 +1,9 @@
+{
+  "extends": ["plugin:eslint-plugin-node-core/recommended"],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "linebreak-style": 0
+  }
+}
