@@ -1,7 +1,7 @@
 'use strict';
 
 function defaultArgv() {
-  // In node REPL, user CLI args follow executable
+  // When evaluating script arg, user CLI args follow executable
   const execArgv = process.execArgv;
   if (execArgv.includes('-e') || execArgv.includes('--eval')) {
     return process.argv.slice(1);
