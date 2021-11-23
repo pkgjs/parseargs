@@ -1,7 +1,29 @@
 'use strict';
 
+function defaultArgv() {
+  // In node REPL, user CLI args follow executable
+  const execArgv = process.execArgv;
+  if (execArgv.includes('-e') || execArgv.includes('--eval')) {
+    return process.argv.slice(1);
+  }
+
+  // In bundled Electron app, user CLI args follow executable:
+  // 1) process.versions.electron is either set by electron, or undefined
+  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  // 2) process.defaultApp is either set by electron in an electron
+  //    unbundled app, or undefined
+  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  if (process.versions && process.versions.electron && !process.defaultApp) {
+    return process.argv.slice(1);
+  }
+
+  // Normally first two arguments are executable and script,
+  // then CLI arguments
+  return process.argv.slice(2);
+}
+
 const parseArgs = (
-  argv = process.argv.slice(require.main ? 2 : 1),
+  argv = defaultArgv(),
   options = {}
 ) => {
   if (typeof options !== 'object' || options === null) {
