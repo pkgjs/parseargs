@@ -3,7 +3,8 @@
 function defaultArgv() {
   // When evaluating script arg, user CLI args follow executable
   const execArgv = process.execArgv;
-  if (execArgv.includes('-e') || execArgv.includes('--eval')) {
+  if (execArgv.includes('-e') || execArgv.includes('--eval') ||
+      execArgv.includes('-p') || execArgv.includes('--print')) {
     return process.argv.slice(1);
   }
 
