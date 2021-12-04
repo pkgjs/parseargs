@@ -84,8 +84,8 @@ into an `Array`
   * `short` {Object} (Optional) An `Object` of key, value pairs of strings which map a "short" alias to an argument; When appearing multiples times in `argv`; Respects `withValue` & `multiples`
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
-  * `args` {Object}, having properties and `Boolean` values corresponding to parsed options passed
-  * `values` {Object}, have properties and `String` values corresponding to parsed options passed
+  * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
+  * `args` {Object}, have properties and `String` values corresponding to parsed options passed
   * `positionals` {string[]}, containing [Positionals][]
 
 ----
@@ -100,9 +100,9 @@ const { parseArgs } = require('util')
 // default
 const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {}
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
-values // { f: [undefined], foo: [undefined] }
+const { flags, args, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
+args // { f: [undefined], foo: [undefined] }
 positionals // ['b']
 ```
 ```js
@@ -111,9 +111,9 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     withValue: ['foo']
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
-values // { f: [undefined], foo: ['b'] }
+const { flags, args, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
+args // { f: [undefined], foo: ['b'] }
 positionals // []
 ```
 ```js
@@ -123,9 +123,9 @@ const options = {
     withValue: ['foo'],
     multiples: ['foo']
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
-values // { f: [undefined], foo: ['a','b'] }
+const { flags, args, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
+args // { f: [undefined], foo: ['a','b'] }
 positionals // []
 ```
 ```js
@@ -134,9 +134,9 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     short: { f: 'foo' }
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { foo: true}
-values // { foo: [undefined] }
+const { flags, args, positionals } = parseArgs(argv, options)
+flags // { foo: true}
+args // { foo: [undefined] }
 positionals // ['b']
 ```
 
