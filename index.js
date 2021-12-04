@@ -31,9 +31,7 @@ const parseArgs = (
         throw new Error('What are we doing with shortcodes!?!');
       }
 
-      // Any number of leading dashes are allowed
-      // remove all leading dashes
-      arg = arg.replace(/^-+/, '');
+      arg = arg.slice(2); // remove leading --
 
       if (arg.includes('=')) {
         // withValue equals(=) case
