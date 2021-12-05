@@ -136,6 +136,23 @@ test('correct default args when use node --eval', function(t) {
   process.execArgv = holdExecArgv;
 });
 
+test('correct default args when normal arguments', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, 'script.js', '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = [];
+  const args = parseArgs();
+
+  const expected = { args: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(args, expected, 'args are true');
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
 //Test bad inputs
 
 test('boolean passed to "withValue" option', function (t) {

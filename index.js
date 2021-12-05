@@ -6,7 +6,7 @@ function getMainArgs() {
 
   // Electron is an interested example, with work-arounds implemented in
   // Commander and Yargs. Hopefully Electron would support process.mainArgs
-  // itself and render this work-around moot.
+  // itself and render th  is work-around moot.
   //
   // In a bundled Electron app, the user CLI args directly
   // follow executable. (No special processing required for unbundled.)
@@ -15,7 +15,8 @@ function getMainArgs() {
   // 2) process.defaultApp is undefined in a bundled Electron app, and set
   //    in an unbundled Electron app
   //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
-  // (Not included in tests.)
+  // (Not included in tests as hopefully temporary example.)
+  /* c8 ignore next 3 */
   if (process.versions && process.versions.electron && !process.defaultApp) {
     return process.argv.slice(1);
   }
