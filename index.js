@@ -15,6 +15,7 @@ function getMainArgs() {
   // 2) process.defaultApp is undefined in a bundled Electron app, and set
   //    in an unbundled Electron app
   //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  // (Not included in tests.)
   if (process.versions && process.versions.electron && !process.defaultApp) {
     return process.argv.slice(1);
   }
