@@ -6,7 +6,7 @@ function getMainArgs() {
 
   // Electron is an interested example, with work-arounds implemented in
   // Commander and Yargs. Hopefully Electron would support process.mainArgs
-  // itself and render th  is work-around moot.
+  // itself and render this work-around moot.
   //
   // In a bundled Electron app, the user CLI args directly
   // follow executable. (No special processing required for unbundled.)
