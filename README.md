@@ -100,9 +100,9 @@ const { parseArgs } = require('util')
 // default
 const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {}
-const { flags, args, positionals } = parseArgs(argv, options)
+const { flags, values, positionals } = parseArgs(argv, options)
 flags // { f: true, foo: true}
-args // { f: [undefined], foo: [undefined] }
+values // { f: [undefined], foo: [undefined] }
 positionals // ['b']
 ```
 ```js
@@ -111,9 +111,9 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     withValue: ['foo']
 }
-const { flags, args, positionals } = parseArgs(argv, options)
+const { flags, values, positionals } = parseArgs(argv, options)
 flags // { f: true, foo: true}
-args // { f: [undefined], foo: ['b'] }
+values // { f: [undefined], foo: ['b'] }
 positionals // []
 ```
 ```js
@@ -123,9 +123,9 @@ const options = {
     withValue: ['foo'],
     multiples: ['foo']
 }
-const { flags, args, positionals } = parseArgs(argv, options)
+const { flags, values, positionals } = parseArgs(argv, options)
 flags // { f: true, foo: true}
-args // { f: [undefined], foo: ['a','b'] }
+values // { f: [undefined], foo: ['a','b'] }
 positionals // []
 ```
 ```js
@@ -134,9 +134,9 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     short: { f: 'foo' }
 }
-const { flags, args, positionals } = parseArgs(argv, options)
+const { flags, values, positionals } = parseArgs(argv, options)
 flags // { foo: true}
-args // { foo: [undefined] }
+values // { foo: [undefined] }
 positionals // ['b']
 ```
 
