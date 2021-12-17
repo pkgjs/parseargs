@@ -13,7 +13,7 @@ const parseArgs = (
 
   const result = {
     flags: {},
-    args: {},
+    values: {},
     positionals: []
   };
 
@@ -45,16 +45,16 @@ const parseArgs = (
         const val = options.withValue &&
           options.withValue.includes(argParts[0]) ?
           argParts[1] : undefined;
-        // Append value to previous args array for case of multiples
+        // Append value to previous values array for case of multiples
         // option, else add to empty array
-        result.args[argParts[0]] = [].concat(
+        result.values[argParts[0]] = [].concat(
           options.multiples &&
             options.multiples.includes(argParts[0]) &&
-            result.args[argParts[0]] || [],
+            result.values[argParts[0]] || [],
           val,
         );
       } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
-        // withValue option should also support setting args when '=
+        // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
         result.flags[arg] = true;
@@ -65,12 +65,12 @@ const parseArgs = (
         const val = options.withValue && options.withValue.includes(arg) ?
           argv[++pos] :
           undefined;
-        // Append value to previous args array for case of multiples
+        // Append value to previous values array for case of multiples
         // option, else add to empty array
-        result.args[arg] = [].concat(
+        result.values[arg] = [].concat(
           options.multiples && options.multiples.includes(arg) &&
-            result.args[arg] ?
-            result.args[arg] :
+            result.values[arg] ?
+            result.values[arg] :
             [],
           val);
       } else {
@@ -78,12 +78,12 @@ const parseArgs = (
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
         // shave value as undefined
         result.flags[arg] = true;
-        // Append undefined to previous args array for case of
+        // Append undefined to previous values array for case of
         // multiples option, else add to empty array
-        result.args[arg] = [].concat(
+        result.values[arg] = [].concat(
           options.multiples && options.multiples.includes(arg) &&
-            result.args[arg] ?
-            result.args[arg] :
+            result.values[arg] ?
+            result.values[arg] :
             [],
           undefined
         );

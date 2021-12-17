@@ -85,7 +85,7 @@ into an `Array`
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
-  * `args` {Object}, have properties and `String` values corresponding to parsed options passed
+  * `values` {Object}, have properties and `String` values corresponding to parsed options passed
   * `positionals` {string[]}, containing [Positionals][]
 
 ----
