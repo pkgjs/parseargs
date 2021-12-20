@@ -12,7 +12,7 @@ const parseArgs = (
   }
 
   const result = {
-    args: {},
+    flags: {},
     values: {},
     positionals: []
   };
@@ -39,13 +39,13 @@ const parseArgs = (
         // withValue equals(=) case
         const argParts = arg.split('=');
 
-        result.args[argParts[0]] = true;
+        result.flags[argParts[0]] = true;
         // If withValue option is specified, take 2nd part after '=' as value,
         // else set value as undefined
         const val = options.withValue &&
           options.withValue.includes(argParts[0]) ?
           argParts[1] : undefined;
-        // Append value to previous arg values array for case of multiples
+        // Append value to previous values array for case of multiples
         // option, else add to empty array
         result.values[argParts[0]] = [].concat(
           options.multiples &&
@@ -57,7 +57,7 @@ const parseArgs = (
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        result.args[arg] = true;
+        result.flags[arg] = true;
         // If withValue option is specified, take next position arguement as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
@@ -65,7 +65,7 @@ const parseArgs = (
         const val = options.withValue && options.withValue.includes(arg) ?
           argv[++pos] :
           undefined;
-        // Append value to previous arg values array for case of multiples
+        // Append value to previous values array for case of multiples
         // option, else add to empty array
         result.values[arg] = [].concat(
           options.multiples && options.multiples.includes(arg) &&
@@ -75,10 +75,10 @@ const parseArgs = (
           val);
       } else {
         // Cases when an arg is specified without a value, example
-        // '--foo --bar' <- 'foo' and 'bar' args should be set to true and
+        // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
         // shave value as undefined
-        result.args[arg] = true;
-        // Append undefined to previous arg values array for case of
+        result.flags[arg] = true;
+        // Append undefined to previous values array for case of
         // multiples option, else add to empty array
         result.values[arg] = [].concat(
           options.multiples && options.multiples.includes(arg) &&
