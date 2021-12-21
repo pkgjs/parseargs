@@ -72,7 +72,7 @@ test('excess leading dashes on options are retained', function(t) {
   // Enforce a design decision for an edge case.
   const passedArgs = ['---triple'];
   const passedOptions = { };
-  const expected = { args: { '-triple': true}, values: { '-triple': [undefined]}, positionals: [] };
+  const expected = { flags: { '-triple': true}, values: { '-triple': [undefined]}, positionals: [] };
   const args = parseArgs(passedArgs, passedOptions);
 
   t.deepEqual(args, expected, 'excess option dashes are retained');
