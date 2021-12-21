@@ -98,22 +98,22 @@ const { parseArgs } = require('util')
 
 ```js
 // default
-const argv = ['-f', '--foo=a', '--goo', 'b']
+const argv = ['-f', '--foo=a', '--bar', 'b']
 const options = {}
 const { flags, values, positionals } = parseArgs(argv, options)
-flags // { f: true, goo: true }
+flags // { f: true, bar: true }
 values // { foo: 'a' }
 positionals // ['b']
 ```
 ```js
 // withValue
-const argv = ['-f', '--foo=a', '--goo', 'b']
+const argv = ['-f', '--foo=a', '--bar', 'b']
 const options = {
-    withValue: ['goo']
+    withValue: ['bar']
 }
 const { flags, values, positionals } = parseArgs(argv, options)
 flags // { f: true }
-values // { foo: 'a', goo: 'b' }
+values // { foo: 'a', bar: 'b' }
 positionals // []
 ```
 ```js
