@@ -1,5 +1,35 @@
 'use strict';
 
+function setOptionValue(parseOptions, option, value, result) {
+  const multiple = parseOptions.multiples &&
+    parseOptions.multiples.includes(option);
+  const withValue = parseOptions.withValue &&
+    parseOptions.withValue.includes(option);
+  const isFlag = !withValue && value === undefined;
+
+  // Normal flag: !withValue && value === undefined
+  // Normal value, withValue && value !== undefined
+  // Special case: withValue && value === undefined, store undefined not flag
+  // Special case: !withValue && value !== undefined, store value not flag
+
+  // Flags
+  // Only mark flags for plain flag without a value, expected or otherwise.
+  if (isFlag)
+    result.flags[option] = true;
+
+  // Values
+  if (multiple) {
+    // Always store value in array, including for flags.
+    const val = isFlag ? true : value;
+    if (result.values[option])
+      result.values[option].concat(val);
+    else
+      result.values[option] = [val];
+  } else if (!isFlag) {
+    result.values[option] = value;
+  }
+}
+
 const parseArgs = (
   argv = process.argv.slice(require.main ? 2 : 1),
   options = {}
@@ -38,59 +68,26 @@ const parseArgs = (
       if (arg.includes('=')) {
         // withValue equals(=) case
         const argParts = arg.split('=');
-
-        result.flags[argParts[0]] = true;
-        // If withValue option is specified, take 2nd part after '=' as value,
-        // else set value as undefined
-        const val = options.withValue &&
-          options.withValue.includes(argParts[0]) ?
-          argParts[1] : undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[argParts[0]] = [].concat(
-          options.multiples &&
-            options.multiples.includes(argParts[0]) &&
-            result.values[argParts[0]] || [],
-          val,
-        );
+        setOptionValue(options, argParts[0], argParts[1], result);
       } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        result.flags[arg] = true;
-        // If withValue option is specified, take next position arguement as
+        // If withValue option is specified, take next position argument as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
         const val = options.withValue && options.withValue.includes(arg) ?
           argv[++pos] :
           undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[arg] = [].concat(
-          options.multiples && options.multiples.includes(arg) &&
-            result.values[arg] ?
-            result.values[arg] :
-            [],
-          val);
+        setOptionValue(options, arg, val, result);
       } else {
-        // Cases when an arg is specified without a value, example
-        // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
-        // shave value as undefined
-        result.flags[arg] = true;
-        // Append undefined to previous values array for case of
-        // multiples option, else add to empty array
-        result.values[arg] = [].concat(
-          options.multiples && options.multiples.includes(arg) &&
-            result.values[arg] ?
-            result.values[arg] :
-            [],
-          undefined
-        );
+        // No argument available as a value.
+        setOptionValue(options, arg, undefined, result);
       }
 
     } else {
-      // Arguements without a dash prefix are considered "positional"
+      // Arguments without a dash prefix are considered "positional"
       result.positionals.push(arg);
     }
 
