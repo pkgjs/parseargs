@@ -84,7 +84,7 @@ into an `Array`
   * `short` {Object} (Optional) An `Object` of key, value pairs of strings which map a "short" alias to an argument; When appearing multiples times in `argv`; Respects `withValue` & `multiples`
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
-  * `args` {Object}, having properties and `Boolean` values corresponding to parsed options passed
+  * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
   * `values` {Object}, have properties and `String` values corresponding to parsed options passed
   * `positionals` {string[]}, containing [Positionals][]
 
@@ -100,8 +100,8 @@ const { parseArgs } = require('util')
 // default
 const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {}
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
+const { flags, values, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
 values // { f: [undefined], foo: [undefined] }
 positionals // ['b']
 ```
@@ -111,8 +111,8 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     withValue: ['foo']
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
+const { flags, values, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
 values // { f: [undefined], foo: ['b'] }
 positionals // []
 ```
@@ -123,8 +123,8 @@ const options = {
     withValue: ['foo'],
     multiples: ['foo']
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { f: true, foo: true}
+const { flags, values, positionals } = parseArgs(argv, options)
+flags // { f: true, foo: true}
 values // { f: [undefined], foo: ['a','b'] }
 positionals // []
 ```
@@ -134,8 +134,8 @@ const argv = ['-f', '--foo=a', '--foo', 'b']
 const options = {
     short: { f: 'foo' }
 }
-const { args, values, positionals } = parseArgs(argv, options)
-args // { foo: true}
+const { flags, values, positionals } = parseArgs(argv, options)
+flags // { foo: true}
 values // { foo: [undefined] }
 positionals // ['b']
 ```

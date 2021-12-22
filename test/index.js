@@ -7,7 +7,7 @@ const {parseArgs} = require('../index.js')
 
 test('Everything after a bare `--` is considered a positional argument', function (t) {
   const passedArgs = ['--', 'barepositionals', 'mopositionals']
-  const expected = { args: {}, values: {}, positionals: ['barepositionals', 'mopositionals'] }
+  const expected = { flags: {}, values: {}, positionals: ['barepositionals', 'mopositionals'] }
   const args = parseArgs(passedArgs)
 
   t.deepEqual(args, expected, 'testing bare positionals')
@@ -17,7 +17,7 @@ test('Everything after a bare `--` is considered a positional argument', functio
 
 test('args are true', function (t) {
   const passedArgs = ['--foo', '--bar']
-  const expected = { args: { foo: true, bar: true}, values: {foo: [undefined], bar: [undefined]}, positionals: [] }
+  const expected = { flags: { foo: true, bar: true}, values: {foo: [undefined], bar: [undefined]}, positionals: [] }
   const args = parseArgs(passedArgs)
 
   t.deepEqual(args, expected, 'args are true')
@@ -27,7 +27,7 @@ test('args are true', function (t) {
 
 test('arg is true and positional is identified', function (t) {
   const passedArgs = ['--foo=a', '--foo', 'b']
-  const expected = { args: { foo: true}, values: { foo: [undefined]}, positionals: ['b'] }
+  const expected = { flags: { foo: true}, values: { foo: [undefined]}, positionals: ['b'] }
   const args = parseArgs(passedArgs)
 
   t.deepEqual(args, expected, 'arg is true and positional is identified')
@@ -38,7 +38,7 @@ test('arg is true and positional is identified', function (t) {
 test('args equals are passed "withValue"', function (t) {
   const passedArgs = ['--so=wat']
   const passedOptions = { withValue: ['so'] }
-  const expected = { args: { so: true}, values: { so: ["wat"]}, positionals: [] }
+  const expected = { flags: { so: true}, values: { so: ["wat"]}, positionals: [] }
   const args = parseArgs(passedArgs, passedOptions)
 
   t.deepEqual(args, expected, 'arg value is passed')
@@ -49,7 +49,7 @@ test('args equals are passed "withValue"', function (t) {
 test('same arg is passed twice "withValue" and last value is recorded', function (t) {
   const passedArgs = ['--foo=a', '--foo', 'b']
   const passedOptions = { withValue: ['foo'] }
-  const expected = { args: { foo: true}, values: { foo: ['b']}, positionals: [] }
+  const expected = { flags: { foo: true}, values: { foo: ['b']}, positionals: [] }
   const args = parseArgs(passedArgs, passedOptions)
 
   t.deepEqual(args, expected, 'last arg value is passed')
@@ -60,7 +60,7 @@ test('same arg is passed twice "withValue" and last value is recorded', function
 test('args are passed "withValue" and "multiples"', function (t) {
   const passedArgs = ['--foo=a', '--foo', 'b']
   const passedOptions = { withValue: ['foo'], multiples: ['foo'] }
-  const expected = { args: { foo: true}, values: { foo: ['a', 'b']}, positionals: [] }
+  const expected = { flags: { foo: true}, values: { foo: ['a', 'b']}, positionals: [] }
   const args = parseArgs(passedArgs, passedOptions)
 
   t.deepEqual(args, expected, 'both arg values are passed')
@@ -73,12 +73,12 @@ test('correct default args when use node -p', function(t) {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['-p', '0'];
-  const args = parseArgs();
+  const result = parseArgs();
 
-  const expected = { args: { foo: true },
+  const expected = { flags: { foo: true },
                      values: { foo: [undefined] },
                      positionals: [] };
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(result, expected);
 
   t.end();
   process.argv = holdArgv;
@@ -90,12 +90,12 @@ test('correct default args when use node --print', function(t) {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['--print', '0'];
-  const args = parseArgs();
+  const result = parseArgs();
 
-  const expected = { args: { foo: true },
+  const expected = { flags: { foo: true },
                      values: { foo: [undefined] },
                      positionals: [] };
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(result, expected);
 
   t.end();
   process.argv = holdArgv;
@@ -107,12 +107,12 @@ test('correct default args when use node -e', function(t) {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['-e', '0'];
-  const args = parseArgs();
+  const result = parseArgs();
 
-  const expected = { args: { foo: true },
+  const expected = { flags: { foo: true },
                      values: { foo: [undefined] },
                      positionals: [] };
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(result, expected);
 
   t.end();
   process.argv = holdArgv;
@@ -124,12 +124,12 @@ test('correct default args when use node --eval', function(t) {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['--eval', '0'];
-  const args = parseArgs();
+  const result = parseArgs();
 
-  const expected = { args: { foo: true },
+  const expected = { flags: { foo: true },
                      values: { foo: [undefined] },
                      positionals: [] };
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(result, expected);
 
   t.end();
   process.argv = holdArgv;
@@ -141,19 +141,35 @@ test('correct default args when normal arguments', function(t) {
   process.argv = [process.argv0, 'script.js', '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = [];
-  const args = parseArgs();
+  const result = parseArgs();
 
-  const expected = { args: { foo: true },
+  const expected = { flags: { foo: true },
                      values: { foo: [undefined] },
                      positionals: [] };
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(result, expected);
 
   t.end();
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
 
-//Test bad inputs
+test('excess leading dashes on options are retained', function(t) {
+  // Enforce a design decision for an edge case.
+  const passedArgs = ['---triple'];
+  const passedOptions = { };
+  const expected = {
+    flags: { '-triple': true },
+    values: { '-triple': [undefined] },
+    positionals: []
+  };
+  const result = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(result, expected, 'excess option dashes are retained');
+
+  t.end();
+});
+
+// Test bad inputs
 
 test('boolean passed to "withValue" option', function (t) {
   const passedArgs = ['--so=wat']
