@@ -97,7 +97,7 @@ const { parseArgs } = require('util')
 ```
 
 ```js
-// default
+// unconfigured
 const argv = ['-f', '--foo=a', '--bar', 'b']
 const options = {}
 const { flags, values, positionals } = parseArgs(argv, options)
@@ -130,7 +130,7 @@ positionals // []
 ```
 ```js
 // shorts
-const argv = ['-f']
+const argv = ['-f', 'b']
 const options = {
     short: { f: 'foo' }
 }
