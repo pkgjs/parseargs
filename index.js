@@ -5,15 +5,17 @@ function setOptionValue(parseOptions, option, value, result) {
     parseOptions.multiples.includes(option);
   const withValue = parseOptions.withValue &&
     parseOptions.withValue.includes(option);
-  const isFlag = !withValue && value === undefined;
 
   // Normal flag: !withValue && value === undefined
   // Normal value, withValue && value !== undefined
-  // Special case: withValue && value === undefined, store undefined not flag
-  // Special case: !withValue && value !== undefined, store value not flag
+  // Special case: withValue && value === undefined
+  //    store as normal for withValue with value undefined
+  // Special case: !withValue && value !== undefined
+  //    store as normal for withValue (and not a flag)
 
   // Flags
   // Only mark flags for plain flag without a value, expected or otherwise.
+  const isFlag = !withValue && value === undefined;
   if (isFlag)
     result.flags[option] = true;
 
