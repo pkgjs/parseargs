@@ -66,9 +66,8 @@ const parseArgs = (
       arg = arg.replace(/^-+/, '');
 
       if (arg.includes('=')) {
-        // withValue equals(=) case
-        const argParts = arg.split('=');
-        setOptionValue(options, argParts[0], argParts[1], result);
+        const index = arg.indexOf('=');
+        setOptionValue(options, arg.slice(0, index), arg.slice(index + 1), result);
       } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
