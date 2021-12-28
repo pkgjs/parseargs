@@ -46,23 +46,34 @@ test('args equals are passed "withValue"', function (t) {
   t.end()
 })
 
-test('when zero config option with equals then option treated as withValue"', function (t) {
+test('when zero config option with equals then option treated as withValue', function (t) {
   const passedArgs = ['--so=wat'];
   const expected = { flags: {}, values: { so: "wat" }, positionals: [] };
   const args = parseArgs(passedArgs);
 
-  t.deepEqual(args, expected, 'arg value is passed');
+  t.deepEqual(args, expected);
 
   t.end();
 });
 
-test('when option in withValue is followed by option instead of value then value is undefined"', function (t) {
+test('when option in withValue is followed by option instead of value then value is undefined', function (t) {
   const passedArgs = ['--foo', '--bar'];
   const passedOptions = { withValue: ['foo'] };
   const expected = { flags: { 'bar': true }, values: { foo: undefined }, positionals: [] };
   const args = parseArgs(passedArgs, passedOptions);
 
-  t.deepEqual(args, expected, 'arg value is passed');
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when option=a=b (value includes =) then value is what follows first =', function (t) {
+  const passedArgs = ['--foo=b=ar'];
+  const passedOptions = { withValue: ['foo'] };
+  const expected = { flags: {}, values: { foo: 'b=ar' }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected);
 
   t.end();
 });
