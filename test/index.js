@@ -68,19 +68,108 @@ test('args are passed "withValue" and "multiples"', function (t) {
   t.end()
 })
 
+test('correct default args when use node -p', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = ['-p', '0'];
+  const result = parseArgs();
+
+  const expected = { flags: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(result, expected);
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
+test('correct default args when use node --print', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = ['--print', '0'];
+  const result = parseArgs();
+
+  const expected = { flags: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(result, expected);
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
+test('correct default args when use node -e', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = ['-e', '0'];
+  const result = parseArgs();
+
+  const expected = { flags: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(result, expected);
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
+test('correct default args when use node --eval', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = ['--eval', '0'];
+  const result = parseArgs();
+
+  const expected = { flags: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(result, expected);
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
+test('correct default args when normal arguments', function(t) {
+  const holdArgv = process.argv;
+  process.argv = [process.argv0, 'script.js', '--foo'];
+  const holdExecArgv = process.execArgv;
+  process.execArgv = [];
+  const result = parseArgs();
+
+  const expected = { flags: { foo: true },
+                     values: { foo: [undefined] },
+                     positionals: [] };
+  t.deepEqual(result, expected);
+
+  t.end();
+  process.argv = holdArgv;
+  process.execArgv = holdExecArgv;
+});
+
 test('excess leading dashes on options are retained', function(t) {
   // Enforce a design decision for an edge case.
   const passedArgs = ['---triple'];
   const passedOptions = { };
-  const expected = { flags: { '-triple': true}, values: { '-triple': [undefined]}, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const expected = {
+    flags: { '-triple': true },
+    values: { '-triple': [undefined] },
+    positionals: []
+  };
+  const result = parseArgs(passedArgs, passedOptions);
 
-  t.deepEqual(args, expected, 'excess option dashes are retained');
+  t.deepEqual(result, expected, 'excess option dashes are retained');
 
   t.end();
 });
 
-//Test bad inputs
+// Test bad inputs
 
 test('boolean passed to "withValue" option', function (t) {
   const passedArgs = ['--so=wat']

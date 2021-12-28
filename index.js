@@ -1,5 +1,37 @@
 'use strict';
 
+function getMainArgs() {
+  // This function is a placeholder for proposed process.mainArgs.
+  // Work out where to slice process.argv for user supplied arguments.
+
+  // Electron is an interested example, with work-arounds implemented in
+  // Commander and Yargs. Hopefully Electron would support process.mainArgs
+  // itself and render this work-around moot.
+  //
+  // In a bundled Electron app, the user CLI args directly
+  // follow executable. (No special processing required for unbundled.)
+  // 1) process.versions.electron is either set by electron, or undefined
+  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  // 2) process.defaultApp is undefined in a bundled Electron app, and set
+  //    in an unbundled Electron app
+  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  // (Not included in tests as hopefully temporary example.)
+  /* c8 ignore next 3 */
+  if (process.versions && process.versions.electron && !process.defaultApp) {
+    return process.argv.slice(1);
+  }
+
+  // Check node options for scenarios where user CLI args follow executable.
+  const execArgv = process.execArgv;
+  if (execArgv.includes('-e') || execArgv.includes('--eval') ||
+      execArgv.includes('-p') || execArgv.includes('--print')) {
+    return process.argv.slice(1);
+  }
+
+  // Normally first two arguments are executable and script, then CLI arguments
+  return process.argv.slice(2);
+}
+
 function setOptionValue(parseOptions, option, value, result) {
   const multiple = parseOptions.multiples &&
     parseOptions.multiples.includes(option);
@@ -33,7 +65,7 @@ function setOptionValue(parseOptions, option, value, result) {
 }
 
 const parseArgs = (
-  argv = process.argv.slice(require.main ? 2 : 1),
+  argv = getMainArgs(),
   options = {}
 ) => {
   if (typeof options !== 'object' || options === null) {
