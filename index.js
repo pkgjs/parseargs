@@ -55,8 +55,8 @@ function setOptionValue(parseOptions, option, value, result) {
   if (multiple) {
     // Always store value in array, including for flags.
     const val = isFlag ? true : value;
-    if (result.values[option])
-      result.values[option].concat(val);
+    if (result.values[option] !== undefined)
+      result.values[option].push(val);
     else
       result.values[option] = [val];
   } else if (!isFlag) {
@@ -99,7 +99,8 @@ const parseArgs = (
 
       if (arg.includes('=')) {
         const index = arg.indexOf('=');
-        setOptionValue(options, arg.slice(0, index), arg.slice(index + 1), result);
+        setOptionValue(options,
+                       arg.slice(0, index), arg.slice(index + 1), result);
       } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
