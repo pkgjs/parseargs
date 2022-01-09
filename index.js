@@ -54,6 +54,9 @@ function setOptionValue(parseOptions, option, value, result) {
   // Values
   if (multiple) {
     // Always store value in array, including for flags.
+    // result.values[option] starts out not present,
+    // first value is added as new array [val],
+    // subsequent values are pushed to existing array.
     const val = isFlag ? true : value;
     if (result.values[option] !== undefined)
       result.values[option].push(val);
