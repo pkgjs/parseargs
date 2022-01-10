@@ -183,9 +183,9 @@ positionals // ['b']
 - Do unknown arguments raise an error?  Are they parsed?  Are they treated as positional arguments?
   - no, they are parsed, not treated as positionals
 - Does `--` signal the end of flags/options?
-  - yes, so `program -- --bar` sets `{positionals:['--bar']}`
+  - yes, the following arguments are treated as positionals. e.g. `program -- --bar` sets `{positionals:['--bar']}`
 - If `--` is used to signal the end of the options, is `--` included as a positional?
-  - no, so `program -- foo` is the same as `program foo` and sets `{positionals:['foo']}`
+  - no, `program -- foo` is the same as `program foo` and sets `{positionals:['foo']}`
 - Does the API specify whether a `--` was present/relevant?
   - no
 - Is `-foo` the same as `--foo`?
