@@ -143,13 +143,13 @@ positionals // ['b']
 ### F.A.Qs
 
 - Is `cmd --foo=bar baz` the same as `cmd baz --foo=bar`?
-  - Yes, if `withValue: ['foo']`, otherwise no
+  - Yes
 - Does the parser execute a function?
   - no
 - Does the parser execute one of several functions, depending on input?
   - no
 - Can subcommands take options that are distinct from the main command?
-  - no (this might be a problem? at least it's a more definitive "opinion")
+  - no (there is support for positionals, but not subcommands)
 - Does it output generated help when no options match?
   - no
 - Does it generated short usage?  Like: `usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]`
@@ -175,9 +175,9 @@ positionals // ['b']
 - Does it coerce types?
   - no
 - Does `--no-foo` coerce to `--foo=false`?  For all flags?  Only boolean flags?
-  - no, it sets `{args:{'no-foo': true}}`
+  - no, it sets `{flags:{'no-foo': true}}`
 - Is `--foo` the same as `--foo=true`?  Only for known booleans?  Only at the end?
-  - no, `--foo` is the same as `--foo=`
+  - no, `--foo` is a flag and sets `{flags:{'foo': true}}` while `--foo=true` sets a string value `{values:{'foo': 'true'}}`
 - Does it read environment variables?  Ie, is `FOO=1 cmd` the same as `cmd --foo=1`?
   - no
 - Do unknown arguments raise an error?  Are they parsed?  Are they treated as positional arguments?
@@ -188,8 +188,7 @@ positionals // ['b']
 - Does the API specify whether a `--` was present/relevant?
   - no
 - Is `-foo` the same as `--foo`?
-  - yes <-- ! kind of a blocker for shortopts !
-  - Recommend: "No, -foo is shortopts form of --f --o --o" (assuming none are defined, or withValues)
+  - no, `-foo` is a short option group. Assuming just flags, same as `-f -o -o`.
 - Is `---foo` the same as `--foo`?
   - no 
   - the first flag would be parsed as `'-foo'`
