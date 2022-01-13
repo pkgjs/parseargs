@@ -26,7 +26,7 @@ This package was implemented using [tape](https://www.npmjs.com/package/tape) as
 - [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
   - [Implementation:](#implementation)
 - [💡 `util.parseArgs(argv)` Proposal](#-utilparseargsargv-proposal)
-- [📃 Examples w/ Output](#-examples-w-output)
+- [📃 Examples](#-examples)
   - [F.A.Qs](#faqs)
 
 ----
@@ -90,54 +90,57 @@ into an `Array`
 
 ----
 
-## 📃 Examples w/ Output
+## 📃 Examples
 
 ```js
-const { parseArgs } = require('util')
+const { parseArgs } = require('@pkgjs/parseargs');
 ```
 
 ```js
 // unconfigured
-const argv = ['-f', '--foo=a', '--bar', 'b']
-const options = {}
-const { flags, values, positionals } = parseArgs(argv, options)
-flags // { f: true, bar: true }
-values // { foo: 'a' }
-positionals // ['b']
+const argv = ['-f', '--foo=a', '--bar', 'b'];
+const options = {};
+const { flags, values, positionals } = parseArgs(argv, options);
+// flags = { f: true, bar: true }
+// values = { foo: 'a' }
+// positionals = ['b']
 ```
+
 ```js
 // withValue
-const argv = ['-f', '--foo=a', '--bar', 'b']
+const argv = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
-    withValue: ['bar']
-}
-const { flags, values, positionals } = parseArgs(argv, options)
-flags // { f: true }
-values // { foo: 'a', bar: 'b' }
-positionals // []
+  withValue: ['bar']
+};
+const { flags, values, positionals } = parseArgs(argv, options);
+// flags = { f: true }
+// values = { foo: 'a', bar: 'b' }
+// positionals = []
 ```
+
 ```js
 // withValue & multiples
-const argv = ['-f', '--foo=a', '--foo', 'b']
+const argv = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
-    withValue: ['foo'],
-    multiples: ['foo']
-}
-const { flags, values, positionals } = parseArgs(argv, options)
-flags // { f: true }
-values // { foo: ['a', 'b'] }
-positionals // []
+  withValue: ['foo'],
+  multiples: ['foo']
+};
+const { flags, values, positionals } = parseArgs(argv, options);
+// flags = { f: true }
+// values = { foo: ['a', 'b'] }
+// positionals = []
 ```
+
 ```js
 // shorts
-const argv = ['-f', 'b']
+const argv = ['-f', 'b'];
 const options = {
-    short: { f: 'foo' }
-}
-const { flags, values, positionals } = parseArgs(argv, options)
-flags // { foo: true }
-values // {}
-positionals // ['b']
+  short: { f: 'foo' }
+};
+const { flags, values, positionals } = parseArgs(argv, options);
+// flags = { foo: true }
+// values = {}
+// positionals = ['b']
 ```
 
 ### F.A.Qs
