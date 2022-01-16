@@ -122,9 +122,9 @@ const parseArgs = (
         result.values[arg] = ArrayPrototypeConcat(
           [],
           options.multiples &&
-            ArrayPrototypeIncludes(options.multiples, arg) &&
-            result.values[arg] ?
-            result.values[arg] : [],
+          ArrayPrototypeIncludes(options.multiples, arg) &&
+          result.values[arg] ||
+          [],
           val
         );
       } else {
@@ -136,10 +136,10 @@ const parseArgs = (
         // multiples option, else add to empty array
         result.values[arg] = ArrayPrototypeConcat(
           [],
-          options.multiples && ArrayPrototypeIncludes(options.multiples, arg) &&
-            result.values[arg] ?
-            result.values[arg] :
-            [],
+          options.multiples &&
+          ArrayPrototypeIncludes(options.multiples, arg) &&
+          result.values[arg] ||
+          [],
           undefined
         );
       }
