@@ -72,9 +72,9 @@ const parseArgs = (
       // Everything after a bare '--' is considered a positional argument
       // and is returned verbatim
       if (arg === '--') {
-        ArrayPrototypePush(
+        result.positionals = ArrayPrototypeConcat(
           result.positionals,
-          ...ArrayPrototypeSlice(argv, ++pos)
+          ArrayPrototypeSlice(argv, ++pos)
         );
         return result;
       } else if (
