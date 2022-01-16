@@ -7,7 +7,7 @@
     "coverage": "c8 --check-coverage node test/index.js",
     "test": "c8 node test/index.js",
     "posttest": "eslint index.js",
-    "fix": "eslint index.js --fix"
+    "fix": "eslint *.js --fix"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,14 @@
     "eslint": "^8.2.0",
     "eslint-plugin-node-core": "iansu/eslint-plugin-node-core",
     "tape": "^5.2.2"
+  },
+  "files": [
+    "index.js",
+    "primordials.js"
+  ],
+  "eslint": {
+    "env": {
+      "es6": true
+    }
   }
 }
