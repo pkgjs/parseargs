@@ -25,14 +25,5 @@
     "eslint": "^8.2.0",
     "eslint-plugin-node-core": "iansu/eslint-plugin-node-core",
     "tape": "^5.2.2"
-  },
-  "files": [
-    "index.js",
-    "primordials.js"
-  ],
-  "eslint": {
-    "env": {
-      "es6": true
-    }
   }
 }
