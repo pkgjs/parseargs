@@ -98,6 +98,7 @@ const { parseArgs } = require('@pkgjs/parseargs');
 
 ```js
 // unconfigured
+const { parseArgs } = require('@pkgjs/parseargs');
 const argv = ['-f', '--foo=a', '--bar', 'b'];
 const options = {};
 const { flags, values, positionals } = parseArgs(argv, options);
@@ -107,6 +108,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 ```
 
 ```js
+const { parseArgs } = require('@pkgjs/parseargs');
 // withValue
 const argv = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
@@ -119,6 +121,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 ```
 
 ```js
+const { parseArgs } = require('@pkgjs/parseargs');
 // withValue & multiples
 const argv = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
@@ -132,6 +135,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 ```
 
 ```js
+const { parseArgs } = require('@pkgjs/parseargs');
 // shorts
 const argv = ['-f', 'b'];
 const options = {
