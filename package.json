@@ -6,8 +6,8 @@
   "scripts": {
     "coverage": "c8 --check-coverage node test/index.js",
     "test": "c8 node test/index.js",
-    "posttest": "eslint index.js",
-    "fix": "eslint index.js --fix"
+    "posttest": "eslint .",
+    "fix": "npm run posttest -- --fix"
   },
   "repository": {
     "type": "git",
