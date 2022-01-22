@@ -1,7 +1,6 @@
 'use strict';
 
 const {
-  ArrayIsArray,
   ArrayPrototypeConcat,
   ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
@@ -12,6 +11,17 @@ const {
   StringPrototypeSplit,
   StringPrototypeStartsWith,
 } = require('./primordials');
+
+const {
+  codes: {
+    ERR_NOT_IMPLEMENTED
+  }
+} = require('./errors');
+
+const {
+  validateArray,
+  validateObject
+} = require('./validators');
 
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
@@ -51,11 +61,9 @@ const parseArgs = (
   argv = getMainArgs(),
   options = {}
 ) => {
-  if (typeof options !== 'object' || options === null) {
-    throw new Error('Whoops!');
-  }
-  if (options.withValue !== undefined && !ArrayIsArray(options.withValue)) {
-    throw new Error('Whoops! options.withValue should be an array.');
+  validateObject(options, 'options');
+  if (options.withValue !== undefined) {
+    validateArray(options.withValue, 'options.withValue');
   }
 
   const result = {
@@ -80,7 +88,7 @@ const parseArgs = (
       } else if (
         StringPrototypeCharAt(arg, 1) !== '-'
       ) { // Look for shortcodes: -fXzy
-        throw new Error('What are we doing with shortcodes!?!');
+        throw new ERR_NOT_IMPLEMENTED('shortcodes');
       }
 
       arg = StringPrototypeSlice(arg, 2); // remove leading --
