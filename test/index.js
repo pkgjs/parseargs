@@ -204,7 +204,9 @@ test('string passed to "withValue" option', function(t) {
   const passedArgs = ['--so=wat'];
   const passedOptions = { withValue: 'so' };
 
-  t.throws(function() { parseArgs(passedArgs, passedOptions); });
+  t.throws(function() { parseArgs(passedArgs, passedOptions); }, {
+    code: 'ERR_INVALID_ARG_TYPE'
+  });
 
   t.end();
 });
