@@ -58,6 +58,17 @@ test('same arg is passed twice "withValue" and last value is recorded', function
   t.end();
 });
 
+test('first arg passed for "withValue" and "multiples" is in array', function(t) {
+  const passedArgs = ['--foo=a'];
+  const passedOptions = { withValue: ['foo'], multiples: ['foo'] };
+  const expected = { flags: { foo: true }, values: { foo: ['a'] }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected, 'first multiple in array');
+
+  t.end();
+});
+
 test('args are passed "withValue" and "multiples"', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = { withValue: ['foo'], multiples: ['foo'] };
