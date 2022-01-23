@@ -10,6 +10,7 @@ class ERR_INVALID_ARG_TYPE extends TypeError {
 class ERR_NOT_IMPLEMENTED extends Error {
   constructor(feature) {
     super(`${feature} not implemented`);
+    this.code = 'ERR_NOT_IMPLEMENTED';
   }
 }
 
