@@ -49,7 +49,7 @@ function getMainArgs() {
 
 function storeOptionValue(parseOptions, option, value, result) {
   const multiple = parseOptions.multiples &&
-    StringPrototypeIncludes(parseOptions.multiples, option);
+    ArrayPrototypeIncludes(parseOptions.multiples, option);
 
   // Flags
   result.flags[option] = true;
