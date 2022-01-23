@@ -48,18 +48,27 @@ function getMainArgs() {
 }
 
 function storeOptionValue(parseOptions, option, value, result) {
+  const multiple = parseOptions.multiples &&
+    StringPrototypeIncludes(parseOptions.multiples, option);
+
+  // Flags
   result.flags[option] = true;
 
-  // Append value to previous values array for case of multiples
-  // option, else add to empty array
-  result.values[option] = ArrayPrototypeConcat(
-    [],
-    parseOptions.multiples &&
-    ArrayPrototypeIncludes(parseOptions.multiples, option) &&
-    result.values[option] ||
-    [],
-    value
-  );
+  // Values
+  if (multiple) {
+    // Always store value in array, including for flags.
+    // result.values[option] starts out not present,
+    // first value is added as new array [newValue],
+    // subsequent values are pushed to existing array.
+    const usedAsFlag = value === undefined;
+    const newValue = usedAsFlag ? true : value;
+    if (result.values[option] !== undefined)
+      ArrayPrototypePush(result.values[option], newValue);
+    else
+      result.values[option] = [newValue];
+  } else {
+    result.values[option] = value;
+  }
 }
 
 const parseArgs = (
