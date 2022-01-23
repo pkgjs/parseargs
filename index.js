@@ -1,5 +1,18 @@
 'use strict';
 
+const {
+  ArrayIsArray,
+  ArrayPrototypeConcat,
+  ArrayPrototypeIncludes,
+  ArrayPrototypeSlice,
+  ArrayPrototypePush,
+  StringPrototypeCharAt,
+  StringPrototypeIncludes,
+  StringPrototypeSlice,
+  StringPrototypeSplit,
+  StringPrototypeStartsWith,
+} = require('./primordials');
+
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
@@ -18,18 +31,35 @@ function getMainArgs() {
   // (Not included in tests as hopefully temporary example.)
   /* c8 ignore next 3 */
   if (process.versions && process.versions.electron && !process.defaultApp) {
-    return process.argv.slice(1);
+    return ArrayPrototypeSlice(process.argv, 1);
   }
 
   // Check node options for scenarios where user CLI args follow executable.
   const execArgv = process.execArgv;
-  if (execArgv.includes('-e') || execArgv.includes('--eval') ||
-      execArgv.includes('-p') || execArgv.includes('--print')) {
-    return process.argv.slice(1);
+  if (StringPrototypeIncludes(execArgv, '-e') ||
+      StringPrototypeIncludes(execArgv, '--eval') ||
+      StringPrototypeIncludes(execArgv, '-p') ||
+      StringPrototypeIncludes(execArgv, '--print')) {
+    return ArrayPrototypeSlice(process.argv, 1);
   }
 
   // Normally first two arguments are executable and script, then CLI arguments
-  return process.argv.slice(2);
+  return ArrayPrototypeSlice(process.argv, 2);
+}
+
+function storeOptionValue(parseOptions, option, value, result) {
+  result.flags[option] = true;
+
+  // Append value to previous values array for case of multiples
+  // option, else add to empty array
+  result.values[option] = ArrayPrototypeConcat(
+    [],
+    parseOptions.multiples &&
+    ArrayPrototypeIncludes(parseOptions.multiples, option) &&
+    result.values[option] ||
+    [],
+    value
+  );
 }
 
 const parseArgs = (
@@ -39,7 +69,7 @@ const parseArgs = (
   if (typeof options !== 'object' || options === null) {
     throw new Error('Whoops!');
   }
-  if (options.withValue !== undefined && !Array.isArray(options.withValue)) {
+  if (options.withValue !== undefined && !ArrayIsArray(options.withValue)) {
     throw new Error('Whoops! options.withValue should be an array.');
   }
 
@@ -53,75 +83,57 @@ const parseArgs = (
   while (pos < argv.length) {
     let arg = argv[pos];
 
-    if (arg.startsWith('-')) {
+    if (StringPrototypeStartsWith(arg, '-')) {
       // Everything after a bare '--' is considered a positional argument
       // and is returned verbatim
       if (arg === '--') {
-        result.positionals.push(...argv.slice(++pos));
+        result.positionals = ArrayPrototypeConcat(
+          result.positionals,
+          ArrayPrototypeSlice(argv, ++pos)
+        );
         return result;
-      } else if (arg.charAt(1) !== '-') { // Look for shortcodes: -fXzy
+      } else if (
+        StringPrototypeCharAt(arg, 1) !== '-'
+      ) { // Look for shortcodes: -fXzy
         throw new Error('What are we doing with shortcodes!?!');
       }
 
-      arg = arg.slice(2); // remove leading --
+      arg = StringPrototypeSlice(arg, 2); // remove leading --
 
-      if (arg.includes('=')) {
+      if (StringPrototypeIncludes(arg, '=')) {
         // withValue equals(=) case
-        const argParts = arg.split('=');
+        const argParts = StringPrototypeSplit(arg, '=');
 
-        result.flags[argParts[0]] = true;
         // If withValue option is specified, take 2nd part after '=' as value,
         // else set value as undefined
         const val = options.withValue &&
-          options.withValue.includes(argParts[0]) ?
+          ArrayPrototypeIncludes(options.withValue, argParts[0]) ?
           argParts[1] : undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[argParts[0]] = [].concat(
-          options.multiples &&
-            options.multiples.includes(argParts[0]) &&
-            result.values[argParts[0]] || [],
-          val,
-        );
-      } else if (pos + 1 < argv.length && !argv[pos + 1].startsWith('-')) {
+        storeOptionValue(options, argParts[0], val, result);
+      } else if (pos + 1 < argv.length &&
+        !StringPrototypeStartsWith(argv[pos + 1], '-')
+      ) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        result.flags[arg] = true;
         // If withValue option is specified, take next position arguement as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
-        const val = options.withValue && options.withValue.includes(arg) ?
-          argv[++pos] :
+        const val = options.withValue &&
+          ArrayPrototypeIncludes(options.withValue, arg) ? argv[++pos] :
           undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[arg] = [].concat(
-          options.multiples && options.multiples.includes(arg) &&
-            result.values[arg] ?
-            result.values[arg] :
-            [],
-          val);
+        storeOptionValue(options, arg, val, result);
       } else {
         // Cases when an arg is specified without a value, example
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
         // shave value as undefined
-        result.flags[arg] = true;
-        // Append undefined to previous values array for case of
-        // multiples option, else add to empty array
-        result.values[arg] = [].concat(
-          options.multiples && options.multiples.includes(arg) &&
-            result.values[arg] ?
-            result.values[arg] :
-            [],
-          undefined
-        );
+        storeOptionValue(options, arg, undefined, result);
       }
 
     } else {
       // Arguements without a dash prefix are considered "positional"
-      result.positionals.push(arg);
+      ArrayPrototypePush(result.positionals, arg);
     }
 
     pos++;
