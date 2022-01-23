@@ -57,6 +57,30 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
+function storeOptionValue(parseOptions, option, value, result) {
+  const multiple = parseOptions.multiples &&
+    ArrayPrototypeIncludes(parseOptions.multiples, option);
+
+  // Flags
+  result.flags[option] = true;
+
+  // Values
+  if (multiple) {
+    // Always store value in array, including for flags.
+    // result.values[option] starts out not present,
+    // first value is added as new array [newValue],
+    // subsequent values are pushed to existing array.
+    const usedAsFlag = value === undefined;
+    const newValue = usedAsFlag ? true : value;
+    if (result.values[option] !== undefined)
+      ArrayPrototypePush(result.values[option], newValue);
+    else
+      result.values[option] = [newValue];
+  } else {
+    result.values[option] = value;
+  }
+}
+
 const parseArgs = (
   argv = getMainArgs(),
   options = {}
@@ -97,27 +121,18 @@ const parseArgs = (
         // withValue equals(=) case
         const argParts = StringPrototypeSplit(arg, '=');
 
-        result.flags[argParts[0]] = true;
         // If withValue option is specified, take 2nd part after '=' as value,
         // else set value as undefined
         const val = options.withValue &&
           ArrayPrototypeIncludes(options.withValue, argParts[0]) ?
           argParts[1] : undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[argParts[0]] = ArrayPrototypeConcat([],
-                                                          options.multiples &&
-            ArrayPrototypeIncludes(options.multiples, argParts[0]) &&
-            result.values[argParts[0]] || [],
-                                                          val,
-        );
+        storeOptionValue(options, argParts[0], val, result);
       } else if (pos + 1 < argv.length &&
         !StringPrototypeStartsWith(argv[pos + 1], '-')
       ) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        result.flags[arg] = true;
         // If withValue option is specified, take next position arguement as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
@@ -125,31 +140,12 @@ const parseArgs = (
         const val = options.withValue &&
           ArrayPrototypeIncludes(options.withValue, arg) ? argv[++pos] :
           undefined;
-        // Append value to previous values array for case of multiples
-        // option, else add to empty array
-        result.values[arg] = ArrayPrototypeConcat(
-          [],
-          options.multiples &&
-          ArrayPrototypeIncludes(options.multiples, arg) &&
-          result.values[arg] ||
-          [],
-          val
-        );
+        storeOptionValue(options, arg, val, result);
       } else {
         // Cases when an arg is specified without a value, example
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
         // shave value as undefined
-        result.flags[arg] = true;
-        // Append undefined to previous values array for case of
-        // multiples option, else add to empty array
-        result.values[arg] = ArrayPrototypeConcat(
-          [],
-          options.multiples &&
-          ArrayPrototypeIncludes(options.multiples, arg) &&
-          result.values[arg] ||
-          [],
-          undefined
-        );
+        storeOptionValue(options, arg, undefined, result);
       }
 
     } else {

@@ -1,6 +1,6 @@
 {
   "name": "@pkgjs/parseargs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pkgjs/parseargs.git"
+    "url": "git@github.com:pkgjs/parseargs.git"
   },
   "keywords": [],
   "author": "",
