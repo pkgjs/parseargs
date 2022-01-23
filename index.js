@@ -5,6 +5,7 @@ const {
   ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
+  ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeSlice,
@@ -86,8 +87,10 @@ const parseArgs = (
   options = {}
 ) => {
   validateObject(options, 'options');
-  if (options.withValue !== undefined) {
-    validateArray(options.withValue, 'options.withValue');
+  for (const key of ['withValue', 'multiples']) {
+    if (ObjectHasOwn(options, key)) {
+      validateArray(options[key], `options.${key}`);
+    }
   }
 
   const result = {
