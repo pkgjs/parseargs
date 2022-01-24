@@ -80,6 +80,18 @@ test('args are passed "withValue" and "multiples"', function(t) {
   t.end();
 });
 
+test('order of option and positional does not matter (per README)', function(t) {
+  const passedArgs1 = ['--foo=bar', 'baz'];
+  const passedArgs2 = ['baz', '--foo=bar'];
+  const passedOptions = { withValue: ['foo'] };
+  const expected = { flags: { foo: true }, values: { foo: 'bar' }, positionals: ['baz'] };
+
+  t.deepEqual(parseArgs(passedArgs1, passedOptions), expected, 'option then positional');
+  t.deepEqual(parseArgs(passedArgs2, passedOptions), expected, 'positional then option');
+
+  t.end();
+});
+
 test('correct default args when use node -p', function(t) {
   const holdArgv = process.argv;
   process.argv = [process.argv0, '--foo'];
