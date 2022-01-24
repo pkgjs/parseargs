@@ -195,8 +195,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 - Does the API specify whether a `--` was present/relevant?
   - no
 - Is `-foo` the same as `--foo`?
-  - yes <-- ! kind of a blocker for shortopts !
-  - Recommend: "No, -foo is shortopts form of --f --o --o" (assuming none are defined, or withValues)
+  - no, `-foo` is a short option or options (WIP: https://github.com/pkgjs/parseargs/issues/2)
 - Is `---foo` the same as `--foo`?
   - no 
   - the first flag would be parsed as `'-foo'`
