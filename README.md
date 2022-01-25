@@ -156,7 +156,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 - Does the parser execute one of several functions, depending on input?
   - no
 - Can subcommands take options that are distinct from the main command?
-  - no (this might be a problem? at least it's a more definitive "opinion")
+  - no
 - Does it output generated help when no options match?
   - no
 - Does it generated short usage?  Like: `usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]`
