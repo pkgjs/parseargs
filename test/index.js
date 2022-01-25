@@ -47,6 +47,16 @@ test('args equals are passed "withValue"', function(t) {
   t.end();
 });
 
+test('when args include single dash then result stores dash as positional', function(t) {
+  const passedArgs = ['-'];
+  const expected = { flags: { }, values: { }, positionals: ['-'] };
+  const args = parseArgs(passedArgs);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
 test('same arg is passed twice "withValue" and last value is recorded', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = { withValue: ['foo'] };

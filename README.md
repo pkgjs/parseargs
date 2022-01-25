@@ -202,7 +202,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
   - the first flag would be parsed as `'-foo'`
   - the second flag would be parsed as `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`
-  - no
+  - yes
 
 [coverage-image]: https://img.shields.io/nycrc/pkgjs/parseargs
 [coverage-url]: https://github.com/pkgjs/parseargs/blob/main/.nycrc
