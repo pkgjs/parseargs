@@ -86,6 +86,7 @@ const parseArgs = (
   argv = getMainArgs(),
   options = {}
 ) => {
+  validateArray(argv, 'argv');
   validateObject(options, 'options');
   for (const key of ['withValue', 'multiples']) {
     if (ObjectHasOwn(options, key)) {
