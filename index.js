@@ -1,17 +1,28 @@
 'use strict';
 
 const {
-  ArrayIsArray,
   ArrayPrototypeConcat,
   ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
+  ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
+  StringPrototypeIndexOf,
   StringPrototypeSlice,
-  StringPrototypeSplit,
   StringPrototypeStartsWith,
 } = require('./primordials');
+
+const {
+  codes: {
+    ERR_NOT_IMPLEMENTED
+  }
+} = require('./errors');
+
+const {
+  validateArray,
+  validateObject
+} = require('./validators');
 
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
@@ -75,11 +86,12 @@ const parseArgs = (
   argv = getMainArgs(),
   options = {}
 ) => {
-  if (typeof options !== 'object' || options === null) {
-    throw new Error('Whoops!');
-  }
-  if (options.withValue !== undefined && !ArrayIsArray(options.withValue)) {
-    throw new Error('Whoops! options.withValue should be an array.');
+  validateArray(argv, 'argv');
+  validateObject(options, 'options');
+  for (const key of ['withValue', 'multiples']) {
+    if (ObjectHasOwn(options, key)) {
+      validateArray(options[key], `options.${key}`);
+    }
   }
 
   const result = {
@@ -104,21 +116,22 @@ const parseArgs = (
       } else if (
         StringPrototypeCharAt(arg, 1) !== '-'
       ) { // Look for shortcodes: -fXzy
-        throw new Error('What are we doing with shortcodes!?!');
+        throw new ERR_NOT_IMPLEMENTED('shortcodes');
       }
 
       arg = StringPrototypeSlice(arg, 2); // remove leading --
 
       if (StringPrototypeIncludes(arg, '=')) {
-        // withValue equals(=) case
-        const argParts = StringPrototypeSplit(arg, '=');
-
-        // If withValue option is specified, take 2nd part after '=' as value,
-        // else set value as undefined
-        const val = options.withValue &&
-          ArrayPrototypeIncludes(options.withValue, argParts[0]) ?
-          argParts[1] : undefined;
-        storeOptionValue(options, argParts[0], val, result);
+        // Store option=value same way independent of `withValue` as:
+        // - looks like a value, store as a value
+        // - match the intention of the user
+        // - preserve information for author to process further
+        const index = StringPrototypeIndexOf(arg, '=');
+        storeOptionValue(
+          options,
+          StringPrototypeSlice(arg, 0, index),
+          StringPrototypeSlice(arg, index + 1),
+          result);
       } else if (pos + 1 < argv.length &&
         !StringPrototypeStartsWith(argv[pos + 1], '-')
       ) {
