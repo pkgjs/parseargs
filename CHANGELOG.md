@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.1](https://github.com/pkgjs/parseargs/compare/v0.1.0...v0.1.1) (2022-01-25)
+
+
+### Bug Fixes
+
+* only use arrays in results for multiples ([#42](https://github.com/pkgjs/parseargs/issues/42)) ([c357584](https://github.com/pkgjs/parseargs/commit/c357584847912506319ed34a0840080116f4fd65))
+
 ## 0.1.0 (2022-01-22)
 
 

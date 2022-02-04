@@ -47,6 +47,17 @@ test('args equals are passed "withValue"', function(t) {
   t.end();
 });
 
+test('zero config args equals are parsed as if "withValue"', function(t) {
+  const passedArgs = ['--so=wat'];
+  const passedOptions = { };
+  const expected = { flags: { so: true }, values: { so: 'wat' }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected, 'arg value is passed');
+
+  t.end();
+});
+
 test('same arg is passed twice "withValue" and last value is recorded', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = { withValue: ['foo'] };
@@ -54,6 +65,17 @@ test('same arg is passed twice "withValue" and last value is recorded', function
   const args = parseArgs(passedArgs, passedOptions);
 
   t.deepEqual(args, expected, 'last arg value is passed');
+
+  t.end();
+});
+
+test('args equals pass string including more equals', function(t) {
+  const passedArgs = ['--so=wat=bing'];
+  const passedOptions = { withValue: ['so'] };
+  const expected = { flags: { so: true }, values: { so: 'wat=bing' }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected, 'arg value is passed');
 
   t.end();
 });

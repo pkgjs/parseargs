@@ -8,8 +8,8 @@ const {
   ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
+  StringPrototypeIndexOf,
   StringPrototypeSlice,
-  StringPrototypeSplit,
   StringPrototypeStartsWith,
 } = require('./primordials');
 
@@ -122,15 +122,16 @@ const parseArgs = (
       arg = StringPrototypeSlice(arg, 2); // remove leading --
 
       if (StringPrototypeIncludes(arg, '=')) {
-        // withValue equals(=) case
-        const argParts = StringPrototypeSplit(arg, '=');
-
-        // If withValue option is specified, take 2nd part after '=' as value,
-        // else set value as undefined
-        const val = options.withValue &&
-          ArrayPrototypeIncludes(options.withValue, argParts[0]) ?
-          argParts[1] : undefined;
-        storeOptionValue(options, argParts[0], val, result);
+        // Store option=value same way independent of `withValue` as:
+        // - looks like a value, store as a value
+        // - match the intention of the user
+        // - preserve information for author to process further
+        const index = StringPrototypeIndexOf(arg, '=');
+        storeOptionValue(
+          options,
+          StringPrototypeSlice(arg, 0, index),
+          StringPrototypeSlice(arg, index + 1),
+          result);
       } else if (pos + 1 < argv.length &&
         !StringPrototypeStartsWith(argv[pos + 1], '-')
       ) {
