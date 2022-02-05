@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/pkgjs/parseargs/compare/v0.1.1...v0.2.0) (2022-02-05)
+
+
+### Features
+
+* basic support for shorts ([#50](https://github.com/pkgjs/parseargs/issues/50)) ([a2f36d7](https://github.com/pkgjs/parseargs/commit/a2f36d7da4145af1c92f76806b7fe2baf6beeceb))
+
+
+### Bug Fixes
+
+* always store value for a=b ([#43](https://github.com/pkgjs/parseargs/issues/43)) ([a85e8dc](https://github.com/pkgjs/parseargs/commit/a85e8dc06379fd2696ee195cc625de8fac6aee42))
+* support single dash as positional ([#49](https://github.com/pkgjs/parseargs/issues/49)) ([d795bf8](https://github.com/pkgjs/parseargs/commit/d795bf877d068fd67aec381f30b30b63f97109ad))
+
 ### [0.1.1](https://github.com/pkgjs/parseargs/compare/v0.1.0...v0.1.1) (2022-01-25)
 
 
