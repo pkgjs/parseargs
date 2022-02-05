@@ -195,7 +195,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 - Does the API specify whether a `--` was present/relevant?
   - no
 - Is `-bar` the same as `--bar`?
-  - no, `-foo` is a short option or options, with expansion logic that follows the
+  - no, `-bar` is a short option or options, with expansion logic that follows the
     [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
   - no 
