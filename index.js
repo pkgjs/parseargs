@@ -4,6 +4,7 @@ const {
   ArrayPrototypeConcat,
   ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
+  ArrayPrototypeSplice,
   ArrayPrototypePush,
   ObjectHasOwn,
   StringPrototypeCharAt,
@@ -12,12 +13,6 @@ const {
   StringPrototypeSlice,
   StringPrototypeStartsWith,
 } = require('./primordials');
-
-const {
-  codes: {
-    ERR_NOT_IMPLEMENTED
-  }
-} = require('./errors');
 
 const {
   validateArray,
@@ -119,9 +114,14 @@ const parseArgs = (
         );
         return result;
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
-        // Look for shortcodes: -fXzy
+        // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
-          throw new ERR_NOT_IMPLEMENTED('short option groups');
+          for (let i = 2; i < arg.length; i++) {
+            const short = StringPrototypeCharAt(arg, i);
+            // Add 'i' to 'pos' such that short options are parsed in order
+            // of definition:
+            ArrayPrototypeSplice(argv, pos + (i - 1), 0, `-${short}`);
+          }
         }
 
         arg = StringPrototypeCharAt(arg, 1); // short
