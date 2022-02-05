@@ -113,13 +113,19 @@ const parseArgs = (
           ArrayPrototypeSlice(argv, ++pos)
         );
         return result;
-      } else if (
-        StringPrototypeCharAt(arg, 1) !== '-'
-      ) { // Look for shortcodes: -fXzy
-        throw new ERR_NOT_IMPLEMENTED('shortcodes');
-      }
+      } else if (StringPrototypeCharAt(arg, 1) !== '-') {
+        // Look for shortcodes: -fXzy
+        if (arg.length > 2) {
+          throw new ERR_NOT_IMPLEMENTED('short option groups');
+        }
 
-      arg = StringPrototypeSlice(arg, 2); // remove leading --
+        arg = StringPrototypeCharAt(arg, 1); // short
+        if (options.short && options.short[arg])
+          arg = options.short[arg]; // now long!
+        // ToDo: later code tests for `=` in arg and wrong for shorts
+      } else {
+        arg = StringPrototypeSlice(arg, 2); // remove leading --
+      }
 
       if (StringPrototypeIncludes(arg, '=')) {
         // Store option=value same way independent of `withValue` as:
