@@ -196,7 +196,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
   - no
 - Is `-foo` the same as `--foo`?
   - no, `-foo` is a short option or options, with expansion logic that follows the
-    [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `--foo bar`, `withValue: ['foo']`, expands to `-f`, `-o`, `-o bar`.
+    [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
   - no 
   - the first flag would be parsed as `'-foo'`
