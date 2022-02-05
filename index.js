@@ -109,9 +109,14 @@ const parseArgs = (
     let arg = argv[pos];
 
     if (StringPrototypeStartsWith(arg, '-')) {
-      // Everything after a bare '--' is considered a positional argument
-      // and is returned verbatim
-      if (arg === '--') {
+      if (arg === '-') {
+        // '-' commonly used to represent stdin/stdout, treat as positional
+        result.positionals = ArrayPrototypeConcat(result.positionals, '-');
+        ++pos;
+        continue;
+      } else if (arg === '--') {
+        // Everything after a bare '--' is considered a positional argument
+        // and is returned verbatim
         result.positionals = ArrayPrototypeConcat(
           result.positionals,
           ArrayPrototypeSlice(argv, ++pos)
