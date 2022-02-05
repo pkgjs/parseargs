@@ -5,7 +5,11 @@ const {
   ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
+  MapPrototypeGet,
+  MapPrototypeHas,
+  MapPrototypeSet,
   ObjectHasOwn,
+  ObjectFromEntries,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
@@ -63,7 +67,7 @@ function storeOptionValue(parseOptions, option, value, result) {
     ArrayPrototypeIncludes(parseOptions.multiples, option);
 
   // Flags
-  result.flags[option] = true;
+  MapPrototypeSet(result.flags, option, true);
 
   // Values
   if (multiple) {
@@ -73,12 +77,12 @@ function storeOptionValue(parseOptions, option, value, result) {
     // subsequent values are pushed to existing array.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[option] !== undefined)
-      ArrayPrototypePush(result.values[option], newValue);
+    if (MapPrototypeHas(result.values, option))
+      ArrayPrototypePush(MapPrototypeGet(result.values, option), newValue);
     else
-      result.values[option] = [newValue];
+      MapPrototypeSet(result.values, option, [newValue]);
   } else {
-    result.values[option] = value;
+    MapPrototypeSet(result.values, option, value);
   }
 }
 
@@ -95,8 +99,8 @@ const parseArgs = (
   }
 
   const result = {
-    flags: {},
-    values: {},
+    flags: new Map(),
+    values: new Map(),
     positionals: []
   };
 
@@ -112,7 +116,8 @@ const parseArgs = (
           result.positionals,
           ArrayPrototypeSlice(argv, ++pos)
         );
-        return result;
+        pos = argv.length;
+        continue;
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
         // Look for shortcodes: -fXzy
         if (arg.length > 2) {
@@ -167,7 +172,12 @@ const parseArgs = (
     pos++;
   }
 
-  return result;
+  const clientResult = {
+    flags: ObjectFromEntries(result.flags),
+    values: ObjectFromEntries(result.values),
+    positionals: result.positionals
+  };
+  return clientResult;
 };
 
 module.exports = {
