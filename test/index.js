@@ -6,6 +6,70 @@ const { parseArgs } = require('../index.js');
 
 // Test results are as we expect
 
+test('when short option used as flag then stored as flag', function(t) {
+  const passedArgs = ['-f'];
+  const expected = { flags: { f: true }, values: { f: undefined }, positionals: [] };
+  const args = parseArgs(passedArgs);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when short option used as flag before positional then stored as flag and positional (and not value)', function(t) {
+  const passedArgs = ['-f', 'bar'];
+  const expected = { flags: { f: true }, values: { f: undefined }, positionals: [ 'bar' ] };
+  const args = parseArgs(passedArgs);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when short option withValue used with value then stored as value', function(t) {
+  const passedArgs = ['-f', 'bar'];
+  const passedOptions = { withValue: ['f'] };
+  const expected = { flags: { f: true }, values: { f: 'bar' }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when short option listed in short used as flag then long option stored as flag', function(t) {
+  const passedArgs = ['-f'];
+  const passedOptions = { short: { f: 'foo' } };
+  const expected = { flags: { foo: true }, values: { foo: undefined }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when short option listed in short and long listed in withValue and used with value then long option stored as value', function(t) {
+  const passedArgs = ['-f', 'bar'];
+  const passedOptions = { short: { f: 'foo' }, withValue: ['foo'] };
+  const expected = { flags: { foo: true }, values: { foo: 'bar' }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
+test('when short option withValue used without value then stored as flag', function(t) {
+  const passedArgs = ['-f'];
+  const passedOptions = { withValue: ['f'] };
+  const expected = { flags: { f: true }, values: { f: undefined }, positionals: [] };
+  const args = parseArgs(passedArgs, passedOptions);
+
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
 test('Everything after a bare `--` is considered a positional argument', function(t) {
   const passedArgs = ['--', 'barepositionals', 'mopositionals'];
   const expected = { flags: {}, values: {}, positionals: ['barepositionals', 'mopositionals'] };
