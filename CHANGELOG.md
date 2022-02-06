@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/pkgjs/parseargs/compare/v0.2.0...v0.3.0) (2022-02-06)
+
+
+### Features
+
+* **parser:** support short-option groups ([#59](https://github.com/pkgjs/parseargs/issues/59)) ([882067b](https://github.com/pkgjs/parseargs/commit/882067bc2d7cbc6b796f8e5a079a99bc99d4e6ba))
+
 ## [0.2.0](https://github.com/pkgjs/parseargs/compare/v0.1.1...v0.2.0) (2022-02-05)
 
 
