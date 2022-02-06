@@ -10,6 +10,7 @@ const {
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
+  StringPrototypeMatch,
   StringPrototypeSlice,
   StringPrototypeStartsWith,
 } = require('./primordials');
@@ -18,6 +19,11 @@ const {
   validateArray,
   validateObject
 } = require('./validators');
+
+const TOKENS = {
+  FLAG: 1,
+  NUMERIC: 2
+};
 
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
@@ -98,9 +104,13 @@ const parseArgs = (
   let pos = 0;
   while (pos < argv.length) {
     let arg = argv[pos];
-
     if (StringPrototypeStartsWith(arg, '-')) {
-      if (arg === '-') {
+      if (token(arg) === TOKENS.NUMERIC) {
+        // Positional numerics, e.g., 33, 9995, -33.
+        result.positionals = ArrayPrototypeConcat(result.positionals, arg);
+        ++pos;
+        continue;
+      } else if (arg === '-') {
         // '-' commonly used to represent stdin/stdout, treat as positional
         result.positionals = ArrayPrototypeConcat(result.positionals, '-');
         ++pos;
@@ -118,20 +128,23 @@ const parseArgs = (
         if (arg.length > 2) {
           for (let i = 2; i < arg.length; i++) {
             const short = StringPrototypeCharAt(arg, i);
+            // Case of `-o=foo`:
+            if (short === '=') break;
             // Add 'i' to 'pos' such that short options are parsed in order
             // of definition:
             ArrayPrototypeSplice(argv, pos + (i - 1), 0, `-${short}`);
           }
         }
-
+        const suffix = StringPrototypeSlice(arg, 2); // maybe -f=bar.
         arg = StringPrototypeCharAt(arg, 1); // short
+        // Alias a short option to its long name.
         if (options.short && options.short[arg])
           arg = options.short[arg]; // now long!
-        // ToDo: later code tests for `=` in arg and wrong for shorts
+        if (suffix.startsWith('='))
+          arg += suffix; // Add =bar back to arg.
       } else {
         arg = StringPrototypeSlice(arg, 2); // remove leading --
       }
-
       if (StringPrototypeIncludes(arg, '=')) {
         // Store option=value same way independent of `withValue` as:
         // - looks like a value, store as a value
@@ -143,18 +156,17 @@ const parseArgs = (
           StringPrototypeSlice(arg, 0, index),
           StringPrototypeSlice(arg, index + 1),
           result);
-      } else if (pos + 1 < argv.length &&
-        !StringPrototypeStartsWith(argv[pos + 1], '-')
-      ) {
+      } else if (peek(argv, pos) !== TOKENS.FLAG) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        // If withValue option is specified, take next position arguement as
+        // If withValue option is specified, take next position argument as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
         const val = options.withValue &&
-          ArrayPrototypeIncludes(options.withValue, arg) ? argv[++pos] :
+          (ArrayPrototypeIncludes(options.withValue, arg) ||
+           ArrayPrototypeIncludes(options.multiples, arg)) ? argv[++pos] :
           undefined;
         storeOptionValue(options, arg, val, result);
       } else {
@@ -174,6 +186,28 @@ const parseArgs = (
 
   return result;
 };
+
+// Look ahead to next token in argv array:
+function peek(argv, pos) {
+  if (pos + 1 >= argv.length) {
+    return 0;
+  }
+  return token(argv[pos + 1]);
+}
+
+// Guess token type based on individual string from argv:
+function token(arg) {
+  const chr = StringPrototypeCharAt(arg, 0);
+  const nextChr = StringPrototypeCharAt(arg, 1);
+  if (StringPrototypeMatch(chr, /^[0-9]$/)) {
+    return TOKENS.NUMERIC;
+  } else if (chr === '-' && StringPrototypeMatch(nextChr, /^[0-9]$/)) {
+    return TOKENS.NUMERIC;
+  } else if (chr === '-') {
+    return TOKENS.FLAG;
+  }
+  return 0;
+}
 
 module.exports = {
   parseArgs
