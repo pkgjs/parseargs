@@ -150,7 +150,7 @@ const { flags, values, positionals } = parseArgs(argv, options);
 ### F.A.Qs
 
 - Is `cmd --foo=bar baz` the same as `cmd baz --foo=bar`?
-  - Yes, if `withValue: ['foo']`, otherwise no
+  - yes
 - Does the parser execute a function?
   - no
 - Does the parser execute one of several functions, depending on input?
