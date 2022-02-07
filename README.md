@@ -194,8 +194,9 @@ const { flags, values, positionals } = parseArgs(argv, options);
   - If `--` signals the end, is `--` included as a positional?  is `program -- foo` the same as `program foo`?  Are both `{positionals:['foo']}`, or is the first one `{positionals:['--', 'foo']}`?
 - Does the API specify whether a `--` was present/relevant?
   - no
-- Is `-foo` the same as `--foo`?
-  - no, `-foo` is a short option or options (WIP: https://github.com/pkgjs/parseargs/issues/2)
+- Is `-bar` the same as `--bar`?
+  - no, `-bar` is a short option or options, with expansion logic that follows the
+    [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
   - no 
   - the first flag would be parsed as `'-foo'`
