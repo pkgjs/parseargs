@@ -125,7 +125,6 @@ const parseArgs = ({
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
-          // `arg` is '-foo'
           for (let i = 2; i < arg.length; i++) {
             const short = StringPrototypeCharAt(arg, i);
             // Add 'i' to 'pos' such that short options are parsed in order
