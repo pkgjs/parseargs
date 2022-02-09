@@ -10,6 +10,18 @@ const {
   }
 } = require('./errors');
 
+function validateString(value, name) {
+  if (typeof value !== 'string') {
+    throw new ERR_INVALID_ARG_TYPE(name, 'String', value);
+  }
+}
+
+function validateBoolean(value, name) {
+  if (typeof value !== 'boolean') {
+    throw new ERR_INVALID_ARG_TYPE(name, 'Boolean', value);
+  }
+}
+
 function validateArray(value, name) {
   if (!ArrayIsArray(value)) {
     throw new ERR_INVALID_ARG_TYPE(name, 'Array', value);
@@ -42,4 +54,6 @@ function validateObject(value, name, options) {
 module.exports = {
   validateArray,
   validateObject,
+  validateString,
+  validateBoolean,
 };

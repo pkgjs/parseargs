@@ -2,11 +2,11 @@
 
 const {
   ArrayPrototypeConcat,
-  ArrayPrototypeIncludes,
   ArrayPrototypeSlice,
   ArrayPrototypeSplice,
   ArrayPrototypePush,
   ObjectHasOwn,
+  ObjectEntries,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
@@ -16,7 +16,9 @@ const {
 
 const {
   validateArray,
-  validateObject
+  validateObject,
+  validateString,
+  validateBoolean,
 } = require('./validators');
 
 function getMainArgs() {
@@ -53,39 +55,46 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(parseOptions, option, value, result) {
-  const multiple = parseOptions.multiples &&
-    ArrayPrototypeIncludes(parseOptions.multiples, option);
+function storeOptionValue(options, arg, value, result) {
+  const option = options[arg] || {};
 
   // Flags
-  result.flags[option] = true;
+  result.flags[arg] = true;
 
   // Values
-  if (multiple) {
+  if (option.multiples) {
     // Always store value in array, including for flags.
-    // result.values[option] starts out not present,
+    // result.values[arg] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[option] !== undefined)
-      ArrayPrototypePush(result.values[option], newValue);
+    if (result.values[arg] !== undefined)
+      ArrayPrototypePush(result.values[arg], newValue);
     else
-      result.values[option] = [newValue];
+      result.values[arg] = [newValue];
   } else {
-    result.values[option] = value;
+    result.values[arg] = value;
   }
 }
 
-const parseArgs = (
-  argv = getMainArgs(),
+const parseArgs = ({
+  args = getMainArgs(),
   options = {}
-) => {
-  validateArray(argv, 'argv');
+} = {}) => {
+  validateArray(args, 'args');
   validateObject(options, 'options');
-  for (const key of ['withValue', 'multiples']) {
-    if (ObjectHasOwn(options, key)) {
-      validateArray(options[key], `options.${key}`);
+  for (const [arg, option] of ObjectEntries(options)) {
+    validateObject(option, `options.${arg}`);
+
+    if (ObjectHasOwn(option, 'short')) {
+      validateString(option.short, `options.${arg}.short`);
+    }
+
+    for (const config of ['withValue', 'multiples']) {
+      if (ObjectHasOwn(option, config)) {
+        validateBoolean(option[config], `options.${arg}.${config}`);
+      }
     }
   }
 
@@ -96,43 +105,54 @@ const parseArgs = (
   };
 
   let pos = 0;
-  while (pos < argv.length) {
-    let arg = argv[pos];
+  while (pos < args.length) {
+    let arg = args[pos];
 
     if (StringPrototypeStartsWith(arg, '-')) {
+      // e.g. `arg` is:
+      // '-' | '--' | '-f' | '-fo' | '--foo' | '-f=bar' | '--for=bar'
       if (arg === '-') {
+        // e.g. `arg` is: '-'
         // '-' commonly used to represent stdin/stdout, treat as positional
         result.positionals = ArrayPrototypeConcat(result.positionals, '-');
         ++pos;
         continue;
       } else if (arg === '--') {
+        // e.g. `arg` is: '--'
         // Everything after a bare '--' is considered a positional argument
         // and is returned verbatim
         result.positionals = ArrayPrototypeConcat(
           result.positionals,
-          ArrayPrototypeSlice(argv, ++pos)
+          ArrayPrototypeSlice(args, ++pos)
         );
         return result;
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
+        // e.g. `arg` is: '-f' | '-foo' | '-f=bar'
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
+          // `arg` is '-foo'
           for (let i = 2; i < arg.length; i++) {
             const short = StringPrototypeCharAt(arg, i);
             // Add 'i' to 'pos' such that short options are parsed in order
             // of definition:
-            ArrayPrototypeSplice(argv, pos + (i - 1), 0, `-${short}`);
+            ArrayPrototypeSplice(args, pos + (i - 1), 0, `-${short}`);
           }
         }
 
         arg = StringPrototypeCharAt(arg, 1); // short
-        if (options.short && options.short[arg])
-          arg = options.short[arg]; // now long!
+        for (const [longName, option] of ObjectEntries(options)) {
+          if (option.short === arg) {
+            arg = longName;
+            break;
+          }
+        }
         // ToDo: later code tests for `=` in arg and wrong for shorts
       } else {
         arg = StringPrototypeSlice(arg, 2); // remove leading --
       }
 
       if (StringPrototypeIncludes(arg, '=')) {
+        // e.g. `arg` is: 'for=bar' | 'foo=bar=baz'
         // Store option=value same way independent of `withValue` as:
         // - looks like a value, store as a value
         // - match the intention of the user
@@ -143,18 +163,21 @@ const parseArgs = (
           StringPrototypeSlice(arg, 0, index),
           StringPrototypeSlice(arg, index + 1),
           result);
-      } else if (pos + 1 < argv.length &&
-        !StringPrototypeStartsWith(argv[pos + 1], '-')
+      } else if (pos + 1 < args.length &&
+        !StringPrototypeStartsWith(args[pos + 1], '-')
       ) {
+        // If next arg is NOT a flag, check if the current arg is
+        // is configured to use `withValue` and store the next arg.
+
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
-        // If withValue option is specified, take next position arguement as
+        // If withValue option is specified, take next position argument as
         // value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
-        const val = options.withValue &&
-          ArrayPrototypeIncludes(options.withValue, arg) ? argv[++pos] :
+        const val = options[arg] && options[arg].withValue ?
+          args[++pos] :
           undefined;
         storeOptionValue(options, arg, val, result);
       } else {
@@ -163,7 +186,6 @@ const parseArgs = (
         // shave value as undefined
         storeOptionValue(options, arg, undefined, result);
       }
-
     } else {
       // Arguements without a dash prefix are considered "positional"
       ArrayPrototypePush(result.positionals, arg);
