@@ -109,16 +109,12 @@ const parseArgs = ({
     let arg = args[pos];
 
     if (StringPrototypeStartsWith(arg, '-')) {
-      // e.g. `arg` is:
-      // '-' | '--' | '-f' | '-fo' | '--foo' | '-f=bar' | '--for=bar'
       if (arg === '-') {
-        // e.g. `arg` is: '-'
         // '-' commonly used to represent stdin/stdout, treat as positional
         result.positionals = ArrayPrototypeConcat(result.positionals, '-');
         ++pos;
         continue;
       } else if (arg === '--') {
-        // e.g. `arg` is: '--'
         // Everything after a bare '--' is considered a positional argument
         // and is returned verbatim
         result.positionals = ArrayPrototypeConcat(
@@ -127,7 +123,6 @@ const parseArgs = ({
         );
         return result;
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
-        // e.g. `arg` is: '-f' | '-foo' | '-f=bar'
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
           // `arg` is '-foo'
@@ -152,7 +147,6 @@ const parseArgs = ({
       }
 
       if (StringPrototypeIncludes(arg, '=')) {
-        // e.g. `arg` is: 'for=bar' | 'foo=bar=baz'
         // Store option=value same way independent of `withValue` as:
         // - looks like a value, store as a value
         // - match the intention of the user
@@ -166,9 +160,6 @@ const parseArgs = ({
       } else if (pos + 1 < args.length &&
         !StringPrototypeStartsWith(args[pos + 1], '-')
       ) {
-        // If next arg is NOT a flag, check if the current arg is
-        // is configured to use `withValue` and store the next arg.
-
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
