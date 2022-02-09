@@ -79,10 +79,10 @@ function storeOptionValue(options, arg, value, result) {
 }
 
 const parseArgs = ({
-  args = getMainArgs(),
+  args: argv = getMainArgs(),
   options = {}
 } = {}) => {
-  validateArray(args, 'args');
+  validateArray(argv, 'argv');
   validateObject(options, 'options');
   for (const [arg, option] of ObjectEntries(options)) {
     validateObject(option, `options.${arg}`);
@@ -105,8 +105,8 @@ const parseArgs = ({
   };
 
   let pos = 0;
-  while (pos < args.length) {
-    let arg = args[pos];
+  while (pos < argv.length) {
+    let arg = argv[pos];
 
     if (StringPrototypeStartsWith(arg, '-')) {
       if (arg === '-') {
@@ -119,7 +119,7 @@ const parseArgs = ({
         // and is returned verbatim
         result.positionals = ArrayPrototypeConcat(
           result.positionals,
-          ArrayPrototypeSlice(args, ++pos)
+          ArrayPrototypeSlice(argv, ++pos)
         );
         return result;
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
@@ -129,7 +129,7 @@ const parseArgs = ({
             const short = StringPrototypeCharAt(arg, i);
             // Add 'i' to 'pos' such that short options are parsed in order
             // of definition:
-            ArrayPrototypeSplice(args, pos + (i - 1), 0, `-${short}`);
+            ArrayPrototypeSplice(argv, pos + (i - 1), 0, `-${short}`);
           }
         }
 
@@ -156,8 +156,8 @@ const parseArgs = ({
           StringPrototypeSlice(arg, 0, index),
           StringPrototypeSlice(arg, index + 1),
           result);
-      } else if (pos + 1 < args.length &&
-        !StringPrototypeStartsWith(args[pos + 1], '-')
+      } else if (pos + 1 < argv.length &&
+        !StringPrototypeStartsWith(argv[pos + 1], '-')
       ) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
@@ -167,7 +167,7 @@ const parseArgs = ({
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
         const val = options[arg] && options[arg].withValue ?
-          args[++pos] :
+          argv[++pos] :
           undefined;
         storeOptionValue(options, arg, val, result);
       } else {
