@@ -18,6 +18,7 @@ const {
   validateArray,
   validateObject,
   validateString,
+  validateUnion,
   validateBoolean,
 } = require('./validators');
 
@@ -87,14 +88,16 @@ const parseArgs = ({
   for (const [arg, option] of ObjectEntries(options)) {
     validateObject(option, `options.${arg}`);
 
+    if (ObjectHasOwn(option, 'type')) {
+      validateUnion(option.type, `options.${arg}.type`, ['string', 'boolean']);
+    }
+
     if (ObjectHasOwn(option, 'short')) {
       validateString(option.short, `options.${arg}.short`);
     }
 
-    for (const config of ['withValue', 'multiples']) {
-      if (ObjectHasOwn(option, config)) {
-        validateBoolean(option[config], `options.${arg}.${config}`);
-      }
+    if (ObjectHasOwn(option, 'multiples')) {
+      validateBoolean(option.multiples, `options.${arg}.multiples`);
     }
   }
 
@@ -146,7 +149,7 @@ const parseArgs = ({
       }
 
       if (StringPrototypeIncludes(arg, '=')) {
-        // Store option=value same way independent of `withValue` as:
+        // Store option=value same way independent of `type: "string"` as:
         // - looks like a value, store as a value
         // - match the intention of the user
         // - preserve information for author to process further
@@ -159,14 +162,14 @@ const parseArgs = ({
       } else if (pos + 1 < argv.length &&
         !StringPrototypeStartsWith(argv[pos + 1], '-')
       ) {
-        // withValue option should also support setting values when '=
+        // `type: "string"` option should also support setting values when '='
         // isn't used ie. both --foo=b and --foo b should work
 
-        // If withValue option is specified, take next position argument as
-        // value and then increment pos so that we don't re-evaluate that
+        // If `type: "string"` option is specified, take next position argument
+        // as value and then increment pos so that we don't re-evaluate that
         // arg, else set value as undefined ie. --foo b --bar c, after setting
         // b as the value for foo, evaluate --bar next and skip 'b'
-        const val = options[arg] && options[arg].withValue ?
+        const val = options[arg] && options[arg].type === 'string' ?
           argv[++pos] :
           undefined;
         storeOptionValue(options, arg, val, result);

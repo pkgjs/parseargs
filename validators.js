@@ -16,6 +16,12 @@ function validateString(value, name) {
   }
 }
 
+function validateUnion(value, name, union) {
+  if (!union.includes(value)) {
+    throw new ERR_INVALID_ARG_TYPE(name, `[${union.join('|')}]`, value);
+  }
+}
+
 function validateBoolean(value, name) {
   if (typeof value !== 'boolean') {
     throw new ERR_INVALID_ARG_TYPE(name, 'Boolean', value);
@@ -55,5 +61,6 @@ module.exports = {
   validateArray,
   validateObject,
   validateString,
+  validateUnion,
   validateBoolean,
 };
