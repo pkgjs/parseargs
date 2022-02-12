@@ -69,19 +69,16 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
 
 ----
 
-## 💡 `util.parseArgs([argv][, options])` Proposal
+## 💡 `util.parseArgs([config])` Proposal
 
-* `argv` {string[]} (Optional) Array of argument strings; defaults
-  to [`process.mainArgs`](process_argv)
-* `options` {Object} (Optional) The `options` parameter is an
+* `config` {Object} (Optional) The `config` parameter is an
   object supporting the following properties:
-  * `withValue` {string[]} (Optional) An `Array` of argument
-    strings which expect a value to be defined in `argv` (see [Options][]
-    for details)
-  * `multiples` {string[]} (Optional) An `Array` of argument
-    strings which, when appearing multiple times in `argv`, will be concatenated 
-into an `Array`
-  * `short` {Object} (Optional) An `Object` of key, value pairs of strings which map a "short" alias to an argument; When appearing multiples times in `argv`; Respects `withValue` & `multiples`
+  * `argv` {string[]} (Optional) Array of argument strings; defaults
+    to [`process.mainArgs`](process_argv)
+  * `options` {Object} (Optional) A collection of configuration objects for each `argv`; `options` keys are the long names of the `argv`, and the values are objects with the following properties:
+    * `type` {'string'|'boolean'} (Optional) Type of `argv`; defaults to `'boolean'`; 
+    * `multiples` {boolean} (Optional) If true, when appearing multiple times in `argv`, will be concatenated into an `Array`
+    * `short` {string} (Optional) An alias to an `argv`; When appearing multiples times in `argv`; Respects the `multiples` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
@@ -101,7 +98,7 @@ const { parseArgs } = require('@pkgjs/parseargs');
 const { parseArgs } = require('@pkgjs/parseargs');
 const argv = ['-f', '--foo=a', '--bar', 'b'];
 const options = {};
-const { flags, values, positionals } = parseArgs(argv, options);
+const { flags, values, positionals } = parseArgs({ argv, options });
 // flags = { f: true, bar: true }
 // values = { foo: 'a' }
 // positionals = ['b']
@@ -112,9 +109,11 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // withValue
 const argv = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
-  withValue: ['bar']
+  foo: {
+    type: 'string',
+  },
 };
-const { flags, values, positionals } = parseArgs(argv, options);
+const { flags, values, positionals } = parseArgs({ argv, options });
 // flags = { f: true }
 // values = { foo: 'a', bar: 'b' }
 // positionals = []
@@ -125,10 +124,12 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // withValue & multiples
 const argv = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
-  withValue: ['foo'],
-  multiples: ['foo']
+  foo: {
+    type: 'string',
+    multiples: true,
+  },
 };
-const { flags, values, positionals } = parseArgs(argv, options);
+const { flags, values, positionals } = parseArgs({ argv, options });
 // flags = { f: true }
 // values = { foo: ['a', 'b'] }
 // positionals = []
@@ -139,9 +140,11 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // shorts
 const argv = ['-f', 'b'];
 const options = {
-  short: { f: 'foo' }
+  foo: {
+    short: 'f',
+  },
 };
-const { flags, values, positionals } = parseArgs(argv, options);
+const { flags, values, positionals } = parseArgs({ argv, options });
 // flags = { foo: true }
 // values = {}
 // positionals = ['b']
