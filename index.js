@@ -80,7 +80,7 @@ function storeOptionValue(options, arg, value, result) {
 }
 
 const parseArgs = ({
-  args: argv = getMainArgs(),
+  argv = getMainArgs(),
   options = {}
 } = {}) => {
   validateArray(argv, 'argv');
