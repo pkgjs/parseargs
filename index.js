@@ -99,23 +99,22 @@ const parseArgs = (
   while (pos < argv.length) {
     let arg = argv[pos];
 
-    if (StringPrototypeStartsWith(arg, '-')) {
-      if (arg === '-') {
-        // '-' commonly used to represent stdin/stdout, treat as positional
-        result.positionals = ArrayPrototypeConcat(result.positionals, '-');
-        ++pos;
-        continue;
-      } else if (arg === '--') {
-        // Everything after a bare '--' is considered a positional argument
-        // and is returned verbatim
-        result.positionals = ArrayPrototypeConcat(
-          result.positionals,
-          ArrayPrototypeSlice(argv, ++pos)
-        );
-        return result;
-      } else if (StringPrototypeCharAt(arg, 1) !== '-') {
+    if (isStdInOutPositional(arg)) {
+      result.positionals = ArrayPrototypeConcat(result.positionals, arg);
+      ++pos;
+      continue;
+    } else if (isOptionsTerminator(arg)) {
+      // Everything after a bare '--' is considered a positional argument
+      // and is returned verbatim
+      result.positionals = ArrayPrototypeConcat(
+        result.positionals,
+        ArrayPrototypeSlice(argv, ++pos)
+      );
+      return result;
+    } else if (isOption(arg)) {
+      if (isShortOption(arg)) {
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
-        if (arg.length > 2) {
+        if (isShortGroupOption(arg)) {
           for (let i = 2; i < arg.length; i++) {
             const short = StringPrototypeCharAt(arg, i);
             // Add 'i' to 'pos' such that short options are parsed in order
@@ -132,7 +131,7 @@ const parseArgs = (
         arg = StringPrototypeSlice(arg, 2); // remove leading --
       }
 
-      if (StringPrototypeIncludes(arg, '=')) {
+      if (hasExplicitOptionArgument(arg)) {
         // Store option=value same way independent of `withValue` as:
         // - looks like a value, store as a value
         // - match the intention of the user
@@ -143,9 +142,7 @@ const parseArgs = (
           StringPrototypeSlice(arg, 0, index),
           StringPrototypeSlice(arg, index + 1),
           result);
-      } else if (pos + 1 < argv.length &&
-        !StringPrototypeStartsWith(argv[pos + 1], '-')
-      ) {
+      } else if (!isNextArgOption(argv, pos)) {
         // withValue option should also support setting values when '=
         // isn't used ie. both --foo=b and --foo b should work
 
@@ -174,6 +171,78 @@ const parseArgs = (
 
   return result;
 };
+
+/**
+ * Determines if `arg` is a stdin/stdout positional.
+ * See [Guideline 13](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html) of the 12.2 Utility Syntax Guidelines.
+ * @example '-'
+ */
+function isStdInOutPositional(arg) {
+  return arg === '-';
+}
+
+/**
+ * Determines if `arg` is an options terminator.
+ * See [Guideline 10](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html) of the 12.2 Utility Syntax Guidelines.
+ * @example '--'
+ */
+function isOptionsTerminator(arg) {
+  return arg === '--';
+}
+
+/**
+ * Determines if `arg` is an option.
+ * See [Guideline 4](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html) of the 12.2 Utility Syntax Guidelines.
+ * @example '-f' | '-foo' | '--foo'
+ */
+function isOption(arg) {
+  return StringPrototypeStartsWith(arg, '-');
+}
+
+/**
+ * Determines if `arg` is a short option.
+ * See [Guideline 5](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html) of the 12.2 Utility Syntax Guidelines.
+ * @example '-f' | '-foo'
+ */
+function isShortOption(arg) {
+  return isOption(arg) &&
+    StringPrototypeCharAt(arg, 1) !== '-';
+}
+
+/**
+ * Determines if `arg` is a short group option.
+ * See [Guideline 5](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html) of the 12.2 Utility Syntax Guidelines.
+ * @example '-foo'
+ */
+function isShortGroupOption(arg) {
+  return isShortOption(arg) && arg.length > 2;
+}
+
+/**
+ * Determines if the option explicitly sets an argument.
+ * Identified by the presence of `=` in the arg.
+ * @example '--foo=bar'
+ */
+function hasExplicitOptionArgument(arg) {
+  return StringPrototypeIncludes(arg, '=');
+}
+
+/**
+ * Determines if the `arg` following a given index is an option.
+ * @example
+ * isNextArgOption(['--foo', '--bar'], 0) // true
+ */
+function isNextArgOption(argv, pos) {
+  return pos + 1 < argv.length && isOption(argv[pos + 1]);
+}
+
+parseArgs.isStdInOutPositional = isStdInOutPositional;
+parseArgs.isOptionsTerminator = isOptionsTerminator;
+parseArgs.isOption = isOption;
+parseArgs.isShortOption = isShortOption;
+parseArgs.isShortGroupOption = isShortGroupOption;
+parseArgs.hasExplicitOptionArgument = hasExplicitOptionArgument;
+parseArgs.isNextArgOption = isNextArgOption;
 
 module.exports = {
   parseArgs
