@@ -22,6 +22,12 @@ const {
   validateBoolean,
 } = require('./validators');
 
+const {
+  codes: {
+    ERR_UNKNOWN_OPTION,
+  },
+} = require('./errors');
+
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
@@ -56,8 +62,14 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(options, arg, value, result) {
-  const option = options[arg] || {};
+function storeOptionValue(strict, options, arg, value, result) {
+  let option = options[arg];
+
+  if (strict && !option) {
+    throw new ERR_UNKNOWN_OPTION(arg);
+  } else {
+    option = {};
+  }
 
   // Flags
   result.flags[arg] = true;
@@ -81,9 +93,11 @@ function storeOptionValue(options, arg, value, result) {
 
 const parseArgs = ({
   argv = getMainArgs(),
+  strict = false,
   options = {}
 } = {}) => {
   validateArray(argv, 'argv');
+  validateBoolean(strict, 'strict');
   validateObject(options, 'options');
   for (const [arg, option] of ObjectEntries(options)) {
     validateObject(option, `options.${arg}`);
@@ -155,6 +169,7 @@ const parseArgs = ({
         // - preserve information for author to process further
         const index = StringPrototypeIndexOf(arg, '=');
         storeOptionValue(
+          strict,
           options,
           StringPrototypeSlice(arg, 0, index),
           StringPrototypeSlice(arg, index + 1),
@@ -172,12 +187,12 @@ const parseArgs = ({
         const val = options[arg] && options[arg].type === 'string' ?
           argv[++pos] :
           undefined;
-        storeOptionValue(options, arg, val, result);
+        storeOptionValue(strict, options, arg, val, result);
       } else {
         // Cases when an arg is specified without a value, example
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
         // shave value as undefined
-        storeOptionValue(options, arg, undefined, result);
+        storeOptionValue(strict, options, arg, undefined, result);
       }
     } else {
       // Arguements without a dash prefix are considered "positional"

@@ -380,3 +380,53 @@ test('invalid union value passed to "type" option', function(t) {
 
   t.end();
 });
+
+// Test strict mode
+
+test('unknown long option --bar', function(t) {
+  const passedArgs = ['--foo', '--bar'];
+  const passedOptions = { foo: { type: 'string' } };
+  const strict = true;
+
+  t.throws(function() { parseArgs({ strict, argv: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown short option --b', function(t) {
+  const passedArgs = ['--foo', '-b'];
+  const passedOptions = { foo: { type: 'string' } };
+  const strict = true;
+
+  t.throws(function() { parseArgs({ strict, argv: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown option -r in short option group -bar', function(t) {
+  const passedArgs = ['--foo', '-bar'];
+  const passedOptions = { foo: { type: 'string' }, b: { type: 'string' }, a: { type: 'string' } };
+  const strict = true;
+
+  t.throws(function() { parseArgs({ strict, argv: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown option with explicit value', function(t) {
+  const passedArgs = ['--foo', '--bar=baz'];
+  const passedOptions = { foo: { type: 'string' } };
+  const strict = true;
+
+  t.throws(function() { parseArgs({ strict, argv: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
