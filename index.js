@@ -6,7 +6,9 @@ const {
   ArrayPrototypeSlice,
   ArrayPrototypeSplice,
   ArrayPrototypePush,
+  ObjectFromEntries,
   ObjectHasOwn,
+  SafeMap,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
@@ -58,22 +60,20 @@ function storeOptionValue(parseOptions, option, value, result) {
     ArrayPrototypeIncludes(parseOptions.multiples, option);
 
   // Flags
-  result.flags[option] = true;
+  result.safeFlags.set(option, true);
 
   // Values
   if (multiple) {
     // Always store value in array, including for flags.
-    // result.values[option] starts out not present,
-    // first value is added as new array [newValue],
-    // subsequent values are pushed to existing array.
+    // Create array when adding first value, undefined until then.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[option] !== undefined)
-      ArrayPrototypePush(result.values[option], newValue);
-    else
-      result.values[option] = [newValue];
+    if (!result.safeValues.get(option)) {
+      result.safeValues.set(option, []);
+    }
+    ArrayPrototypePush(result.safeValues.get(option), newValue);
   } else {
-    result.values[option] = value;
+    result.safeValues.set(option, value);
   }
 }
 
@@ -90,8 +90,8 @@ const parseArgs = (
   }
 
   const result = {
-    flags: {},
-    values: {},
+    safeFlags: new SafeMap(),
+    safeValues: new SafeMap(),
     positionals: []
   };
 
@@ -112,7 +112,7 @@ const parseArgs = (
           result.positionals,
           ArrayPrototypeSlice(argv, ++pos)
         );
-        return result;
+        break; // Finished processing argv, leave while loop
       } else if (StringPrototypeCharAt(arg, 1) !== '-') {
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
@@ -172,7 +172,13 @@ const parseArgs = (
     pos++;
   }
 
-  return result;
+  // Copy back from "safe" objects to vanilla objects
+  const clientResult = {
+    flags: ObjectFromEntries(result.safeFlags),
+    values: ObjectFromEntries(result.safeValues),
+    positionals: result.positionals
+  };
+  return clientResult;
 };
 
 module.exports = {
