@@ -75,10 +75,10 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
   object supporting the following properties:
   * `argv` {string[]} (Optional) Array of argument strings; defaults
     to [`process.mainArgs`](process_argv)
-  * `options` {Object} (Optional) A collection of configuration objects for each `argv`; `options` keys are the long names of the `argv`, and the values are objects with the following properties:
-    * `type` {'string'|'boolean'} (Optional) Type of `argv`; defaults to `'boolean'`; 
-    * `multiples` {boolean} (Optional) If true, when appearing multiple times in `argv`, will be concatenated into an `Array`
-    * `short` {string} (Optional) An alias to an `argv`; When appearing multiples times in `argv`; Respects the `multiples` configuration
+  * `options` {Object} (Optional) An object describing the known options to look for in `argv`; `options` keys are the long names of the known options, and the values are objects with the following properties:
+    * `type` {'string'|'boolean'} (Optional) Type of known option; defaults to `'boolean'`; 
+    * `multiples` {boolean} (Optional) If true, when appearing one or more times in `argv`, results are collected in an `Array`
+    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `argv`; Respects the `multiples` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
