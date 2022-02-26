@@ -56,26 +56,26 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(options, arg, value, result) {
-  const option = options[arg] || {};
+function storeOptionValue(options, option, value, result) {
+  const optionConfig = options[option] || {};
 
   // Flags
-  result.flags[arg] = true;
+  result.flags[option] = true;
 
   // Values
-  if (option.multiples) {
+  if (optionConfig.multiples) {
     // Always store value in array, including for flags.
-    // result.values[arg] starts out not present,
+    // result.values[option] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[arg] !== undefined)
-      ArrayPrototypePush(result.values[arg], newValue);
+    if (result.values[option] !== undefined)
+      ArrayPrototypePush(result.values[option], newValue);
     else
-      result.values[arg] = [newValue];
+      result.values[option] = [newValue];
   } else {
-    result.values[arg] = value;
+    result.values[option] = value;
   }
 }
 
