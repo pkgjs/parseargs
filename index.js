@@ -176,11 +176,11 @@ const parseArgs = ({
       } else {
         // Cases when an arg is specified without a value, example
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
-        // shave value as undefined
+        // save value as undefined
         storeOptionValue(options, arg, undefined, result);
       }
     } else {
-      // Arguements without a dash prefix are considered "positional"
+      // Arguments without a dash prefix are considered "positional"
       ArrayPrototypePush(result.positionals, arg);
     }
 
