@@ -38,9 +38,9 @@ test('when terminal of short-option group expects value then subsequent argument
   t.end();
 });
 
-test('when middle of short-option group expects value then arg returned as positional (as not a valid group)', function(t) {
+test('when middle of short-option group expects value and strict:false then arg returned as positional (as not a valid group)', function(t) {
   const passedArgs = ['-afb'];
-  const passedOptions = { withValue: ['f'] };
+  const passedOptions = { withValue: ['f'], strict: false };
 
   const args = parseArgs(passedArgs, passedOptions);
   const expected = { flags: {}, values: {}, positionals: ['-afb'] };
