@@ -85,19 +85,19 @@ const parseArgs = ({
 } = {}) => {
   validateArray(argv, 'argv');
   validateObject(options, 'options');
-  for (const [arg, option] of ObjectEntries(options)) {
-    validateObject(option, `options.${arg}`);
+  for (const [option, optionConfig] of ObjectEntries(options)) {
+    validateObject(optionConfig, `options.${option}`);
 
-    if (ObjectHasOwn(option, 'type')) {
-      validateUnion(option.type, `options.${arg}.type`, ['string', 'boolean']);
+    if (ObjectHasOwn(optionConfig, 'type')) {
+      validateUnion(optionConfig.type, `options.${option}.type`, ['string', 'boolean']);
     }
 
-    if (ObjectHasOwn(option, 'short')) {
-      validateString(option.short, `options.${arg}.short`);
+    if (ObjectHasOwn(optionConfig, 'short')) {
+      validateString(optionConfig.short, `options.${option}.short`);
     }
 
-    if (ObjectHasOwn(option, 'multiples')) {
-      validateBoolean(option.multiples, `options.${arg}.multiples`);
+    if (ObjectHasOwn(optionConfig, 'multiples')) {
+      validateBoolean(optionConfig.multiples, `options.${option}.multiples`);
     }
   }
 
@@ -137,9 +137,9 @@ const parseArgs = ({
         }
 
         arg = StringPrototypeCharAt(arg, 1); // short
-        for (const [longName, option] of ObjectEntries(options)) {
-          if (option.short === arg) {
-            arg = longName;
+        for (const [option, optionConfig] of ObjectEntries(options)) {
+          if (optionConfig.short === arg) {
+            arg = option; // now long!
             break;
           }
         }
