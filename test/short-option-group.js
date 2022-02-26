@@ -70,3 +70,13 @@ test('handles short-option groups with "short" alias configured', function(t) {
 
   t.end();
 });
+
+test('when parse explicit args containing short group then callers args not modified', function(t) {
+  const passedArgs = ['-rf'];
+  const originalArgs = passedArgs.slice();
+
+  parseArgs(passedArgs);
+  t.deepEqual(passedArgs, originalArgs);
+
+  t.end();
+});
