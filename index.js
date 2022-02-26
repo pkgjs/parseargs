@@ -198,7 +198,7 @@ function isShortOptionGroup(arg, options) {
 
   const leadingShorts = StringPrototypeSlice(arg, 1, -1);
   const allLeadingAreBoolean = ArrayPrototypeEvery(leadingShorts, (short) => {
-    const optionKey = getOptionKey(short);
+    const optionKey = getOptionKey(short, options);
     return !isExpectingValue(optionKey, options);
   });
   return allLeadingAreBoolean;

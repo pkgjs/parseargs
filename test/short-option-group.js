@@ -49,6 +49,17 @@ test('when middle of short-option group expects value and strict:false then arg 
   t.end();
 });
 
+test('when middle of short-option group expects value via alias and strict:false then arg returned as positional (as not a valid group)', function(t) {
+  const passedArgs = ['-afb'];
+  const passedOptions = { short: { f: 'file' }, withValue: ['file'], strict: false };
+
+  const args = parseArgs(passedArgs, passedOptions);
+  const expected = { flags: {}, values: {}, positionals: ['-afb'] };
+  t.deepEqual(args, expected);
+
+  t.end();
+});
+
 test('handles short-option groups in conjunction with long-options', function(t) {
   const passedArgs = ['-rf', '--foo', 'foo'];
   const passedOptions = { withValue: ['foo'] };
