@@ -125,7 +125,7 @@ const parseArgs = (
       continue;
     }
 
-    if (isShortOptionGroup(arg)) {
+    if (isShortOptionGroup(arg, options)) {
       // Expand -fXzy to -f -X -z -y
       const expanded = [];
       for (let index = 1; index < arg.length; index++) {
@@ -197,7 +197,7 @@ function isShortOptionGroup(arg, options) {
   const onlyFlags = arg.slice(1, -1);
   for (let index = 0; index < onlyFlags.length; index++) {
     const optionKey = getOptionKey(StringPrototypeCharAt(onlyFlags, index));
-    if (isExpectingValue(optionKey)) {
+    if (isExpectingValue(optionKey, options)) {
       return false;
     }
   }

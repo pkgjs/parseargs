@@ -70,58 +70,6 @@ test('when short option withValue used without value then stored as flag', funct
   t.end();
 });
 
-test('short option group behaves like multiple short options', function(t) {
-  const passedArgs = ['-rf'];
-  const passedOptions = { };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
-
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
-test('short option group does not consume subsequent positional', function(t) {
-  const passedArgs = ['-rf', 'foo'];
-  const passedOptions = { };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['foo'] };
-  const args = parseArgs(passedArgs, passedOptions);
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
-// See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-test('if terminal of short-option group configured withValue, subsequent positional is stored', function(t) {
-  const passedArgs = ['-rvf', 'foo'];
-  const passedOptions = { withValue: ['f'] };
-  const expected = { flags: { r: true, f: true, v: true }, values: { r: undefined, v: undefined, f: 'foo' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
-test('handles short-option groups in conjunction with long-options', function(t) {
-  const passedArgs = ['-rf', '--foo', 'foo'];
-  const passedOptions = { withValue: ['foo'] };
-  const expected = { flags: { r: true, f: true, foo: true }, values: { r: undefined, f: undefined, foo: 'foo' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
-test('handles short-option groups with "short" alias configured', function(t) {
-  const passedArgs = ['-rf'];
-  const passedOptions = { short: { r: 'remove' } };
-  const expected = { flags: { remove: true, f: true }, values: { remove: undefined, f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
 test('Everything after a bare `--` is considered a positional argument', function(t) {
   const passedArgs = ['--', 'barepositionals', 'mopositionals'];
   const expected = { flags: {}, values: {}, positionals: ['barepositionals', 'mopositionals'] };
