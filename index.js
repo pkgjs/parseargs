@@ -2,6 +2,7 @@
 
 const {
   ArrayPrototypeConcat,
+  ArrayPrototypeEvery,
   ArrayPrototypeIncludes,
   ArrayPrototypeMap,
   ArrayPrototypeSlice,
@@ -192,14 +193,12 @@ function isShortOptionGroup(arg, options) {
   if (StringPrototypeCharAt(arg, 0) !== '-') return false;
   if (StringPrototypeCharAt(arg, 1) === '-') return false;
 
-  const onlyFlags = StringPrototypeSlice(arg, 1, -1);
-  for (let index = 0; index < onlyFlags.length; index++) {
-    const optionKey = getOptionKey(StringPrototypeCharAt(onlyFlags, index));
-    if (isExpectingValue(optionKey, options)) {
-      return false;
-    }
-  }
-  return true;
+  const leadingShorts = StringPrototypeSlice(arg, 1, -1);
+  const allLeadingAreBoolean = ArrayPrototypeEvery(leadingShorts, (short) => {
+    const optionKey = getOptionKey(short);
+    return !isExpectingValue(optionKey, options);
+  });
+  return allLeadingAreBoolean;
 }
 
 /**
