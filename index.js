@@ -239,11 +239,12 @@ function isExpectingValue(optionKey, options) {
 
 /**
   * Determines if the argument can be used as an option value.
-  * NB: We are choosing not to accept option-looking arguments.
+  * NB: We are choosing not to accept option-ish arguments.
   * @example
-  * isOptionValue(['-v', 'V'], 1) // returns true
-  * isOptionValue(['-v'], 1) // returns false
-  * isOptionValue(['-v', '-b'], 1) // returns false
+  * isOptionValue('V']) // returns true
+  * isOptionValue('-v') // returns false
+  * isOptionValue('--foo') // returns false
+  * isOptionValue(undefined) // returns false
   */
 function isOptionValue(value) {
   if (value === undefined) return false;
