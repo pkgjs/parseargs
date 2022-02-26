@@ -3,6 +3,7 @@
 const {
   ArrayPrototypeConcat,
   ArrayPrototypeIncludes,
+  ArrayPrototypeMap,
   ArrayPrototypeSlice,
   ArrayPrototypeSplice,
   ArrayPrototypePush,
@@ -127,10 +128,7 @@ const parseArgs = (
 
     if (isShortOptionGroup(arg, options)) {
       // Expand -fXzy to -f -X -z -y
-      const expanded = [];
-      for (let index = 1; index < arg.length; index++) {
-        ArrayPrototypePush(expanded, `-${StringPrototypeCharAt(arg, index)}`);
-      }
+      const expanded = ArrayPrototypeMap(StringPrototypeSlice(arg, 1), (char) => `-${char}`);
       // Replace group with expansion.
       ArrayPrototypeSplice(argv, pos, 1, ...expanded);
       continue;
