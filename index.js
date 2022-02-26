@@ -138,6 +138,15 @@ const parseArgs = (
       continue;
     }
 
+    if (isShortAndValue(arg, options)) {
+      // e.g. '-fBAR'
+      const optionKey = getOptionKey(StringPrototypeCharAt(arg, 1), options);
+      const optionValue = StringPrototypeSlice(arg, 2);
+      storeOptionValue(optionKey, optionValue, options, result);
+      pos++;
+      continue;
+    }
+
     if (isLongOption(arg)) {
       let optionKey;
       let optionValue;
@@ -203,6 +212,20 @@ function isShortOptionGroup(arg, options) {
   });
   return allLeadingAreBoolean;
 }
+
+/**
+  * Determines if `arg` is a combined short option and its value.
+  * @example '-fBAR'
+  */
+function isShortAndValue(arg, options) {
+  if (arg.length <= 2) return false;
+  if (StringPrototypeCharAt(arg, 0) !== '-') return false;
+  if (StringPrototypeCharAt(arg, 1) === '-') return false;
+
+  const optionKey = getOptionKey(StringPrototypeCharAt(arg, 1), options);
+  return isExpectingValue(optionKey, options);
+}
+
 
 /**
   * Determines if `arg` is a long option, which may have a trailing value.
