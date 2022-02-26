@@ -19,7 +19,7 @@ test("when args include '-' used as positional then result has '-' in positional
 });
 
 // If '-' is a valid positional, it is symmetrical to allow it as an option value too.
-test("when args include '-' used as option value then result has '-' in option value", function(t) {
+test("when args include '-' used as space-separated option value then result has '-' in option value", function(t) {
   const passedArgs = ['-v', '-'];
   const options = { withValue: ['v'] };
 
