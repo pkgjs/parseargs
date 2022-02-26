@@ -186,8 +186,8 @@ function isLoneShortOption(arg) {
   * @example
   * isShortOptionGroup('-a', {}) // returns false
   * isShortOptionGroup('-ab', {}) // returns true
-  * isShortOptionGroup('-fb', { withValues: ['f'] }) // returns false
-  * isShortOptionGroup('-bf', { withValues: ['f'] }) // returns true
+  * isShortOptionGroup('-fb', { withValue: ['f'] }) // returns false
+  * isShortOptionGroup('-bf', { withValue: ['f'] }) // returns true
   */
 function isShortOptionGroup(arg, options) {
   if (arg.length <= 2) return false;

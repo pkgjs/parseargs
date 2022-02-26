@@ -4,8 +4,8 @@
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
   "scripts": {
-    "coverage": "c8 --check-coverage node test/index.js",
-    "test": "c8 node test/index.js",
+    "coverage": "c8 --check-coverage tape 'test/*.js'",
+    "test": "c8 tape 'test/*.js'",
     "posttest": "eslint .",
     "fix": "npm run posttest -- --fix"
   },

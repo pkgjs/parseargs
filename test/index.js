@@ -163,16 +163,6 @@ test('args equals are passed "withValue"', function(t) {
   t.end();
 });
 
-test('when args include single dash then result stores dash as positional', function(t) {
-  const passedArgs = ['-'];
-  const expected = { flags: { }, values: { }, positionals: ['-'] };
-  const args = parseArgs(passedArgs);
-
-  t.deepEqual(args, expected);
-
-  t.end();
-});
-
 test('zero config args equals are parsed as if "withValue"', function(t) {
   const passedArgs = ['--so=wat'];
   const passedOptions = { };
