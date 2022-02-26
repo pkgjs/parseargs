@@ -6,7 +6,6 @@ const {
   ArrayPrototypeIncludes,
   ArrayPrototypeMap,
   ArrayPrototypeSlice,
-  ArrayPrototypeSplice,
   ArrayPrototypePush,
   ObjectHasOwn,
   StringPrototypeCharAt,
@@ -131,7 +130,11 @@ const parseArgs = (
       // Expand -fXzy to -f -X -z -y
       const expanded = ArrayPrototypeMap(StringPrototypeSlice(arg, 1), (char) => `-${char}`);
       // Replace group with expansion.
-      ArrayPrototypeSplice(argv, pos, 1, ...expanded);
+      argv = ArrayPrototypeConcat(
+        ArrayPrototypeSlice(argv, 0, pos),
+        expanded,
+        ArrayPrototypeSlice(argv, pos + 1),
+      );
       continue;
     }
 
