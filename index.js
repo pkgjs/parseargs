@@ -53,7 +53,7 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(parseOptions, option, value, result) {
+function storeOptionValue(option, value, parseOptions, result) {
   const multiple = parseOptions.multiples &&
     ArrayPrototypeIncludes(parseOptions.multiples, option);
 
@@ -97,83 +97,165 @@ const parseArgs = (
 
   let pos = 0;
   while (pos < argv.length) {
-    let arg = argv[pos];
+    const arg = argv[pos];
+    const nextArg = argv[pos + 1];
 
-    if (StringPrototypeStartsWith(arg, '-')) {
-      if (arg === '-') {
-        // '-' commonly used to represent stdin/stdout, treat as positional
-        result.positionals = ArrayPrototypeConcat(result.positionals, '-');
-        ++pos;
-        continue;
-      } else if (arg === '--') {
-        // Everything after a bare '--' is considered a positional argument
-        // and is returned verbatim
-        result.positionals = ArrayPrototypeConcat(
-          result.positionals,
-          ArrayPrototypeSlice(argv, ++pos)
-        );
-        return result;
-      } else if (StringPrototypeCharAt(arg, 1) !== '-') {
-        // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
-        if (arg.length > 2) {
-          for (let i = 2; i < arg.length; i++) {
-            const short = StringPrototypeCharAt(arg, i);
-            // Add 'i' to 'pos' such that short options are parsed in order
-            // of definition:
-            ArrayPrototypeSplice(argv, pos + (i - 1), 0, `-${short}`);
-          }
-        }
-
-        arg = StringPrototypeCharAt(arg, 1); // short
-        if (options.short && options.short[arg])
-          arg = options.short[arg]; // now long!
-        // ToDo: later code tests for `=` in arg and wrong for shorts
-      } else {
-        arg = StringPrototypeSlice(arg, 2); // remove leading --
-      }
-
-      if (StringPrototypeIncludes(arg, '=')) {
-        // Store option=value same way independent of `withValue` as:
-        // - looks like a value, store as a value
-        // - match the intention of the user
-        // - preserve information for author to process further
-        const index = StringPrototypeIndexOf(arg, '=');
-        storeOptionValue(
-          options,
-          StringPrototypeSlice(arg, 0, index),
-          StringPrototypeSlice(arg, index + 1),
-          result);
-      } else if (pos + 1 < argv.length &&
-        !StringPrototypeStartsWith(argv[pos + 1], '-')
-      ) {
-        // withValue option should also support setting values when '=
-        // isn't used ie. both --foo=b and --foo b should work
-
-        // If withValue option is specified, take next position argument as
-        // value and then increment pos so that we don't re-evaluate that
-        // arg, else set value as undefined ie. --foo b --bar c, after setting
-        // b as the value for foo, evaluate --bar next and skip 'b'
-        const val = options.withValue &&
-          ArrayPrototypeIncludes(options.withValue, arg) ? argv[++pos] :
-          undefined;
-        storeOptionValue(options, arg, val, result);
-      } else {
-        // Cases when an arg is specified without a value, example
-        // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
-        // save value as undefined
-        storeOptionValue(options, arg, undefined, result);
-      }
-
-    } else {
-      // Arguments without a dash prefix are considered "positional"
-      ArrayPrototypePush(result.positionals, arg);
+    // Check if `arg` is an options terminator.
+    // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+    if (arg === '--') {
+      // Everything after a bare '--' is considered a positional argument.
+      result.positionals = ArrayPrototypeConcat(
+        result.positionals,
+        ArrayPrototypeSlice(argv, pos + 1)
+      );
+      break; // Finished processing argv, leave while loop.
     }
 
+    if (isLoneShortOption(arg)) {
+      // e.g. '-f'
+      const optionKey = getOptionKey(StringPrototypeCharAt(arg, 1), options);
+      let optionValue;
+      if (isExpectingValue(optionKey, options) && isOptionValue(nextArg)) {
+        // e.g. '-f' 'bar'
+        optionValue = nextArg;
+        pos++;
+      }
+      storeOptionValue(optionKey, optionValue, options, result);
+      pos++;
+      continue;
+    }
+
+    if (isShortOptionGroup(arg)) {
+      // Expand -fXzy to -f -X -z -y
+      const expanded = [];
+      for (let index = 1; index < arg.length; index++) {
+        ArrayPrototypePush(expanded, `-${StringPrototypeCharAt(arg, index)}`);
+      }
+      // Replace group with expansion.
+      ArrayPrototypeSplice(argv, pos, 1, ...expanded);
+      continue;
+    }
+
+    if (isLongOption(arg)) {
+      let optionKey;
+      let optionValue;
+      if (StringPrototypeIncludes(arg, '=')) {
+        // e.g. '--foo=bar'
+        const index = StringPrototypeIndexOf(arg, '=');
+        optionKey = StringPrototypeSlice(arg, 2, index);
+        optionValue = StringPrototypeSlice(arg, index + 1);
+      } else {
+        // e.g. '--foo'
+        optionKey = StringPrototypeSlice(arg, 2);
+        if (isExpectingValue(optionKey, options) && isOptionValue(nextArg)) {
+          // e.g. '--foo' 'bar'
+          optionValue = nextArg;
+          pos++;
+        }
+      }
+      storeOptionValue(optionKey, optionValue, options, result);
+      pos++;
+      continue;
+    }
+
+    // Anything that did not get handled above is a positional.
+    ArrayPrototypePush(result.positionals, arg);
     pos++;
   }
 
   return result;
 };
+
+/**
+  * Determines if `arg` is a just a short option.
+  * @example '-f'
+  */
+function isLoneShortOption(arg) {
+  return arg.length === 2 &&
+    StringPrototypeCharAt(arg, 0) === '-' &&
+    StringPrototypeCharAt(arg, 1) !== '-';
+}
+
+/**
+  * Determines if `arg` is a short option group.
+  *
+  * See Guideline 5 of the [Open Group Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html).
+  *   One or more options without option-arguments, followed by at most one
+  *   option that takes an option-argument, should be accepted when grouped
+  *   behind one '-' delimiter.
+  * @example
+  * isShortOptionGroup('-a', {}) // returns false
+  * isShortOptionGroup('-ab', {}) // returns true
+  * isShortOptionGroup('-fb', { withValues: ['f'] }) // returns false
+  * isShortOptionGroup('-bf', { withValues: ['f'] }) // returns true
+  */
+function isShortOptionGroup(arg, options) {
+  if (arg.length <= 2) return false;
+  if (StringPrototypeCharAt(arg, 0) !== '-') return false;
+  if (StringPrototypeCharAt(arg, 1) === '-') return false;
+
+  const onlyFlags = arg.slice(1, -1);
+  for (let index = 0; index < onlyFlags.length; index++) {
+    const optionKey = getOptionKey(StringPrototypeCharAt(onlyFlags, index));
+    if (isExpectingValue(optionKey)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+  * Determines if `arg` is a long option, which may have a trailing value.
+  * @example
+  * isLongOption('-a) // returns false
+  * isLongOption('--foo) // returns true
+  * isLongOption('--foo=bar) // returns true
+  */
+function isLongOption(arg) {
+  return arg.length > 2 && StringPrototypeStartsWith(arg, '--');
+}
+
+/**
+  * Expand known short options into long, otherwise return original.
+  * @example
+  * getOptionKey('f', { short: { f: 'file'}}) // returns 'file'
+  * getOptionKey('b', {}) // returns 'b'
+  * getOptionKey('long-option', {}) // returns 'long-option'
+  */
+function getOptionKey(option, options) {
+  if (option.length === 1 && options?.short?.[option]) {
+    return options.short[option]; // long option
+  }
+  return option;
+}
+
+/**
+ * Determines if the option is expecting a value.
+ */
+function isExpectingValue(optionKey, options) {
+  return options && options.withValue &&
+    ArrayPrototypeIncludes(options.withValue, optionKey);
+}
+
+/**
+  * Determines if the argument can be used as an option value.
+  * NB: We are choosing not to accept option-looking arguments.
+  * @example
+  * isOptionValue(['-v', 'V'], 1) // returns true
+  * isOptionValue(['-v'], 1) // returns false
+  * isOptionValue(['-v', '-b'], 1) // returns false
+  */
+function isOptionValue(value) {
+  if (value === undefined) return false;
+  if (value === '-') return true; // e.g. representing stdin/stdout for file
+
+  // Open Group Utility Conventions are that an option-argument may start
+  // with a dash, but we are currentlly rejecting these and prioritising the
+  // option-like appearance of the argument. Rejection allows error detection
+  // if strict:true, but comes at the cost of rejecting intended values starting
+  // with a dash, especially negative numbers.
+  return !StringPrototypeStartsWith(value, '-');
+}
 
 module.exports = {
   parseArgs
