@@ -9,8 +9,11 @@
 
 Polyfill of future proposal to the [nodejs/tooling](https://github.com/nodejs/tooling) repo for `util.parseArgs()`
 
+### Scope
 
-This package was implemented using [tape](https://www.npmjs.com/package/tape) as its test harness.
+It is already possible to build great arg parsing modules on top of what Node.js provides; the prickly API is abstracted away by these modules. Thus, process.parseArgs() is not necessarily intended for library authors; it is intended for developers of simple CLI tools, ad-hoc scripts, deployed Node.js applications, and learning materials.
+
+It is exceedingly difficult to provide an API which would both be friendly to these Node.js users while being extensible enough for libraries to build upon. We chose to prioritize these use cases because these are currently not well-served by Node.js' API.
 
 ### Links & Resources
 
@@ -54,6 +57,8 @@ This package was implemented using [tape](https://www.npmjs.com/package/tape) as
 Any person who wants to contribute to the initiative is welcome! Please first read the [Contributing Guide](CONTRIBUTING.md)
 
 Additionally, reading the [`Examples w/ Output`](#-examples-w-output) section of this document will be the best way to familiarize yourself with the target expected behavior for parseArgs() once it is fully implemented.
+
+This package was implemented using [tape](https://www.npmjs.com/package/tape) as its test harness.
 
 ----
 
