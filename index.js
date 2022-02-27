@@ -63,13 +63,13 @@ function getMainArgs() {
 }
 
 function storeOptionValue(strict, options, option, value, result) {
-  let optionConfig = options[option];
+  const hasOptionConfig = ObjectHasOwn(options, option);
 
-  if (strict && !option) {
+  if (strict && !hasOptionConfig) {
     throw new ERR_UNKNOWN_OPTION(option);
-  } else {
-    optionConfig = {};
   }
+
+  const optionConfig = hasOptionConfig ? options[option] : {};
 
   // Flags
   result.flags[option] = true;
