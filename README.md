@@ -9,8 +9,11 @@
 
 Polyfill of future proposal to the [nodejs/tooling](https://github.com/nodejs/tooling) repo for `util.parseArgs()`
 
+### Scope
 
-This package was implemented using [tape](https://www.npmjs.com/package/tape) as its test harness.
+It is already possible to build great arg parsing modules on top of what Node.js provides; the prickly API is abstracted away by these modules. Thus, process.parseArgs() is not necessarily intended for library authors; it is intended for developers of simple CLI tools, ad-hoc scripts, deployed Node.js applications, and learning materials.
+
+It is exceedingly difficult to provide an API which would both be friendly to these Node.js users while being extensible enough for libraries to build upon. We chose to prioritize these use cases because these are currently not well-served by Node.js' API.
 
 ### Links & Resources
 
@@ -55,6 +58,8 @@ Any person who wants to contribute to the initiative is welcome! Please first re
 
 Additionally, reading the [`Examples w/ Output`](#-examples-w-output) section of this document will be the best way to familiarize yourself with the target expected behavior for parseArgs() once it is fully implemented.
 
+This package was implemented using [tape](https://www.npmjs.com/package/tape) as its test harness.
+
 ----
 
 ## 💡 `process.mainArgs` Proposal
@@ -75,10 +80,10 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
   object supporting the following properties:
   * `argv` {string[]} (Optional) Array of argument strings; defaults
     to [`process.mainArgs`](process_argv)
-  * `options` {Object} (Optional) A collection of configuration objects for each `argv`; `options` keys are the long names of the `argv`, and the values are objects with the following properties:
-    * `type` {'string'|'boolean'} (Optional) Type of `argv`; defaults to `'boolean'`; 
-    * `multiples` {boolean} (Optional) If true, when appearing multiple times in `argv`, will be concatenated into an `Array`
-    * `short` {string} (Optional) An alias to an `argv`; When appearing multiples times in `argv`; Respects the `multiples` configuration
+  * `options` {Object} (Optional) An object describing the known options to look for in `argv`; `options` keys are the long names of the known options, and the values are objects with the following properties:
+    * `type` {'string'|'boolean'} (Optional) Type of known option; defaults to `'boolean'`; 
+    * `multiples` {boolean} (Optional) If true, when appearing one or more times in `argv`, results are collected in an `Array`
+    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `argv`; Respects the `multiples` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed

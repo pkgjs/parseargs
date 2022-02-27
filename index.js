@@ -62,32 +62,32 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(strict, options, arg, value, result) {
-  let option = options[arg];
+function storeOptionValue(strict, options, option, value, result) {
+  let optionConfig = options[option];
 
   if (strict && !option) {
-    throw new ERR_UNKNOWN_OPTION(arg);
+    throw new ERR_UNKNOWN_OPTION(option);
   } else {
-    option = {};
+    optionConfig = {};
   }
 
   // Flags
-  result.flags[arg] = true;
+  result.flags[option] = true;
 
   // Values
-  if (option.multiples) {
+  if (optionConfig.multiples) {
     // Always store value in array, including for flags.
-    // result.values[arg] starts out not present,
+    // result.values[option] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[arg] !== undefined)
-      ArrayPrototypePush(result.values[arg], newValue);
+    if (result.values[option] !== undefined)
+      ArrayPrototypePush(result.values[option], newValue);
     else
-      result.values[arg] = [newValue];
+      result.values[option] = [newValue];
   } else {
-    result.values[arg] = value;
+    result.values[option] = value;
   }
 }
 
@@ -99,19 +99,19 @@ const parseArgs = ({
   validateArray(argv, 'argv');
   validateBoolean(strict, 'strict');
   validateObject(options, 'options');
-  for (const [arg, option] of ObjectEntries(options)) {
-    validateObject(option, `options.${arg}`);
+  for (const [option, optionConfig] of ObjectEntries(options)) {
+    validateObject(optionConfig, `options.${option}`);
 
-    if (ObjectHasOwn(option, 'type')) {
-      validateUnion(option.type, `options.${arg}.type`, ['string', 'boolean']);
+    if (ObjectHasOwn(optionConfig, 'type')) {
+      validateUnion(optionConfig.type, `options.${option}.type`, ['string', 'boolean']);
     }
 
-    if (ObjectHasOwn(option, 'short')) {
-      validateString(option.short, `options.${arg}.short`);
+    if (ObjectHasOwn(optionConfig, 'short')) {
+      validateString(optionConfig.short, `options.${option}.short`);
     }
 
-    if (ObjectHasOwn(option, 'multiples')) {
-      validateBoolean(option.multiples, `options.${arg}.multiples`);
+    if (ObjectHasOwn(optionConfig, 'multiples')) {
+      validateBoolean(optionConfig.multiples, `options.${option}.multiples`);
     }
   }
 
@@ -151,9 +151,9 @@ const parseArgs = ({
         }
 
         arg = StringPrototypeCharAt(arg, 1); // short
-        for (const [longName, option] of ObjectEntries(options)) {
-          if (option.short === arg) {
-            arg = longName;
+        for (const [option, optionConfig] of ObjectEntries(options)) {
+          if (optionConfig.short === arg) {
+            arg = option; // now long!
             break;
           }
         }
@@ -191,11 +191,11 @@ const parseArgs = ({
       } else {
         // Cases when an arg is specified without a value, example
         // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
-        // shave value as undefined
+        // save value as undefined
         storeOptionValue(strict, options, arg, undefined, result);
       }
     } else {
-      // Arguements without a dash prefix are considered "positional"
+      // Arguments without a dash prefix are considered "positional"
       ArrayPrototypePush(result.positionals, arg);
     }
 
