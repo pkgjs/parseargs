@@ -82,8 +82,8 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     to [`process.mainArgs`](process_argv)
   * `options` {Object} (Optional) An object describing the known options to look for in `args`; `options` keys are the long names of the known options, and the values are objects with the following properties:
     * `type` {'string'|'boolean'} (Optional) Type of known option; defaults to `'boolean'`; 
-    * `multiples` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
-    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiples` configuration
+    * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
+    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
@@ -126,12 +126,12 @@ const { flags, values, positionals } = parseArgs({ args, options });
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
-// withValue & multiples
+// withValue & multiple
 const args = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
   foo: {
     type: 'string',
-    multiples: true,
+    multiple: true,
   },
 };
 const { flags, values, positionals } = parseArgs({ args, options });

@@ -63,7 +63,7 @@ function storeOptionValue(options, option, value, result) {
   result.flags[option] = true;
 
   // Values
-  if (optionConfig.multiples) {
+  if (optionConfig.multiple) {
     // Always store value in array, including for flags.
     // result.values[option] starts out not present,
     // first value is added as new array [newValue],
@@ -96,8 +96,8 @@ const parseArgs = ({
       validateString(optionConfig.short, `options.${option}.short`);
     }
 
-    if (ObjectHasOwn(optionConfig, 'multiples')) {
-      validateBoolean(optionConfig.multiples, `options.${option}.multiples`);
+    if (ObjectHasOwn(optionConfig, 'multiple')) {
+      validateBoolean(optionConfig.multiple, `options.${option}.multiple`);
     }
   }
 

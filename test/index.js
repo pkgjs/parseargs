@@ -206,9 +206,9 @@ test('args equals pass string including more equals', function(t) {
   t.end();
 });
 
-test('first arg passed for `type: "string"` and "multiples" is in array', function(t) {
+test('first arg passed for `type: "string"` and "multiple" is in array', function(t) {
   const passedArgs = ['--foo=a'];
-  const passedOptions = { foo: { type: 'string', multiples: true } };
+  const passedOptions = { foo: { type: 'string', multiple: true } };
   const expected = { flags: { foo: true }, values: { foo: ['a'] }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -217,12 +217,12 @@ test('first arg passed for `type: "string"` and "multiples" is in array', functi
   t.end();
 });
 
-test('args are passed `type: "string"` and "multiples"', function(t) {
+test('args are passed `type: "string"` and "multiple"', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = {
     foo: {
       type: 'string',
-      multiples: true,
+      multiple: true,
     },
   };
   const expected = { flags: { foo: true }, values: { foo: ['a', 'b'] }, positionals: [] };
