@@ -18,7 +18,7 @@ function validateString(value, name) {
 
 function validateUnion(value, name, union) {
   if (!union.includes(value)) {
-    throw new ERR_INVALID_ARG_TYPE(name, `[${union.join('|')}]`, value);
+    throw new ERR_INVALID_ARG_TYPE(name, `('${union.join('|')}')`, value);
   }
 }
 
