@@ -380,3 +380,12 @@ test('invalid union value passed to "type" option', function(t) {
 
   t.end();
 });
+
+test('invalid short option length', function(t) {
+  const passedArgs = [];
+  const passedOptions = { foo: { short: 'fo' } };
+
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); });
+
+  t.end();
+});

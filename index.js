@@ -93,7 +93,11 @@ const parseArgs = ({
     }
 
     if (ObjectHasOwn(optionConfig, 'short')) {
-      validateString(optionConfig.short, `options.${option}.short`);
+      const short = optionConfig.short;
+      validateString(short, `options.${option}.short`);
+      if (short.length !== 1) {
+        throw new Error(`options.${option}.short must be a single character got "${short}"`);
+      }
     }
 
     if (ObjectHasOwn(optionConfig, 'multiple')) {
