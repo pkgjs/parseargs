@@ -2,6 +2,7 @@
 
 const {
   ArrayIsArray,
+  ArrayPrototypeIncludes,
 } = require('./primordials');
 
 const {
