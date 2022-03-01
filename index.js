@@ -147,7 +147,7 @@ const parseArgs = ({
 
         arg = StringPrototypeCharAt(arg, 1); // short
 
-        const [ longOption ] = ArrayPrototypeFind(
+        const [longOption] = ArrayPrototypeFind(
           ObjectEntries(options),
           ([, optionConfig]) => optionConfig.short === arg
         ) || [];
