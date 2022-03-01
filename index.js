@@ -2,6 +2,8 @@
 
 const {
   ArrayPrototypeConcat,
+  ArrayPrototypeFind,
+  ArrayPrototypeForEach,
   ArrayPrototypeSlice,
   ArrayPrototypeSplice,
   ArrayPrototypePush,
@@ -85,7 +87,7 @@ const parseArgs = ({
 } = {}) => {
   validateArray(args, 'args');
   validateObject(options, 'options');
-  for (const [option, optionConfig] of ObjectEntries(options)) {
+  ArrayPrototypeForEach(ObjectEntries(options), ([option, optionConfig]) => {
     validateObject(optionConfig, `options.${option}`);
 
     if (ObjectHasOwn(optionConfig, 'type')) {
@@ -103,7 +105,7 @@ const parseArgs = ({
     if (ObjectHasOwn(optionConfig, 'multiple')) {
       validateBoolean(optionConfig.multiple, `options.${option}.multiple`);
     }
-  }
+  });
 
   const result = {
     flags: {},
@@ -141,12 +143,14 @@ const parseArgs = ({
         }
 
         arg = StringPrototypeCharAt(arg, 1); // short
-        for (const [option, optionConfig] of ObjectEntries(options)) {
-          if (optionConfig.short === arg) {
-            arg = option; // now long!
-            break;
-          }
-        }
+
+        const [ longOption ] = ArrayPrototypeFind(
+          ObjectEntries(options),
+          ([, optionConfig]) => optionConfig.short === arg
+        ) || [];
+
+        arg = longOption ?? arg;
+
         // ToDo: later code tests for `=` in arg and wrong for shorts
       } else {
         arg = StringPrototypeSlice(arg, 2); // remove leading --
