@@ -3,6 +3,7 @@
 const {
   ArrayIsArray,
   ArrayPrototypeIncludes,
+  ArrayPrototypeJoin,
 } = require('./primordials');
 
 const {
@@ -19,7 +20,7 @@ function validateString(value, name) {
 
 function validateUnion(value, name, union) {
   if (!ArrayPrototypeIncludes(union, value)) {
-    throw new ERR_INVALID_ARG_TYPE(name, `('${union.join('|')}')`, value);
+    throw new ERR_INVALID_ARG_TYPE(name, `('${ArrayPrototypeJoin(union, '|')}')`, value);
   }
 }
 
