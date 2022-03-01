@@ -58,26 +58,26 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
-function storeOptionValue(options, option, value, result) {
-  const optionConfig = options[option] || {};
+function storeOptionValue(options, longOption, value, result) {
+  const optionConfig = options[longOption] || {};
 
   // Flags
-  result.flags[option] = true;
+  result.flags[longOption] = true;
 
   // Values
   if (optionConfig.multiple) {
     // Always store value in array, including for flags.
-    // result.values[option] starts out not present,
+    // result.values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
     const usedAsFlag = value === undefined;
     const newValue = usedAsFlag ? true : value;
-    if (result.values[option] !== undefined)
-      ArrayPrototypePush(result.values[option], newValue);
+    if (result.values[longOption] !== undefined)
+      ArrayPrototypePush(result.values[longOption], newValue);
     else
-      result.values[option] = [newValue];
+      result.values[longOption] = [newValue];
   } else {
-    result.values[option] = value;
+    result.values[longOption] = value;
   }
 }
 
@@ -87,25 +87,28 @@ const parseArgs = ({
 } = {}) => {
   validateArray(args, 'args');
   validateObject(options, 'options');
-  ArrayPrototypeForEach(ObjectEntries(options), ([option, optionConfig]) => {
-    validateObject(optionConfig, `options.${option}`);
+  ArrayPrototypeForEach(
+    ObjectEntries(options),
+    ([longOption, optionConfig]) => {
+      validateObject(optionConfig, `options.${longOption}`);
 
-    if (ObjectHasOwn(optionConfig, 'type')) {
-      validateUnion(optionConfig.type, `options.${option}.type`, ['string', 'boolean']);
-    }
+      if (ObjectHasOwn(optionConfig, 'type')) {
+        validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
+      }
 
-    if (ObjectHasOwn(optionConfig, 'short')) {
-      const short = optionConfig.short;
-      validateString(short, `options.${option}.short`);
-      if (short.length !== 1) {
-        throw new Error(`options.${option}.short must be a single character got "${short}"`);
+      if (ObjectHasOwn(optionConfig, 'short')) {
+        const shortOption = optionConfig.short;
+        validateString(shortOption, `options.${longOption}.short`);
+        if (shortOption.length !== 1) {
+          throw new Error(`options.${longOption}.short must be a single character got "${shortOption}"`);
+        }
+      }
+
+      if (ObjectHasOwn(optionConfig, 'multiple')) {
+        validateBoolean(optionConfig.multiple, `options.${longOption}.multiple`);
       }
     }
-
-    if (ObjectHasOwn(optionConfig, 'multiple')) {
-      validateBoolean(optionConfig.multiple, `options.${option}.multiple`);
-    }
-  });
+  );
 
   const result = {
     flags: {},
@@ -135,10 +138,10 @@ const parseArgs = ({
         // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
         if (arg.length > 2) {
           for (let i = 2; i < arg.length; i++) {
-            const short = StringPrototypeCharAt(arg, i);
+            const shortOption = StringPrototypeCharAt(arg, i);
             // Add 'i' to 'pos' such that short options are parsed in order
             // of definition:
-            ArrayPrototypeSplice(args, pos + (i - 1), 0, `-${short}`);
+            ArrayPrototypeSplice(args, pos + (i - 1), 0, `-${shortOption}`);
           }
         }
 
