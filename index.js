@@ -100,7 +100,7 @@ const parseArgs = ({
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
         if (shortOption.length !== 1) {
-          throw new Error(`options.${longOption}.short must be a single character got "${shortOption}"`);
+          throw new Error(`options.${longOption}.short must be a single character, got '${shortOption}'`);
         }
       }
 
