@@ -2,6 +2,8 @@
 
 const {
   ArrayIsArray,
+  ArrayPrototypeIncludes,
+  ArrayPrototypeJoin,
 } = require('./primordials');
 
 const {
@@ -9,6 +11,24 @@ const {
     ERR_INVALID_ARG_TYPE
   }
 } = require('./errors');
+
+function validateString(value, name) {
+  if (typeof value !== 'string') {
+    throw new ERR_INVALID_ARG_TYPE(name, 'String', value);
+  }
+}
+
+function validateUnion(value, name, union) {
+  if (!ArrayPrototypeIncludes(union, value)) {
+    throw new ERR_INVALID_ARG_TYPE(name, `('${ArrayPrototypeJoin(union, '|')}')`, value);
+  }
+}
+
+function validateBoolean(value, name) {
+  if (typeof value !== 'boolean') {
+    throw new ERR_INVALID_ARG_TYPE(name, 'Boolean', value);
+  }
+}
 
 function validateArray(value, name) {
   if (!ArrayIsArray(value)) {
@@ -42,4 +62,7 @@ function validateObject(value, name, options) {
 module.exports = {
   validateArray,
   validateObject,
+  validateString,
+  validateUnion,
+  validateBoolean,
 };
