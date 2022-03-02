@@ -9,7 +9,7 @@ const { parseArgs } = require('../index.js');
 test('when short option used as flag then stored as flag', function(t) {
   const passedArgs = ['-f'];
   const expected = { flags: { f: true }, values: { f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected);
 
@@ -19,18 +19,18 @@ test('when short option used as flag then stored as flag', function(t) {
 test('when short option used as flag before positional then stored as flag and positional (and not value)', function(t) {
   const passedArgs = ['-f', 'bar'];
   const expected = { flags: { f: true }, values: { f: undefined }, positionals: [ 'bar' ] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected);
 
   t.end();
 });
 
-test('when short option withValue used with value then stored as value', function(t) {
+test('when short option `type: "string"` used with value then stored as value', function(t) {
   const passedArgs = ['-f', 'bar'];
-  const passedOptions = { withValue: ['f'] };
+  const passedOptions = { f: { type: 'string' } };
   const expected = { flags: { f: true }, values: { f: 'bar' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
@@ -39,31 +39,31 @@ test('when short option withValue used with value then stored as value', functio
 
 test('when short option listed in short used as flag then long option stored as flag', function(t) {
   const passedArgs = ['-f'];
-  const passedOptions = { short: { f: 'foo' } };
+  const passedOptions = { foo: { short: 'f' } };
   const expected = { flags: { foo: true }, values: { foo: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
   t.end();
 });
 
-test('when short option listed in short and long listed in withValue and used with value then long option stored as value', function(t) {
+test('when short option listed in short and long listed in `type: "string"` and used with value then long option stored as value', function(t) {
   const passedArgs = ['-f', 'bar'];
-  const passedOptions = { short: { f: 'foo' }, withValue: ['foo'] };
+  const passedOptions = { foo: { short: 'f', type: 'string' } };
   const expected = { flags: { foo: true }, values: { foo: 'bar' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
   t.end();
 });
 
-test('when short option withValue used without value then stored as flag', function(t) {
+test('when short option `type: "string"` used without value then stored as flag', function(t) {
   const passedArgs = ['-f'];
-  const passedOptions = { withValue: ['f'] };
+  const passedOptions = { f: { type: 'string' } };
   const expected = { flags: { f: true }, values: { f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
@@ -74,7 +74,7 @@ test('short option group behaves like multiple short options', function(t) {
   const passedArgs = ['-rf'];
   const passedOptions = { };
   const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
@@ -85,18 +85,18 @@ test('short option group does not consume subsequent positional', function(t) {
   const passedArgs = ['-rf', 'foo'];
   const passedOptions = { };
   const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['foo'] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
 });
 
-// See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-test('if terminal of short-option group configured withValue, subsequent positional is stored', function(t) {
+// // See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+test('if terminal of short-option group configured `type: "string"`, subsequent positional is stored', function(t) {
   const passedArgs = ['-rvf', 'foo'];
-  const passedOptions = { withValue: ['f'] };
+  const passedOptions = { f: { type: 'string' } };
   const expected = { flags: { r: true, f: true, v: true }, values: { r: undefined, v: undefined, f: 'foo' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -104,9 +104,9 @@ test('if terminal of short-option group configured withValue, subsequent positio
 
 test('handles short-option groups in conjunction with long-options', function(t) {
   const passedArgs = ['-rf', '--foo', 'foo'];
-  const passedOptions = { withValue: ['foo'] };
+  const passedOptions = { foo: { type: 'string' } };
   const expected = { flags: { r: true, f: true, foo: true }, values: { r: undefined, f: undefined, foo: 'foo' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -114,9 +114,9 @@ test('handles short-option groups in conjunction with long-options', function(t)
 
 test('handles short-option groups with "short" alias configured', function(t) {
   const passedArgs = ['-rf'];
-  const passedOptions = { short: { r: 'remove' } };
+  const passedOptions = { remove: { short: 'r' } };
   const expected = { flags: { remove: true, f: true }, values: { remove: undefined, f: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -125,7 +125,7 @@ test('handles short-option groups with "short" alias configured', function(t) {
 test('Everything after a bare `--` is considered a positional argument', function(t) {
   const passedArgs = ['--', 'barepositionals', 'mopositionals'];
   const expected = { flags: {}, values: {}, positionals: ['barepositionals', 'mopositionals'] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected, 'testing bare positionals');
 
@@ -135,7 +135,7 @@ test('Everything after a bare `--` is considered a positional argument', functio
 test('args are true', function(t) {
   const passedArgs = ['--foo', '--bar'];
   const expected = { flags: { foo: true, bar: true }, values: { foo: undefined, bar: undefined }, positionals: [] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected, 'args are true');
 
@@ -145,18 +145,18 @@ test('args are true', function(t) {
 test('arg is true and positional is identified', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const expected = { flags: { foo: true }, values: { foo: undefined }, positionals: ['b'] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected, 'arg is true and positional is identified');
 
   t.end();
 });
 
-test('args equals are passed "withValue"', function(t) {
+test('args equals are passed `type: "string"`', function(t) {
   const passedArgs = ['--so=wat'];
-  const passedOptions = { withValue: ['so'] };
+  const passedOptions = { so: { type: 'string' } };
   const expected = { flags: { so: true }, values: { so: 'wat' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'arg value is passed');
 
@@ -166,29 +166,29 @@ test('args equals are passed "withValue"', function(t) {
 test('when args include single dash then result stores dash as positional', function(t) {
   const passedArgs = ['-'];
   const expected = { flags: { }, values: { }, positionals: ['-'] };
-  const args = parseArgs(passedArgs);
+  const args = parseArgs({ args: passedArgs });
 
   t.deepEqual(args, expected);
 
   t.end();
 });
 
-test('zero config args equals are parsed as if "withValue"', function(t) {
+test('zero config args equals are parsed as if `type: "string"`', function(t) {
   const passedArgs = ['--so=wat'];
   const passedOptions = { };
   const expected = { flags: { so: true }, values: { so: 'wat' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'arg value is passed');
 
   t.end();
 });
 
-test('same arg is passed twice "withValue" and last value is recorded', function(t) {
+test('same arg is passed twice `type: "string"` and last value is recorded', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
-  const passedOptions = { withValue: ['foo'] };
+  const passedOptions = { foo: { type: 'string' } };
   const expected = { flags: { foo: true }, values: { foo: 'b' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'last arg value is passed');
 
@@ -197,31 +197,36 @@ test('same arg is passed twice "withValue" and last value is recorded', function
 
 test('args equals pass string including more equals', function(t) {
   const passedArgs = ['--so=wat=bing'];
-  const passedOptions = { withValue: ['so'] };
+  const passedOptions = { so: { type: 'string' } };
   const expected = { flags: { so: true }, values: { so: 'wat=bing' }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'arg value is passed');
 
   t.end();
 });
 
-test('first arg passed for "withValue" and "multiples" is in array', function(t) {
+test('first arg passed for `type: "string"` and "multiple" is in array', function(t) {
   const passedArgs = ['--foo=a'];
-  const passedOptions = { withValue: ['foo'], multiples: ['foo'] };
+  const passedOptions = { foo: { type: 'string', multiple: true } };
   const expected = { flags: { foo: true }, values: { foo: ['a'] }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'first multiple in array');
 
   t.end();
 });
 
-test('args are passed "withValue" and "multiples"', function(t) {
+test('args are passed `type: "string"` and "multiple"', function(t) {
   const passedArgs = ['--foo=a', '--foo', 'b'];
-  const passedOptions = { withValue: ['foo'], multiples: ['foo'] };
+  const passedOptions = {
+    foo: {
+      type: 'string',
+      multiple: true,
+    },
+  };
   const expected = { flags: { foo: true }, values: { foo: ['a', 'b'] }, positionals: [] };
-  const args = parseArgs(passedArgs, passedOptions);
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, 'both arg values are passed');
 
@@ -231,11 +236,11 @@ test('args are passed "withValue" and "multiples"', function(t) {
 test('order of option and positional does not matter (per README)', function(t) {
   const passedArgs1 = ['--foo=bar', 'baz'];
   const passedArgs2 = ['baz', '--foo=bar'];
-  const passedOptions = { withValue: ['foo'] };
+  const passedOptions = { foo: { type: 'string' } };
   const expected = { flags: { foo: true }, values: { foo: 'bar' }, positionals: ['baz'] };
 
-  t.deepEqual(parseArgs(passedArgs1, passedOptions), expected, 'option then positional');
-  t.deepEqual(parseArgs(passedArgs2, passedOptions), expected, 'positional then option');
+  t.deepEqual(parseArgs({ args: passedArgs1, options: passedOptions }), expected, 'option then positional');
+  t.deepEqual(parseArgs({ args: passedArgs2, options: passedOptions }), expected, 'positional then option');
 
   t.end();
 });
@@ -334,7 +339,7 @@ test('excess leading dashes on options are retained', function(t) {
     values: { '-triple': undefined },
     positionals: []
   };
-  const result = parseArgs(passedArgs, passedOptions);
+  const result = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected, 'excess option dashes are retained');
 
@@ -345,32 +350,42 @@ test('excess leading dashes on options are retained', function(t) {
 
 test('invalid argument passed for options', function(t) {
   const passedArgs = ['--so=wat'];
+  const passedOptions = 'bad value';
 
-  t.throws(function() { parseArgs(passedArgs, 'bad value'); }, {
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
   t.end();
 });
 
-test('boolean passed to "withValue" option', function(t) {
+test('boolean passed to "type" option', function(t) {
   const passedArgs = ['--so=wat'];
-  const passedOptions = { withValue: true };
+  const passedOptions = { foo: { type: true } };
 
-  t.throws(function() { parseArgs(passedArgs, passedOptions); }, {
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
   t.end();
 });
 
-test('string passed to "withValue" option', function(t) {
+test('invalid union value passed to "type" option', function(t) {
   const passedArgs = ['--so=wat'];
-  const passedOptions = { withValue: 'so' };
+  const passedOptions = { foo: { type: 'str' } };
 
-  t.throws(function() { parseArgs(passedArgs, passedOptions); }, {
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
+
+  t.end();
+});
+
+test('invalid short option length', function(t) {
+  const passedArgs = [];
+  const passedOptions = { foo: { short: 'fo' } };
+
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); });
 
   t.end();
 });
