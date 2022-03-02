@@ -1,6 +1,7 @@
 'use strict';
 
 const {
+  StringPrototypeCharAt,
   StringPrototypeStartsWith,
 } = require('./primordials');
 
@@ -30,6 +31,17 @@ function isPossibleOptionValue(value) {
   return !StringPrototypeStartsWith(value, '-');
 }
 
+/**
+   * Determines if `arg` is a just a short option.
+   * @example '-f'
+   */
+function isLoneShortOption(arg) {
+  return arg.length === 2 &&
+    StringPrototypeCharAt(arg, 0) === '-' &&
+    StringPrototypeCharAt(arg, 1) !== '-';
+}
+
 module.exports = {
+  isLoneShortOption,
   isPossibleOptionValue
 };
