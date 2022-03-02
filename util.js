@@ -1,6 +1,9 @@
 'use strict';
 
 const {
+  ArrayPrototypeFind,
+  ObjectAssign,
+  ObjectValues,
   StringPrototypeCharAt,
   StringPrototypeStartsWith,
 } = require('./primordials');
@@ -52,8 +55,77 @@ function isLongOption(arg) {
   return arg.length > 2 && StringPrototypeStartsWith(arg, '--');
 }
 
+function getDefaultOptionConfig() {
+  return {
+    short: undefined,
+    type: 'boolean',
+    multiple: false
+  };
+}
+
+/**
+ * Lookup option config. Returns undefined if no match.
+ */
+function findOptionConfigFromShort(shortOption, options) {
+  const foundConfig = ArrayPrototypeFind(
+    ObjectValues(options),
+    (optionConfig) => optionConfig.short === shortOption
+  );
+  return foundConfig;
+}
+
+/**
+ * Populate an option config using options and defaults.
+ */
+function getOptionConfigFromShort(shortOption, options) {
+  const optionConfig = findOptionConfigFromShort(shortOption, options) || {};
+  return ObjectAssign(getDefaultOptionConfig(), optionConfig);
+}
+
+/**
+ * Return whether a short option is of boolean type, implicitly or explicitly.
+ */
+function isShortOfTypeBoolean(shortOption, options) {
+  if (!options) throw new Error('Internal error, missing options argument');
+
+  const optionConfig = getOptionConfigFromShort(shortOption, options);
+  return optionConfig.type === 'boolean';
+}
+
+/**
+   * Determines if `arg` is a short option group.
+   *
+   * See Guideline 5 of the [Open Group Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html).
+   *   One or more options without option-arguments, followed by at most one
+   *   option that takes an option-argument, should be accepted when grouped
+   *   behind one '-' delimiter.
+   * @example
+   * isShortOptionGroup('-a', {}) // returns false
+   * isShortOptionGroup('-ab', {}) // returns true
+   * // -fb is an option and a value, not a short option group
+   * isShortOptionGroup('-fb', {
+   *   options: { f: { type: 'string' }}
+   * }) // returns false
+   * isShortOptionGroup('-bf', {
+   *   options: { f: { type: 'string' }}
+   * }) // returns true
+   * // -bfb is an edge case, return true and caller sorts it out
+   * isShortOptionGroup('-bfb', {
+   *   options: { f: { type: 'string' }}
+   * }) // returns true
+   */
+function isShortOptionGroup(arg, options) {
+  if (arg.length <= 2) return false;
+  if (StringPrototypeCharAt(arg, 0) !== '-') return false;
+  if (StringPrototypeCharAt(arg, 1) === '-') return false;
+
+  const firstShort = StringPrototypeCharAt(arg, 1);
+  return isShortOfTypeBoolean(firstShort, options);
+}
+
 module.exports = {
   isLongOption,
   isLoneShortOption,
-  isPossibleOptionValue
+  isPossibleOptionValue,
+  isShortOptionGroup
 };
