@@ -3,6 +3,7 @@
 const {
   ArrayPrototypeConcat,
   ArrayPrototypeForEach,
+  ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
   ObjectHasOwn,
@@ -121,10 +122,10 @@ const parseArgs = ({
     positionals: []
   };
 
-  let pos = 0;
-  while (pos < args.length) {
-    const arg = args[pos];
-    const nextArg = args[pos + 1];
+  const remainingArgs = ArrayPrototypeSlice(args);
+  while (remainingArgs.length > 0) {
+    const arg = ArrayPrototypeShift(remainingArgs);
+    const nextArg = remainingArgs[0];
 
     // Check if `arg` is an options terminator.
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
@@ -132,7 +133,7 @@ const parseArgs = ({
       // Everything after a bare '--' is considered a positional argument.
       result.positionals = ArrayPrototypeConcat(
         result.positionals,
-        ArrayPrototypeSlice(args, pos + 1)
+        remainingArgs
       );
       break; // Finished processing argv, leave while loop.
     }
@@ -144,11 +145,9 @@ const parseArgs = ({
       let optionValue;
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
-        optionValue = nextArg;
-        pos++;
+        optionValue = ArrayPrototypeShift(remainingArgs);
       }
       storeOptionValue(options, longOption, optionValue, result);
-      pos++;
       continue;
     }
 
@@ -158,11 +157,9 @@ const parseArgs = ({
       let optionValue;
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-foo', 'bar'
-        optionValue = nextArg;
-        pos++;
+        optionValue = ArrayPrototypeShift(remainingArgs);
       }
       storeOptionValue(options, longOption, optionValue, result);
-      pos++;
       continue;
     }
 
@@ -172,13 +169,11 @@ const parseArgs = ({
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
       storeOptionValue(options, longOption, optionValue, result);
-      pos++;
       continue;
     }
 
     // Anything left is a positional
     ArrayPrototypePush(result.positionals, arg);
-    pos++;
   }
 
   return result;
