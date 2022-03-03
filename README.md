@@ -28,7 +28,7 @@ It is exceedingly difficult to provide an API which would both be friendly to th
 - [🙌 Contributing](#-contributing)
 - [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
   - [Implementation:](#implementation)
-- [💡 `util.parseArgs(argv)` Proposal](#-utilparseargsargv-proposal)
+- [💡 `util.parseArgs([config])` Proposal](#-utilparseargsconfig-proposal)
 - [📃 Examples](#-examples)
   - [F.A.Qs](#faqs)
 
@@ -78,12 +78,12 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
 
 * `config` {Object} (Optional) The `config` parameter is an
   object supporting the following properties:
-  * `argv` {string[]} (Optional) Array of argument strings; defaults
+  * `args` {string[]} (Optional) Array of argument strings; defaults
     to [`process.mainArgs`](process_argv)
-  * `options` {Object} (Optional) An object describing the known options to look for in `argv`; `options` keys are the long names of the known options, and the values are objects with the following properties:
+  * `options` {Object} (Optional) An object describing the known options to look for in `args`; `options` keys are the long names of the known options, and the values are objects with the following properties:
     * `type` {'string'|'boolean'} (Optional) Type of known option; defaults to `'boolean'`; 
-    * `multiples` {boolean} (Optional) If true, when appearing one or more times in `argv`, results are collected in an `Array`
-    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `argv`; Respects the `multiples` configuration
+    * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
+    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
@@ -101,9 +101,9 @@ const { parseArgs } = require('@pkgjs/parseargs');
 ```js
 // unconfigured
 const { parseArgs } = require('@pkgjs/parseargs');
-const argv = ['-f', '--foo=a', '--bar', 'b'];
+const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {};
-const { flags, values, positionals } = parseArgs({ argv, options });
+const { flags, values, positionals } = parseArgs({ args, options });
 // flags = { f: true, bar: true }
 // values = { foo: 'a' }
 // positionals = ['b']
@@ -112,13 +112,13 @@ const { flags, values, positionals } = parseArgs({ argv, options });
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
 // withValue
-const argv = ['-f', '--foo=a', '--bar', 'b'];
+const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
   foo: {
     type: 'string',
   },
 };
-const { flags, values, positionals } = parseArgs({ argv, options });
+const { flags, values, positionals } = parseArgs({ args, options });
 // flags = { f: true }
 // values = { foo: 'a', bar: 'b' }
 // positionals = []
@@ -126,15 +126,15 @@ const { flags, values, positionals } = parseArgs({ argv, options });
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
-// withValue & multiples
-const argv = ['-f', '--foo=a', '--foo', 'b'];
+// withValue & multiple
+const args = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
   foo: {
     type: 'string',
-    multiples: true,
+    multiple: true,
   },
 };
-const { flags, values, positionals } = parseArgs({ argv, options });
+const { flags, values, positionals } = parseArgs({ args, options });
 // flags = { f: true }
 // values = { foo: ['a', 'b'] }
 // positionals = []
@@ -143,13 +143,13 @@ const { flags, values, positionals } = parseArgs({ argv, options });
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
 // shorts
-const argv = ['-f', 'b'];
+const args = ['-f', 'b'];
 const options = {
   foo: {
     short: 'f',
   },
 };
-const { flags, values, positionals } = parseArgs({ argv, options });
+const { flags, values, positionals } = parseArgs({ args, options });
 // flags = { foo: true }
 // values = {}
 // positionals = ['b']
