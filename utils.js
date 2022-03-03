@@ -2,10 +2,9 @@
 
 const {
   ArrayPrototypeFind,
-  ObjectAssign,
   ObjectEntries,
-  ObjectValues,
   StringPrototypeCharAt,
+  StringPrototypeIncludes,
   StringPrototypeStartsWith,
 } = require('./primordials');
 
@@ -18,12 +17,12 @@ const {
  * Determines if the argument may be used as an option value.
  * NB: We are choosing not to accept option-ish arguments.
  * @example
- * isPossibleOptionValue('V']) // returns true
- * isPossibleOptionValue('-v') // returns false
- * isPossibleOptionValue('--foo') // returns false
- * isPossibleOptionValue(undefined) // returns false
+ * isOptionValue('V']) // returns true
+ * isOptionValue('-v') // returns false
+ * isOptionValue('--foo') // returns false
+ * isOptionValue(undefined) // returns false
  */
-function isPossibleOptionValue(value) {
+function isOptionValue(value) {
   if (value === undefined) return false;
   if (value === '-') return true; // e.g. representing stdin/stdout for file
 
@@ -46,82 +45,61 @@ function isLoneShortOption(arg) {
 }
 
 /**
- * Determines if `arg` is a long option, which may have a trailing value.
+ * Determines if `arg` is a lone long option.
  * @example
- * isLongOption('-a) // returns false
- * isLongOption('--foo) // returns true
- * isLongOption('--foo=bar) // returns true
+ * isLoneLongOption('a') // returns false
+ * isLoneLongOption('-a') // returns false
+ * isLoneLongOption('--foo) // returns true
+ * isLoneLongOption('--foo=bar) // returns false
  */
-function isLongOption(arg) {
-  return arg.length > 2 && StringPrototypeStartsWith(arg, '--');
-}
-
-function getDefaultOptionConfig() {
-  return {
-    short: undefined,
-    type: 'boolean',
-    multiple: false
-  };
+function isLoneLongOption(arg) {
+  return arg.length > 2 &&
+    StringPrototypeStartsWith(arg, '--') &&
+    !StringPrototypeIncludes(arg.slice(3), '=');
 }
 
 /**
- * Lookup option config. Returns undefined if no match.
+ * Determines if `arg` is a long option and value in same argument.
+ * @example
+ * isLongOptionAndValue('--foo) // returns true
+ * isLongOptionAndValue('--foo=bar) // returns false
  */
-function findOptionConfigFromShort(shortOption, options) {
-  const foundConfig = ArrayPrototypeFind(
-    ObjectValues(options),
-    (optionConfig) => optionConfig.short === shortOption
-  );
-  return foundConfig;
+function isLongOptionAndValue(arg) {
+  return arg.length > 2 &&
+    StringPrototypeStartsWith(arg, '--') &&
+    StringPrototypeIncludes(arg.slice(3), '=');
 }
 
 /**
- * Populate an option config using options and defaults.
+ * Determines if `arg` is a short option group.
+ *
+ * See Guideline 5 of the [Open Group Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html).
+ *   One or more options without option-arguments, followed by at most one
+ *   option that takes an option-argument, should be accepted when grouped
+ *   behind one '-' delimiter.
+ * @example
+ * isShortOptionGroup('-a', {}) // returns false
+ * isShortOptionGroup('-ab', {}) // returns true
+ * // -fb is an option and a value, not a short option group
+ * isShortOptionGroup('-fb', {
+ *   options: { f: { type: 'string' }}
+ * }) // returns false
+ * isShortOptionGroup('-bf', {
+ *   options: { f: { type: 'string' }}
+ * }) // returns true
+ * // -bfb is an edge case, return true and caller sorts it out
+ * isShortOptionGroup('-bfb', {
+ *   options: { f: { type: 'string' }}
+ * }) // returns true
  */
-function getOptionConfigFromShort(shortOption, options) {
-  const optionConfig = findOptionConfigFromShort(shortOption, options) || {};
-  return ObjectAssign(getDefaultOptionConfig(), optionConfig);
-}
-
-/**
- * Return whether a short option is of boolean type, implicitly or explicitly.
- */
-function isShortOfTypeBoolean(shortOption, options) {
-  if (!options) throw new Error('Internal error, missing options argument');
-
-  const optionConfig = getOptionConfigFromShort(shortOption, options);
-  return optionConfig.type === 'boolean';
-}
-
-/**
-   * Determines if `arg` is a short option group.
-   *
-   * See Guideline 5 of the [Open Group Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html).
-   *   One or more options without option-arguments, followed by at most one
-   *   option that takes an option-argument, should be accepted when grouped
-   *   behind one '-' delimiter.
-   * @example
-   * isShortOptionGroup('-a', {}) // returns false
-   * isShortOptionGroup('-ab', {}) // returns true
-   * // -fb is an option and a value, not a short option group
-   * isShortOptionGroup('-fb', {
-   *   options: { f: { type: 'string' }}
-   * }) // returns false
-   * isShortOptionGroup('-bf', {
-   *   options: { f: { type: 'string' }}
-   * }) // returns true
-   * // -bfb is an edge case, return true and caller sorts it out
-   * isShortOptionGroup('-bfb', {
-   *   options: { f: { type: 'string' }}
-   * }) // returns true
-   */
 function isShortOptionGroup(arg, options) {
   if (arg.length <= 2) return false;
   if (StringPrototypeCharAt(arg, 0) !== '-') return false;
   if (StringPrototypeCharAt(arg, 1) === '-') return false;
 
   const firstShort = StringPrototypeCharAt(arg, 1);
-  return isShortOfTypeBoolean(firstShort, options);
+  const longOption = findLongOptionForShort(firstShort, options);
+  return (options[longOption]?.type !== 'string');
 }
 
 /**
@@ -144,8 +122,9 @@ function findLongOptionForShort(shortOption, options) {
 
 module.exports = {
   findLongOptionForShort,
-  isLongOption,
+  isLoneLongOption,
   isLoneShortOption,
-  isPossibleOptionValue,
+  isLongOptionAndValue,
+  isOptionValue,
   isShortOptionGroup
 };
