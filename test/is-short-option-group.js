@@ -2,7 +2,7 @@
 /* eslint max-len: 0 */
 
 const test = require('tape');
-const { isShortOptionGroup } = require('../util.js');
+const { isShortOptionGroup } = require('../utils.js');
 
 test('isShortOptionGroup: when passed lone short option then returns false', (t) => {
   t.false(isShortOptionGroup('-s', {}));

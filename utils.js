@@ -3,6 +3,7 @@
 const {
   ArrayPrototypeFind,
   ObjectAssign,
+  ObjectEntries,
   ObjectValues,
   StringPrototypeCharAt,
   StringPrototypeStartsWith,
@@ -123,7 +124,26 @@ function isShortOptionGroup(arg, options) {
   return isShortOfTypeBoolean(firstShort, options);
 }
 
+/**
+ * Find the key to use for a short option. Looks for a configured
+ * `short` and returns the short option itself it not found.
+ * @example
+ * findOptionsKeyForShort('a', {}) // returns 'a'
+ * findOptionsKeyForShort('b', {
+ *   options: { bar: { short: 'b' }}
+ * }) // returns 'bar'
+ */
+function findLongOptionForShort(shortOption, options) {
+  if (!options) throw new Error('Internal error, missing options argument');
+  const [longOption] = ArrayPrototypeFind(
+    ObjectEntries(options),
+    ([, optionConfig]) => optionConfig.short === shortOption
+  ) || [];
+  return longOption || shortOption;
+}
+
 module.exports = {
+  findLongOptionForShort,
   isLongOption,
   isLoneShortOption,
   isPossibleOptionValue,

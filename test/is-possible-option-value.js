@@ -2,7 +2,7 @@
 /* eslint max-len: 0 */
 
 const test = require('tape');
-const { isPossibleOptionValue } = require('../util.js');
+const { isPossibleOptionValue } = require('../utils.js');
 
 test('isPossibleOptionValue: when passed plain text then returns true', (t) => {
   t.true(isPossibleOptionValue('abc'));

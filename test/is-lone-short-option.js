@@ -2,7 +2,7 @@
 /* eslint max-len: 0 */
 
 const test = require('tape');
-const { isLoneShortOption } = require('../util.js');
+const { isLoneShortOption } = require('../utils.js');
 
 test('isLoneShortOption: when passed short option then returns true', (t) => {
   t.true(isLoneShortOption('-s'));
