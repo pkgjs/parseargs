@@ -124,7 +124,7 @@ const parseArgs = ({
     positionals: []
   };
 
-  const remainingArgs = ArrayPrototypeSlice(args);
+  let remainingArgs = ArrayPrototypeSlice(args);
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
@@ -169,7 +169,9 @@ const parseArgs = ({
           // Expand -abfFILE to -a -b -fFILE
           ArrayPrototypePush(expanded, ArrayPrototypeSlice(index));
           break; // finished short group
+        }
       }
+      remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
       continue;
     }
 
