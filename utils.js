@@ -103,6 +103,26 @@ function isShortOptionGroup(arg, options) {
 }
 
 /**
+ * Determine is arg is a short string option followed by its value.
+ * @example
+ * isShortOptionAndValue('-a, {}); // returns false
+ * isShortOptionAndValue('-ab, {}); // returns false
+ * isShortOptionAndValue('-fFILE', {
+ *   options: { foo: { short: 'f', type: 'string' }}
+ * }) // returns true
+ */
+function isShortOptionAndValue(arg, options) {
+  if (!options) throw new Error('Internal error, missing options argument');
+  if (arg.length <= 2) return false;
+  if (StringPrototypeCharAt(arg, 0) !== '-') return false;
+  if (StringPrototypeCharAt(arg, 1) === '-') return false;
+
+  const shortOption = StringPrototypeCharAt(arg, 1);
+  const longOption = findLongOptionForShort(shortOption, options);
+  return (options[longOption]?.type === 'string');
+}
+
+/**
  * Find the key to use for a short option. Looks for a configured
  * `short` and returns the short option itself it not found.
  * @example
@@ -126,5 +146,6 @@ module.exports = {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
+  isShortOptionAndValue,
   isShortOptionGroup
 };

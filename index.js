@@ -27,7 +27,9 @@ const {
   isLoneLongOption,
   isLoneShortOption,
   isLongOptionAndValue,
-  isOptionValue
+  isOptionValue,
+  isShortOptionAndValue,
+  isShortOptionGroup
 } = require('./utils');
 
 function getMainArgs() {
@@ -149,6 +151,37 @@ const parseArgs = ({
       }
       storeOptionValue(options, longOption, optionValue, result);
       continue;
+    }
+
+    if (isShortOptionGroup(arg, options)) {
+      // e.g. '-abc'
+      for (let index = 1; index < arg.length; index++) {
+        const shortOption = StringPrototypeCharAt(arg, index);
+        const longOption = findLongOptionForShort(shortOption, options);
+        if (options[longOption]?.type !== 'string') {
+          // Store boolean option.
+          storeOptionValue(options, longOption, undefined, result);
+        } else if (index === arg.length - 1) {
+          // String option on end of group, process separately.
+          remainingArgs.unshift(`-${shortOption}`);
+        } else {
+          // String option in middle. Urk.
+          // ToDo: if strict then throw
+          // Eat remaining arg as value.
+          const optionValue = arg.slice(index + 1);
+          storeOptionValue(options, longOption, optionValue, result);
+          break; // finished short group
+        }
+      }
+      continue;
+    }
+
+    if (isShortOptionAndValue(arg, options)) {
+      // e.g. -fFILE
+      const shortOption = StringPrototypeCharAt(arg, 1);
+      const longOption = findLongOptionForShort(shortOption, options);
+      const optionValue = arg.slice(2);
+      storeOptionValue(options, longOption, optionValue, result);
     }
 
     if (isLoneLongOption(arg)) {
