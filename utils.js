@@ -8,10 +8,12 @@ const {
   StringPrototypeStartsWith,
 } = require('./primordials');
 
-// These are internal utilities to make the parsing logic easier to read. They
-// are not for client use. They are in a separate file to allow unit testing,
-// although that is not essential (this could be rolled into main file
-// and just tested implicitly via API).
+// These are internal utilities to make the parsing logic easier to read, and
+// add lots of detail for the curious. They are in a separate file to allow
+// unit testing, although that is not essential (this could be rolled into
+// main file and just tested implicitly via API).
+//
+// These routines are for internal use, not for export to client.
 
 /**
  * Determines if the argument may be used as an option value.
@@ -26,8 +28,9 @@ function isOptionValue(value) {
   if (value === undefined) return false;
   if (value === '-') return true; // e.g. representing stdin/stdout for file
 
-  // Open Group Utility Conventions are that an option-argument may start
-  // with a dash, but we are currentlly rejecting these and prioritising the
+  // Open Group Utility Conventions are that an option-argument
+  // is the argument after the option, and may start with a dash.
+  // However, we are currently rejecting these and prioritising the
   // option-like appearance of the argument. Rejection allows more error
   // detection for strict:true, but comes at the cost of rejecting intended
   // values starting with a dash, especially negative numbers.
@@ -123,8 +126,8 @@ function isShortOptionAndValue(arg, options) {
 }
 
 /**
- * Find the key to use for a short option. Looks for a configured
- * `short` and returns the short option itself it not found.
+ * Find the long option associated with a short option. Looks for a configured
+ * `short` and returns the short option itself if long option not found.
  * @example
  * findOptionsKeyForShort('a', {}) // returns 'a'
  * findOptionsKeyForShort('b', {
