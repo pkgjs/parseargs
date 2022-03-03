@@ -167,7 +167,7 @@ const parseArgs = ({
           // String option in middle. Yuck.
           // ToDo: if strict then throw
           // Expand -abfFILE to -a -b -fFILE
-          ArrayPrototypePush(expanded, ArrayPrototypeSlice(index));
+          ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
         }
       }
@@ -179,8 +179,9 @@ const parseArgs = ({
       // e.g. -fFILE
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
-      const optionValue = arg.slice(2);
+      const optionValue = StringPrototypeSlice(arg, 2);
       storeOptionValue(options, longOption, optionValue, result);
+      continue;
     }
 
     if (isLoneLongOption(arg)) {
