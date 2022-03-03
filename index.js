@@ -67,8 +67,18 @@ function getMainArgs() {
 function storeOptionValue(strict, options, longOption, value, result) {
   const hasOptionConfig = ObjectHasOwn(options, longOption);
 
-  if (strict && !hasOptionConfig) {
-    throw new ERR_UNKNOWN_OPTION(longOption);
+  if (strict) {
+    if (!hasOptionConfig) {
+      throw new ERR_UNKNOWN_OPTION(longOption);
+    }
+
+    if (options[longOption].type === 'string' && value == null) {
+      throw new Error(`Missing value for 'string' option: --${longOption}`);
+    }
+
+    if (options[longOption].type === 'boolean' && value != null) {
+      throw new Error(`Unexpected value for 'boolean' option: --${longOption}`);
+    }
   }
 
   const optionConfig = hasOptionConfig ? options[longOption] : {};
