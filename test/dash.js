@@ -11,9 +11,9 @@ const { parseArgs } = require('../index.js');
 test("dash: when args include '-' used as positional then result has '-' in positionals", (t) => {
   const passedArgs = ['-'];
 
-  const args = parseArgs(passedArgs);
+  const result = parseArgs({ args: passedArgs });
   const expected = { flags: {}, values: {}, positionals: ['-'] };
-  t.deepEqual(args, expected);
+  t.deepEqual(result, expected);
 
   t.end();
 });
@@ -21,11 +21,11 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 // If '-' is a valid positional, it is symmetrical to allow it as an option value too.
 test("dash: when args include '-' used as space-separated option value then result has '-' in option value", (t) => {
   const passedArgs = ['-v', '-'];
-  const options = { withValue: ['v'] };
+  const options = { v: { type: 'string' } };
 
-  const args = parseArgs(passedArgs, options);
+  const result = parseArgs({ args: passedArgs, options });
   const expected = { flags: { v: true }, values: { v: '-' }, positionals: [] };
-  t.deepEqual(args, expected);
+  t.deepEqual(result, expected);
 
   t.end();
 });
