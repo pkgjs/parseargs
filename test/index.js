@@ -388,9 +388,7 @@ test('unknown long option --bar', function(t) {
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_UNKNOWN_OPTION'
-  });
+  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
 
   t.end();
 });
@@ -400,9 +398,7 @@ test('unknown short option -b', function(t) {
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_UNKNOWN_OPTION'
-  });
+  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
 
   t.end();
 });
@@ -412,9 +408,7 @@ test('unknown option -r in short option group -bar', function(t) {
   const passedOptions = { foo: { type: 'boolean' }, b: { type: 'boolean' }, a: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_UNKNOWN_OPTION'
-  });
+  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
 
   t.end();
 });
@@ -424,9 +418,7 @@ test('unknown option with explicit value', function(t) {
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_UNKNOWN_OPTION'
-  });
+  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
 
   t.end();
 });
