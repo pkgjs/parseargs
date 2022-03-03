@@ -24,12 +24,6 @@ const {
   validateBoolean,
 } = require('./validators');
 
-const {
-  codes: {
-    ERR_UNKNOWN_OPTION,
-  },
-} = require('./errors');
-
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
@@ -69,7 +63,7 @@ function storeOptionValue(strict, options, longOption, value, result) {
 
   if (strict) {
     if (!hasOptionConfig) {
-      throw new ERR_UNKNOWN_OPTION(longOption);
+      throw new Error(`Unknown option: --${longOption}`);
     }
 
     if (options[longOption].type === 'string' && value == null) {
