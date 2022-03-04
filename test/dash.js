@@ -10,11 +10,11 @@ const { parseArgs } = require('../index.js');
 // https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
 test("dash: when args include '-' used as positional then result has '-' in positionals", (t) => {
   const passedArgs = ['-'];
+  const expected = { flags: {}, values: {}, positionals: ['-'] };
 
   const result = parseArgs({ args: passedArgs });
-  const expected = { flags: {}, values: {}, positionals: ['-'] };
-  t.deepEqual(result, expected);
 
+  t.deepEqual(result, expected);
   t.end();
 });
 
@@ -22,10 +22,10 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 test("dash: when args include '-' used as space-separated option value then result has '-' in option value", (t) => {
   const passedArgs = ['-v', '-'];
   const options = { v: { type: 'string' } };
+  const expected = { flags: { v: true }, values: { v: '-' }, positionals: [] };
 
   const result = parseArgs({ args: passedArgs, options });
-  const expected = { flags: { v: true }, values: { v: '-' }, positionals: [] };
-  t.deepEqual(result, expected);
 
+  t.deepEqual(result, expected);
   t.end();
 });
