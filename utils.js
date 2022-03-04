@@ -70,7 +70,7 @@ function isLoneLongOption(arg) {
 function isLongOptionAndValue(arg) {
   return arg.length > 2 &&
     StringPrototypeStartsWith(arg, '--') &&
-    StringPrototypeIncludes(arg.slice(3), '=');
+    StringPrototypeIncludes(StringPrototypeSlice(arg, 3), '=');
 }
 
 /**
