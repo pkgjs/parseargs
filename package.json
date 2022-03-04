@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "coverage": "c8 --check-coverage tape 'test/*.js'",
-    "test": "c8 tape 'test/*.js'",    "posttest": "eslint .",
+    "test": "c8 tape 'test/*.js'",
+    "posttest": "eslint .",
     "fix": "npm run posttest -- --fix"
   },
   "repository": {
