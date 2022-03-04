@@ -26,7 +26,7 @@ const {
  * isOptionValue(undefined) // returns false
  */
 function isOptionValue(value) {
-  if (value === undefined) return false;
+  if (value == null) return false;
   if (value === '-') return true; // e.g. representing stdin/stdout for file
 
   // Open Group Utility Conventions are that an option-argument
