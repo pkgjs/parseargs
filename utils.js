@@ -65,8 +65,8 @@ function isLoneLongOption(arg) {
 /**
  * Determines if `arg` is a long option and value in same argument.
  * @example
- * isLongOptionAndValue('--foo) // returns true
- * isLongOptionAndValue('--foo=bar) // returns false
+ * isLongOptionAndValue('--foo) // returns false
+ * isLongOptionAndValue('--foo=bar) // returns true
  */
 function isLongOptionAndValue(arg) {
   return arg.length > 2 &&
