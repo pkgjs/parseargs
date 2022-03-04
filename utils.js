@@ -5,6 +5,7 @@ const {
   ObjectEntries,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
+  StringPrototypeSlice,
   StringPrototypeStartsWith,
 } = require('./primordials');
 
