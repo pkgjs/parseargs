@@ -24,10 +24,10 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 // If '-' is a valid positional, it is symmetrical to allow it as an option value too.
 test("dash: when args include '-' used as space-separated option value then result has '-' in option value", (t) => {
   const passedArgs = ['-v', '-'];
-  const options = { v: { type: 'string' } };
+  const passedOptions = { v: { type: 'string' } };
   const expected = { flags: { v: true }, values: { v: '-' }, positionals: [] };
 
-  const result = parseArgs({ args: passedArgs, options });
+  const result = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected);
   t.end();
