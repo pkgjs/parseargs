@@ -9,7 +9,7 @@ test('isLoneShortOption: when passed short option then returns true', (t) => {
   t.end();
 });
 
-test('isLoneShortOption: when passed short option group then returns false', (t) => {
+test('isLoneShortOption: when passed short option group (or might be short and value) then returns false', (t) => {
   t.false(isLoneShortOption('-abc'));
   t.end();
 });
