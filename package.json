@@ -3,7 +3,10 @@
   "version": "0.3.0",
   "description": "Polyfill of future proposal for `util.parseArgs()`",
   "main": "index.js",
-  "exports": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "coverage": "c8 --check-coverage tape 'test/*.js'",
     "test": "c8 tape 'test/*.js'",
