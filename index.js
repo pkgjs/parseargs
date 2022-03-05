@@ -189,7 +189,7 @@ const parseArgs = ({
       const longOption = StringPrototypeSlice(arg, 2);
       let optionValue;
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
-        // e.g. '-foo', 'bar'
+        // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
       storeOptionValue(options, longOption, optionValue, result);
