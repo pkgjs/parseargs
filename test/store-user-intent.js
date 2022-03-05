@@ -8,7 +8,8 @@ const { parseArgs } = require('../index.js');
 // Rationale
 //
 // John Gee:
-// Looks like a boolean option, stored like a flag. Looks like a string option, stored like a string option.
+// - Looks like a boolean option, stored like a boolean option.
+// - Looks like a string option, stored like a string option.
 // No loss of information. No new pattern to learn in result.
 //
 // Jordan Harband: In other words, the way they're stored matches the intention of the user,
@@ -41,8 +42,8 @@ test('when use string long option used as boolean then result as if boolean', (t
 
 test('when use boolean long option used as string then result as if string', (t) => {
   const passedArgs = ['--bool=OOPS'];
-  const stringOptions = { bool: { short: 'b', type: 'string' } };
-  const booleanOptions = { bool: { short: 'b', type: 'boolean' } };
+  const stringOptions = { bool: { type: 'string' } };
+  const booleanOptions = { bool: { type: 'boolean' } };
 
   const stringConfigResult = parseArgs({ args: passedArgs, options: stringOptions, strict: false });
   const booleanConfigResult = parseArgs({ args: passedArgs, options: booleanOptions, strict: false });

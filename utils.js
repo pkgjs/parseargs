@@ -130,8 +130,8 @@ function isShortOptionAndValue(arg, options) {
  * Find the long option associated with a short option. Looks for a configured
  * `short` and returns the short option itself if long option not found.
  * @example
- * findOptionsKeyForShort('a', {}) // returns 'a'
- * findOptionsKeyForShort('b', {
+ * findLongOptionForShort('a', {}) // returns 'a'
+ * findLongOptionForShort('b', {
  *   options: { bar: { short: 'b' }}
  * }) // returns 'bar'
  */
