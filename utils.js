@@ -123,7 +123,7 @@ function isShortOptionAndValue(arg, options) {
 
   const shortOption = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(shortOption, options);
-  return (options[longOption]?.type === 'string');
+  return options[longOption]?.type === 'string';
 }
 
 /**
