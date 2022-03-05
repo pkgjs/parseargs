@@ -103,7 +103,7 @@ function isShortOptionGroup(arg, options) {
 
   const firstShort = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(firstShort, options);
-  return (options[longOption]?.type !== 'string');
+  return options[longOption]?.type !== 'string';
 }
 
 /**
