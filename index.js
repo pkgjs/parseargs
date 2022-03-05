@@ -137,7 +137,7 @@ const parseArgs = ({
         result.positionals,
         remainingArgs
       );
-      break; // Finished processing argv, leave while loop.
+      break; // Finished processing args, leave while loop.
     }
 
     if (isLoneShortOption(arg)) {
