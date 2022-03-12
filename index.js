@@ -69,8 +69,8 @@ function getMainArgs() {
 function storeOptionValue(options, longOption, value, result) {
   const optionConfig = options[longOption] || {};
 
-  // Flags
-  result.flags[longOption] = true;
+  // foundOptions
+  result.foundOptions[longOption] = true;
 
   // Values
   if (optionConfig.multiple) {
@@ -119,7 +119,7 @@ const parseArgs = ({
   );
 
   const result = {
-    flags: {},
+    foundOptions: {},
     values: {},
     positionals: []
   };
