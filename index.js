@@ -2,10 +2,9 @@
 
 const {
   ArrayPrototypeConcat,
-  ArrayPrototypeFind,
   ArrayPrototypeForEach,
+  ArrayPrototypeShift,
   ArrayPrototypeSlice,
-  ArrayPrototypeSplice,
   ArrayPrototypePush,
   ObjectHasOwn,
   ObjectEntries,
@@ -13,7 +12,6 @@ const {
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
-  StringPrototypeStartsWith,
 } = require('./primordials');
 
 const {
@@ -23,6 +21,16 @@ const {
   validateUnion,
   validateBoolean,
 } = require('./validators');
+
+const {
+  findLongOptionForShort,
+  isLoneLongOption,
+  isLoneShortOption,
+  isLongOptionAndValue,
+  isOptionValue,
+  isShortOptionAndValue,
+  isShortOptionGroup
+} = require('./utils');
 
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
@@ -116,86 +124,89 @@ const parseArgs = ({
     positionals: []
   };
 
-  let pos = 0;
-  while (pos < args.length) {
-    let arg = args[pos];
+  let remainingArgs = ArrayPrototypeSlice(args);
+  while (remainingArgs.length > 0) {
+    const arg = ArrayPrototypeShift(remainingArgs);
+    const nextArg = remainingArgs[0];
 
-    if (StringPrototypeStartsWith(arg, '-')) {
-      if (arg === '-') {
-        // '-' commonly used to represent stdin/stdout, treat as positional
-        result.positionals = ArrayPrototypeConcat(result.positionals, '-');
-        ++pos;
-        continue;
-      } else if (arg === '--') {
-        // Everything after a bare '--' is considered a positional argument
-        // and is returned verbatim
-        result.positionals = ArrayPrototypeConcat(
-          result.positionals,
-          ArrayPrototypeSlice(args, ++pos)
-        );
-        return result;
-      } else if (StringPrototypeCharAt(arg, 1) !== '-') {
-        // Look for shortcodes: -fXzy and expand them to -f -X -z -y:
-        if (arg.length > 2) {
-          for (let i = 2; i < arg.length; i++) {
-            const shortOption = StringPrototypeCharAt(arg, i);
-            // Add 'i' to 'pos' such that short options are parsed in order
-            // of definition:
-            ArrayPrototypeSplice(args, pos + (i - 1), 0, `-${shortOption}`);
-          }
-        }
-
-        arg = StringPrototypeCharAt(arg, 1); // short
-
-        const [longOption] = ArrayPrototypeFind(
-          ObjectEntries(options),
-          ([, optionConfig]) => optionConfig.short === arg
-        ) || [];
-
-        arg = longOption ?? arg;
-
-        // ToDo: later code tests for `=` in arg and wrong for shorts
-      } else {
-        arg = StringPrototypeSlice(arg, 2); // remove leading --
-      }
-
-      if (StringPrototypeIncludes(arg, '=')) {
-        // Store option=value same way independent of `type: "string"` as:
-        // - looks like a value, store as a value
-        // - match the intention of the user
-        // - preserve information for author to process further
-        const index = StringPrototypeIndexOf(arg, '=');
-        storeOptionValue(
-          options,
-          StringPrototypeSlice(arg, 0, index),
-          StringPrototypeSlice(arg, index + 1),
-          result);
-      } else if (pos + 1 < args.length &&
-        !StringPrototypeStartsWith(args[pos + 1], '-')
-      ) {
-        // `type: "string"` option should also support setting values when '='
-        // isn't used ie. both --foo=b and --foo b should work
-
-        // If `type: "string"` option is specified, take next position argument
-        // as value and then increment pos so that we don't re-evaluate that
-        // arg, else set value as undefined ie. --foo b --bar c, after setting
-        // b as the value for foo, evaluate --bar next and skip 'b'
-        const val = options[arg] && options[arg].type === 'string' ?
-          args[++pos] :
-          undefined;
-        storeOptionValue(options, arg, val, result);
-      } else {
-        // Cases when an arg is specified without a value, example
-        // '--foo --bar' <- 'foo' and 'bar' flags should be set to true and
-        // save value as undefined
-        storeOptionValue(options, arg, undefined, result);
-      }
-    } else {
-      // Arguments without a dash prefix are considered "positional"
-      ArrayPrototypePush(result.positionals, arg);
+    // Check if `arg` is an options terminator.
+    // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+    if (arg === '--') {
+      // Everything after a bare '--' is considered a positional argument.
+      result.positionals = ArrayPrototypeConcat(
+        result.positionals,
+        remainingArgs
+      );
+      break; // Finished processing args, leave while loop.
     }
 
-    pos++;
+    if (isLoneShortOption(arg)) {
+      // e.g. '-f'
+      const shortOption = StringPrototypeCharAt(arg, 1);
+      const longOption = findLongOptionForShort(shortOption, options);
+      let optionValue;
+      if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
+        // e.g. '-f', 'bar'
+        optionValue = ArrayPrototypeShift(remainingArgs);
+      }
+      storeOptionValue(options, longOption, optionValue, result);
+      continue;
+    }
+
+    if (isShortOptionGroup(arg, options)) {
+      // Expand -fXzy to -f -X -z -y
+      const expanded = [];
+      for (let index = 1; index < arg.length; index++) {
+        const shortOption = StringPrototypeCharAt(arg, index);
+        const longOption = findLongOptionForShort(shortOption, options);
+        if (options[longOption]?.type !== 'string' ||
+          index === arg.length - 1) {
+          // Boolean option, or last short in group. Well formed.
+          ArrayPrototypePush(expanded, `-${shortOption}`);
+        } else {
+          // String option in middle. Yuck.
+          // ToDo: if strict then throw
+          // Expand -abfFILE to -a -b -fFILE
+          ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
+          break; // finished short group
+        }
+      }
+      remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
+      continue;
+    }
+
+    if (isShortOptionAndValue(arg, options)) {
+      // e.g. -fFILE
+      const shortOption = StringPrototypeCharAt(arg, 1);
+      const longOption = findLongOptionForShort(shortOption, options);
+      const optionValue = StringPrototypeSlice(arg, 2);
+      storeOptionValue(options, longOption, optionValue, result);
+      continue;
+    }
+
+    if (isLoneLongOption(arg)) {
+      // e.g. '--foo'
+      const longOption = StringPrototypeSlice(arg, 2);
+      let optionValue;
+      if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
+        // e.g. '--foo', 'bar'
+        optionValue = ArrayPrototypeShift(remainingArgs);
+      }
+      storeOptionValue(options, longOption, optionValue, result);
+      continue;
+    }
+
+    if (isLongOptionAndValue(arg)) {
+      // e.g. --foo=bar
+      const index = StringPrototypeIndexOf(arg, '=');
+      const longOption = StringPrototypeSlice(arg, 2, index);
+      const optionValue = StringPrototypeSlice(arg, index + 1);
+      storeOptionValue(options, longOption, optionValue, result);
+      continue;
+    }
+
+    // Anything left is a positional
+    ArrayPrototypePush(result.positionals, arg);
   }
 
   return result;
