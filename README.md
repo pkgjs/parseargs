@@ -3,9 +3,9 @@
 
 [![Coverage][coverage-image]][coverage-url]
 
-> 
+>
 > 🚨  THIS REPO IS AN EARLY WIP -- DO NOT USE ... yet 🚨
-> 
+>
 
 Polyfill of future proposal to the [nodejs/tooling](https://github.com/nodejs/tooling) repo for `util.parseArgs()`
 
@@ -86,8 +86,8 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
-  * `flags` {Object}, having properties and `Boolean` values corresponding to parsed options passed
-  * `values` {Object}, have properties and `String` values corresponding to parsed options passed
+  * `foundOptions` {Object}, key:true for each option found in the input `args`
+  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array for  options configured as "multiple".
   * `positionals` {string[]}, containing [Positionals][]
 
 ----
@@ -103,30 +103,30 @@ const { parseArgs } = require('@pkgjs/parseargs');
 const { parseArgs } = require('@pkgjs/parseargs');
 const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {};
-const { flags, values, positionals } = parseArgs({ args, options });
-// flags = { f: true, bar: true }
-// values = { foo: 'a' }
+const { foundOptions, values, positionals } = parseArgs({ args, options });
+// foundOptions = { f: true, foo: true, bar: true }
+// values = { f: true, foo: 'a', bar: true }
 // positionals = ['b']
 ```
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
-// withValue
+// type:string
 const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
-  foo: {
+  bar: {
     type: 'string',
   },
 };
-const { flags, values, positionals } = parseArgs({ args, options });
-// flags = { f: true }
-// values = { foo: 'a', bar: 'b' }
+const { foundOptions, values, positionals } = parseArgs({ args, options });
+// foundOptions = { f: true, foo: true, bar: true }
+// values = { f: true, foo: 'a', bar: 'b' }
 // positionals = []
 ```
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
-// withValue & multiple
+// type:string & multiple
 const args = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
   foo: {
@@ -134,9 +134,9 @@ const options = {
     multiple: true,
   },
 };
-const { flags, values, positionals } = parseArgs({ args, options });
-// flags = { f: true }
-// values = { foo: ['a', 'b'] }
+const { foundOptions, values, positionals } = parseArgs({ args, options });
+// foundOptions = { f: true, foo: true }
+// values = { f: true, foo: [ 'a', 'b' ] }
 // positionals = []
 ```
 
@@ -149,9 +149,9 @@ const options = {
     short: 'f',
   },
 };
-const { flags, values, positionals } = parseArgs({ args, options });
-// flags = { foo: true }
-// values = {}
+const { foundOptions, values, positionals } = parseArgs({ args, options });
+// foundOptions = { foo: true }
+// values = { foo: true }
 // positionals = ['b']
 ```
 
@@ -189,17 +189,20 @@ const { flags, values, positionals } = parseArgs({ args, options });
   - `"0o22"`
 - Does it coerce types?
   - no
-- Does `--no-foo` coerce to `--foo=false`?  For all flags?  Only boolean flags?
-  - no, it sets `{args:{'no-foo': true}}`
+- Does `--no-foo` coerce to `--foo=false`?  For all options?  Only boolean options?
+  - no, it sets `{values:{'no-foo': true}}`
 - Is `--foo` the same as `--foo=true`?  Only for known booleans?  Only at the end?
-  - no, `--foo` is the same as `--foo=`
+  - no, `--foo` is a boolean option and `--foo=true` is a string option
 - Does it read environment variables?  Ie, is `FOO=1 cmd` the same as `cmd --foo=1`?
   - no
 - Do unknown arguments raise an error?  Are they parsed?  Are they treated as positional arguments?
   - no, they are parsed, not treated as positionals
-- Does `--` signal the end of flags/options?
-  - **open question**
-  - If `--` signals the end, is `--` included as a positional?  is `program -- foo` the same as `program foo`?  Are both `{positionals:['foo']}`, or is the first one `{positionals:['--', 'foo']}`?
+- Does `--` signal the end of options?
+  - yes
+- Is `--` included as a positional?
+  - no
+- Is `program -- foo` the same as `program foo`?
+  - yes, both store `{positionals:['foo']}`
 - Does the API specify whether a `--` was present/relevant?
   - no
 - Is `-bar` the same as `--bar`?
@@ -207,8 +210,8 @@ const { flags, values, positionals } = parseArgs({ args, options });
     [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
   - no 
-  - the first flag would be parsed as `'-foo'`
-  - the second flag would be parsed as `'foo'`
+  - the first is a long option named `'-foo'`
+  - the second is a long option named `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`
   - yes
 
