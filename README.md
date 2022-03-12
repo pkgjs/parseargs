@@ -87,7 +87,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
   * `foundOptions` {Object}, key:true for each option found in the input `args`
-  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array for  options configured as "multiple".
+  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array for  options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
 
 ----
