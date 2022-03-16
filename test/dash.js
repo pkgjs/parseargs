@@ -13,7 +13,7 @@ const { parseArgs } = require('../index.js');
 
 test("dash: when args include '-' used as positional then result has '-' in positionals", (t) => {
   const passedArgs = ['-'];
-  const expected = { foundOptions: {}, values: {}, positionals: ['-'] };
+  const expected = { parsedOptions: {}, values: {}, positionals: ['-'] };
 
   const result = parseArgs({ args: passedArgs });
 
@@ -25,7 +25,7 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 test("dash: when args include '-' used as space-separated option value then result has '-' in option value", (t) => {
   const passedArgs = ['-v', '-'];
   const passedOptions = { v: { type: 'string' } };
-  const expected = { foundOptions: { v: true }, values: { v: '-' }, positionals: [] };
+  const expected = { parsedOptions: { v: true }, values: { v: '-' }, positionals: [] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 

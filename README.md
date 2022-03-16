@@ -86,7 +86,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
-  * `foundOptions` {Object}, key:true for each option found in the input `args`
+  * `parsedOptions` {Object}, key:true for each option found in the input `args`
   * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array for  options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
 
@@ -103,8 +103,8 @@ const { parseArgs } = require('@pkgjs/parseargs');
 const { parseArgs } = require('@pkgjs/parseargs');
 const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {};
-const { foundOptions, values, positionals } = parseArgs({ args, options });
-// foundOptions = { f: true, foo: true, bar: true }
+const { parsedOptions, values, positionals } = parseArgs({ args, options });
+// parsedOptions = { f: true, foo: true, bar: true }
 // values = { f: true, foo: 'a', bar: true }
 // positionals = ['b']
 ```
@@ -118,8 +118,8 @@ const options = {
     type: 'string',
   },
 };
-const { foundOptions, values, positionals } = parseArgs({ args, options });
-// foundOptions = { f: true, foo: true, bar: true }
+const { parsedOptions, values, positionals } = parseArgs({ args, options });
+// parsedOptions = { f: true, foo: true, bar: true }
 // values = { f: true, foo: 'a', bar: 'b' }
 // positionals = []
 ```
@@ -134,8 +134,8 @@ const options = {
     multiple: true,
   },
 };
-const { foundOptions, values, positionals } = parseArgs({ args, options });
-// foundOptions = { f: true, foo: true }
+const { parsedOptions, values, positionals } = parseArgs({ args, options });
+// parsedOptions = { f: true, foo: true }
 // values = { f: true, foo: [ 'a', 'b' ] }
 // positionals = []
 ```
@@ -149,8 +149,8 @@ const options = {
     short: 'f',
   },
 };
-const { foundOptions, values, positionals } = parseArgs({ args, options });
-// foundOptions = { foo: true }
+const { parsedOptions, values, positionals } = parseArgs({ args, options });
+// parsedOptions = { foo: true }
 // values = { foo: true }
 // positionals = ['b']
 ```
