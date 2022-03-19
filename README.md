@@ -86,7 +86,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
 * Returns: {Object} An object having properties:
-  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array for  options configured as `multiple:true`.
+  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array (of strings or booleans) for options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
 
 ----
