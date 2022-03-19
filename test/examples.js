@@ -9,7 +9,6 @@ function show(args, options) {
   console.log('options = %O', options);
   console.log('---');
   const result = parseArgs({ args, options });
-  console.log('parsedOptions = %O', result.parsedOptions);
   console.log('values = %O', result.values);
   console.log('positionals = %O', result.positionals);
   console.log('-------------------------------------------\n');
