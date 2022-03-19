@@ -187,7 +187,7 @@ const { values, positionals } = parseArgs({ args, options });
 - Does `--no-foo` coerce to `--foo=false`?  For all options?  Only boolean options?
   - no, it sets `{values:{'no-foo': true}}`
 - Is `--foo` the same as `--foo=true`?  Only for known booleans?  Only at the end?
-  - no, `--foo` is a boolean option and `--foo=true` is a string option
+  - no, they are not the same. There is no special handling of `true` as a value so it is just another string.
 - Does it read environment variables?  Ie, is `FOO=1 cmd` the same as `cmd --foo=1`?
   - no
 - Do unknown arguments raise an error?  Are they parsed?  Are they treated as positional arguments?
