@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/pkgjs/parseargs/compare/v0.3.0...v0.4.0) (2022-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* parsing, revisit short option groups, add support for combined short and value (#75)
+* restructure configuration to take options bag (#63)
+
+### Code Refactoring
+
+* parsing, revisit short option groups, add support for combined short and value ([#75](https://github.com/pkgjs/parseargs/issues/75)) ([a92600f](https://github.com/pkgjs/parseargs/commit/a92600fa6c214508ab1e016fa55879a314f541af))
+* restructure configuration to take options bag ([#63](https://github.com/pkgjs/parseargs/issues/63)) ([b412095](https://github.com/pkgjs/parseargs/commit/b4120957d90e809ee8b607b06e747d3e6a6b213e))
+
 ## [0.3.0](https://github.com/pkgjs/parseargs/compare/v0.2.0...v0.3.0) (2022-02-06)
 
 
