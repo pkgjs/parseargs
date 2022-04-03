@@ -90,6 +90,6 @@ test('strict: when long option and suspect value then throws with whole expected
 
   t.throws(() => {
     parseArgs({ args: passedArgs, options: knownOptions, strict: true });
-  }, /Did you forget to specify the option argument for '--with'\?\nTo specify an option argument starting with a dash use '--with=--foo'\./);
+  }, /Did you forget to specify the option argument for '--with'\?\nTo specify an option argument starting with a dash use '--with=-EXAMPLE'\./);
   t.end();
 });
