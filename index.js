@@ -120,10 +120,10 @@ const parseArgs = ({
     }
   );
 
-  const checkSafeOptionValue = (optionUsed, longOption, value) => {
-    if (strict && !isSafeOptionValue()) {
-      const errorMessage = `Did you forget to specify the option argument for '-${optionUsed}'?
-To specify an option argument starting with a dash use '--${longOption}=${value}'.`;
+  const checkSafeOptionValue = (optionAsUsed, longOptionName, value) => {
+    if (strict && !isSafeOptionValue(value)) {
+      const errorMessage = `Did you forget to specify the option argument for '${optionAsUsed}'?
+To specify an option argument starting with a dash use '--${longOptionName}=${value}'.`;
       throw new Error(errorMessage);
     }
   };
@@ -158,7 +158,7 @@ To specify an option argument starting with a dash use '--${longOption}=${value}
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkSafeOptionValue(shortOption, longOption, optionValue);
+        checkSafeOptionValue(arg, longOption, optionValue);
       }
       storeOptionValue(options, longOption, optionValue, result);
       continue;
@@ -202,7 +202,7 @@ To specify an option argument starting with a dash use '--${longOption}=${value}
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkSafeOptionValue(longOption, longOption, optionValue);
+        checkSafeOptionValue(arg, longOption, optionValue);
       }
       storeOptionValue(options, longOption, optionValue, result);
       continue;
