@@ -28,6 +28,7 @@ const {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
+  isSafeOptionValue,
   isShortOptionAndValue,
   isShortOptionGroup
 } = require('./utils');
@@ -91,6 +92,7 @@ function storeOptionValue(options, longOption, value, result) {
 
 const parseArgs = ({
   args = getMainArgs(),
+  strict = false,
   options = {}
 } = {}) => {
   validateArray(args, 'args');
@@ -117,6 +119,14 @@ const parseArgs = ({
       }
     }
   );
+
+  const checkSafeOptionValue = (optionUsed, longOption, value) => {
+    if (strict && !isSafeOptionValue()) {
+      const errorMessage = `Did you forget to specify the option argument for '-${optionUsed}'?
+To specify an option argument starting with a dash use '--${longOption}=${value}'.`;
+      throw new Error(errorMessage);
+    }
+  };
 
   const result = {
     flags: {},
@@ -148,6 +158,7 @@ const parseArgs = ({
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        checkSafeOptionValue(shortOption, longOption, optionValue);
       }
       storeOptionValue(options, longOption, optionValue, result);
       continue;
@@ -191,6 +202,7 @@ const parseArgs = ({
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        checkSafeOptionValue(longOption, longOption, optionValue);
       }
       storeOptionValue(options, longOption, optionValue, result);
       continue;

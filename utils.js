@@ -18,24 +18,31 @@ const {
 
 /**
  * Determines if the argument may be used as an option value.
- * NB: We are choosing not to accept option-ish arguments.
  * @example
- * isOptionValue('V']) // returns true
- * isOptionValue('-v') // returns false
- * isOptionValue('--foo') // returns false
+ * isOptionValue('V') // returns true
+ * isOptionValue('-v') // returns true (greedy)
+ * isOptionValue('--foo') // returns true (greedy)
  * isOptionValue(undefined) // returns false
  */
 function isOptionValue(value) {
   if (value == null) return false;
-  if (value === '-') return true; // e.g. representing stdin/stdout for file
 
   // Open Group Utility Conventions are that an option-argument
   // is the argument after the option, and may start with a dash.
-  // However, we are currently rejecting these and prioritising the
-  // option-like appearance of the argument. Rejection allows more error
-  // detection for strict:true, but comes at the cost of rejecting intended
-  // values starting with a dash, especially negative numbers.
-  return !StringPrototypeStartsWith(value, '-');
+  return true; // greedy!
+}
+
+/**
+ * Detect whether there is possible confusion and user may have omitted
+ * the option argument, like `--port --verbose` when `port` of type:string.
+ * In strict mode we throw errors if value is not safe.
+ */
+function isSafeOptionValue(value) {
+  if (value == null) return false;
+  if (value === '-') return true;
+  if (value === '--') return false;
+
+  return StringPrototypeCharAt(value, 0) !== '-';
 }
 
 /**
@@ -150,6 +157,7 @@ module.exports = {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
+  isSafeOptionValue,
   isShortOptionAndValue,
   isShortOptionGroup
 };
