@@ -66,11 +66,16 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
+const protoKey = '__proto__';
 function storeOptionValue(options, longOption, value, result) {
   const optionConfig = options[longOption] || {};
 
   // Flags
   result.flags[longOption] = true;
+
+  if (longOption === protoKey) {
+    return;
+  }
 
   // Values
   if (optionConfig.multiple) {
