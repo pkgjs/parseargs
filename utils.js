@@ -9,6 +9,10 @@ const {
   StringPrototypeStartsWith,
 } = require('./primordials');
 
+const {
+  validateObject
+} = require('./validators');
+
 // These are internal utilities to make the parsing logic easier to read, and
 // add lots of detail for the curious. They are in a separate file to allow
 // unit testing, although that is not essential (this could be rolled into
@@ -116,7 +120,8 @@ function isShortOptionGroup(arg, options) {
  * }) // returns true
  */
 function isShortOptionAndValue(arg, options) {
-  if (!options) throw new Error('Internal error, missing options argument');
+  validateObject(options, 'options');
+
   if (arg.length <= 2) return false;
   if (StringPrototypeCharAt(arg, 0) !== '-') return false;
   if (StringPrototypeCharAt(arg, 1) === '-') return false;
@@ -136,10 +141,10 @@ function isShortOptionAndValue(arg, options) {
  * }) // returns 'bar'
  */
 function findLongOptionForShort(shortOption, options) {
-  if (!options) throw new Error('Internal error, missing options argument');
-  const [longOption] = ArrayPrototypeFind(
+  validateObject(options, 'options');
+  const { 0: longOption } = ArrayPrototypeFind(
     ObjectEntries(options),
-    ([, optionConfig]) => optionConfig.short === shortOption
+    ({ 1: optionConfig }) => optionConfig.short === shortOption
   ) || [];
   return longOption || shortOption;
 }
