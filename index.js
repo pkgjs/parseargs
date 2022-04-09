@@ -74,11 +74,11 @@ function storeOptionValue(strict, options, longOption, value, result) {
       throw new Error(`Unknown option: --${longOption}`);
     }
 
-    if (options[longOption].type === 'string' && value === undefined) {
+    if (options[longOption].type === 'string' && value == null) {
       throw new Error(`Missing value for 'string' option: --${longOption}`);
     }
 
-    if (options[longOption].type === 'boolean' && value !== undefined) {
+    if (options[longOption].type === 'boolean' && value != null) {
       throw new Error(`Unexpected value for 'boolean' option: --${longOption}`);
     }
   }
