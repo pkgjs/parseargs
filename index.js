@@ -120,10 +120,10 @@ const parseArgs = ({
     }
   );
 
-  const checkSafeOptionValue = (optionAsUsed, longOptionName, value) => {
+  const checkSafeOptionValue = (dashedOption, longOption, value) => {
     if (strict && !isSafeOptionValue(value)) {
-      const errorMessage = `Did you forget to specify the option argument for '${optionAsUsed}'?
-To specify an option argument starting with a dash use '--${longOptionName}=-EXAMPLE'.`;
+      const errorMessage = `Did you forget to specify the option argument for '${dashedOption}'?
+To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE'.`;
       throw new Error(errorMessage);
     }
   };
