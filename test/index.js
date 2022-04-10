@@ -233,6 +233,22 @@ test('args are passed `type: "string"` and "multiple"', function(t) {
   t.end();
 });
 
+test('args are passed `type: "boolean"` and "multiple"', function(t) {
+  const passedArgs = ['--foo', '--foo'];
+  const passedOptions = {
+    foo: {
+      type: 'boolean',
+      multiple: true,
+    },
+  };
+  const expected = { flags: { foo: true }, values: { foo: [true, true] }, positionals: [] };
+  const args = parseArgs({ args: passedArgs, options: passedOptions });
+
+  t.deepEqual(args, expected, 'the array contains multiple `true`s');
+
+  t.end();
+});
+
 test('order of option and positional does not matter (per README)', function(t) {
   const passedArgs1 = ['--foo=bar', 'baz'];
   const passedArgs2 = ['baz', '--foo=bar'];
