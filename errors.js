@@ -22,8 +22,8 @@ class ERR_INVALID_SHORT_OPTION extends TypeError {
 }
 
 class ERR_UNKNOWN_OPTION extends Error {
-  constructor(longOption) {
-    super(`Unknown option '${longOption}'`);
+  constructor(message) {
+    super(message);
     this.code = 'ERR_UNKNOWN_OPTION';
   }
 }

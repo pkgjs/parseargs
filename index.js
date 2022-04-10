@@ -76,20 +76,31 @@ function getMainArgs() {
 
 const protoKey = '__proto__';
 
-function storeOptionValue(strict, options, longOption, value, result) {
+function storeOption({
+  strict,
+  options,
+  result,
+  longOption,
+  shortOption,
+  optionValue,
+}) {
   const hasOptionConfig = ObjectHasOwn(options, longOption);
 
   if (strict) {
+    const longOrShortOption = shortOption == null ?
+      `long option '--${longOption}'` :
+      `short option '-${shortOption}'`;
+
     if (!hasOptionConfig) {
-      throw new ERR_UNKNOWN_OPTION(longOption);
+      throw new ERR_UNKNOWN_OPTION(`Unknown ${longOrShortOption}`);
     }
 
-    if (options[longOption].type === 'string' && value == null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Missing value for '${longOption}' option with type:'string'`);
+    if (options[longOption].type === 'string' && optionValue == null) {
+      throw new ERR_INVALID_OPTION_VALUE(`Missing value for ${longOrShortOption} with type:'string'`);
     }
 
-    if (options[longOption].type === 'boolean' && value != null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Unexpected value '${value}' for '${longOption}' option with type:'boolean'`);
+    if (options[longOption].type === 'boolean' && optionValue != null) {
+      throw new ERR_INVALID_OPTION_VALUE(`Unexpected value '${optionValue}' for ${longOrShortOption} with type:'boolean'`);
     }
   }
 
@@ -108,14 +119,14 @@ function storeOptionValue(strict, options, longOption, value, result) {
     // result.values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
-    const usedAsFlag = value === undefined;
-    const newValue = usedAsFlag ? true : value;
+    const usedAsFlag = optionValue === undefined;
+    const newValue = usedAsFlag ? true : optionValue;
     if (result.values[longOption] !== undefined)
       ArrayPrototypePush(result.values[longOption], newValue);
     else
       result.values[longOption] = [newValue];
   } else {
-    result.values[longOption] = value;
+    result.values[longOption] = optionValue;
   }
 }
 
@@ -181,7 +192,14 @@ const parseArgs = ({
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      storeOptionValue(strict, options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -212,7 +230,14 @@ const parseArgs = ({
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       const optionValue = StringPrototypeSlice(arg, 2);
-      storeOptionValue(strict, options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -224,7 +249,7 @@ const parseArgs = ({
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      storeOptionValue(strict, options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 
@@ -233,7 +258,7 @@ const parseArgs = ({
       const index = StringPrototypeIndexOf(arg, '=');
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
-      storeOptionValue(strict, options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 
