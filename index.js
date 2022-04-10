@@ -6,7 +6,7 @@ const {
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
-  ObjectHasOwn,
+  ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   ObjectEntries,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
@@ -31,6 +31,12 @@ const {
   isShortOptionAndValue,
   isShortOptionGroup
 } = require('./utils');
+
+const {
+  codes: {
+    ERR_INVALID_SHORT_OPTION,
+  },
+} = require('./errors');
 
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
@@ -66,8 +72,13 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
+const protoKey = '__proto__';
 function storeOptionValue(options, longOption, value, result) {
   const optionConfig = options[longOption] || {};
+
+  if (longOption === protoKey) {
+    return;
+  }
 
   // Values
   const usedAsFlag = value === undefined;
@@ -94,7 +105,7 @@ const parseArgs = ({
   validateObject(options, 'options');
   ArrayPrototypeForEach(
     ObjectEntries(options),
-    ([longOption, optionConfig]) => {
+    ({ 0: longOption, 1: optionConfig }) => {
       validateObject(optionConfig, `options.${longOption}`);
 
       if (ObjectHasOwn(optionConfig, 'type')) {
@@ -105,7 +116,7 @@ const parseArgs = ({
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
         if (shortOption.length !== 1) {
-          throw new Error(`options.${longOption}.short must be a single character, got '${shortOption}'`);
+          throw new ERR_INVALID_SHORT_OPTION(longOption, shortOption);
         }
       }
 
