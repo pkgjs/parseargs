@@ -24,7 +24,7 @@ const {
  * Determines if the argument may be used as an option value.
  * NB: We are choosing not to accept option-ish arguments.
  * @example
- * isOptionValue('V']) // returns true
+ * isOptionValue('V') // returns true
  * isOptionValue('-v') // returns false
  * isOptionValue('--foo') // returns false
  * isOptionValue(undefined) // returns false
@@ -58,7 +58,7 @@ function isLoneShortOption(arg) {
  * isLoneLongOption('a') // returns false
  * isLoneLongOption('-a') // returns false
  * isLoneLongOption('--foo) // returns true
- * isLoneLongOption('--foo=bar) // returns false
+ * isLoneLongOption('--foo=bar') // returns false
  */
 function isLoneLongOption(arg) {
   return arg.length > 2 &&
@@ -67,10 +67,10 @@ function isLoneLongOption(arg) {
 }
 
 /**
- * Determines if `arg` is a long option and value in same argument.
+ * Determines if `arg` is a long option and value in the same argument.
  * @example
  * isLongOptionAndValue('--foo) // returns false
- * isLongOptionAndValue('--foo=bar) // returns true
+ * isLongOptionAndValue('--foo=bar') // returns true
  */
 function isLongOptionAndValue(arg) {
   return arg.length > 2 &&
@@ -133,11 +133,11 @@ function isShortOptionAndValue(arg, options) {
 
 /**
  * Find the long option associated with a short option. Looks for a configured
- * `short` and returns the short option itself if long option not found.
+ * `short` and returns the short option itself if a long option is not found.
  * @example
  * findLongOptionForShort('a', {}) // returns 'a'
  * findLongOptionForShort('b', {
- *   options: { bar: { short: 'b' }}
+ *   options: { bar: { short: 'b' } }
  * }) // returns 'bar'
  */
 function findLongOptionForShort(shortOption, options) {

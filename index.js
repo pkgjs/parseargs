@@ -143,9 +143,7 @@ const parseArgs = ({
     ({ 0: longOption, 1: optionConfig }) => {
       validateObject(optionConfig, `options.${longOption}`);
 
-      if (ObjectHasOwn(optionConfig, 'type')) {
-        validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
-      }
+      validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
 
       if (ObjectHasOwn(optionConfig, 'short')) {
         const shortOption = optionConfig.short;
