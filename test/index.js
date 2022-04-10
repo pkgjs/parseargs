@@ -412,7 +412,7 @@ test('invalid short option length', (t) => {
   const passedOptions = { foo: { short: 'fo', type: 'boolean' } };
 
   t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_SHORT_OPTION'
+    code: 'ERR_INVALID_ARG_VALUE'
   });
 
   t.end();

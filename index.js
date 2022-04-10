@@ -34,7 +34,7 @@ const {
 
 const {
   codes: {
-    ERR_INVALID_SHORT_OPTION,
+    ERR_INVALID_ARG_VALUE,
   },
 } = require('./errors');
 
@@ -117,7 +117,11 @@ const parseArgs = ({
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
         if (shortOption.length !== 1) {
-          throw new ERR_INVALID_SHORT_OPTION(longOption, shortOption);
+          throw new ERR_INVALID_ARG_VALUE(
+            `options.${longOption}.short`,
+            shortOption,
+            'must be a single character'
+          );
         }
       }
 
