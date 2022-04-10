@@ -34,9 +34,7 @@ const {
 
 const {
   codes: {
-    ERR_INVALID_OPTION_VALUE,
-    ERR_INVALID_SHORT_OPTION,
-    ERR_UNKNOWN_OPTION,
+    ERR_INVALID_ARG_VALUE,
   },
 } = require('./errors');
 
@@ -88,19 +86,27 @@ function storeOption({
 
   if (strict) {
     const longOrShortOption = shortOption == null ?
-      `long option '--${longOption}'` :
-      `short option '-${shortOption}'`;
+      `--${longOption}` :
+      `-${shortOption}`;
 
     if (!hasOptionConfig) {
-      throw new ERR_UNKNOWN_OPTION(`Unknown ${longOrShortOption}`);
+      throw new ERR_INVALID_ARG_VALUE(`option.${longOption}`, undefined, 'must be configured');
     }
 
     if (options[longOption].type === 'string' && optionValue == null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Missing value for ${longOrShortOption} with type:'string'`);
+      throw new ERR_INVALID_ARG_VALUE(
+        longOrShortOption,
+        optionValue,
+        'must be provided a value',
+      );
     }
 
     if (options[longOption].type === 'boolean' && optionValue != null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Unexpected value '${optionValue}' for ${longOrShortOption} with type:'boolean'`);
+      throw new ERR_INVALID_ARG_VALUE(
+        longOrShortOption,
+        optionValue,
+        'does not expect a value',
+      );
     }
   }
 
@@ -149,7 +155,11 @@ const parseArgs = ({
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
         if (shortOption.length !== 1) {
-          throw new ERR_INVALID_SHORT_OPTION(longOption, shortOption);
+          throw new ERR_INVALID_ARG_VALUE(
+            `options.${longOption}.short`,
+            shortOption,
+            'must be a single character'
+          );
         }
       }
 

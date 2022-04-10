@@ -409,62 +409,74 @@ test('invalid union value passed to "type" option', (t) => {
 
 // Test strict mode
 
-test('unknown long option --bar', function(t) {
+test('unknown long option --bar', (t) => {
   const passedArgs = ['--foo', '--bar'];
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
 
-test('unknown short option -b', function(t) {
+test('unknown short option -b', (t) => {
   const passedArgs = ['--foo', '-b'];
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
 
-test('unknown option -r in short option group -bar', function(t) {
-  const passedArgs = ['--foo', '-bar'];
-  const passedOptions = { foo: { type: 'boolean' }, b: { type: 'boolean' }, a: { type: 'boolean' } };
+test('unknown option -r in short option group -bar', (t) => {
+  const passedArgs = ['-bar'];
+  const passedOptions = { b: { type: 'boolean' }, a: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
 
-test('unknown option with explicit value', function(t) {
+test('unknown option with explicit value', (t) => {
   const passedArgs = ['--foo', '--bar=baz'];
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
 
-test('string option used as boolean', function(t) {
+test('string option used as boolean', (t) => {
   const passedArgs = ['--foo'];
   const passedOptions = { foo: { type: 'string' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
 
-test('boolean option used with value', function(t) {
+test('boolean option used with value', (t) => {
   const passedArgs = ['--foo=bar'];
   const passedOptions = { foo: { type: 'boolean' } };
   const strict = true;
 
-  t.throws(function() { parseArgs({ strict, args: passedArgs, options: passedOptions }); });
+  t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
+  });
 
   t.end();
 });
@@ -473,8 +485,8 @@ test('invalid short option length', (t) => {
   const passedArgs = [];
   const passedOptions = { foo: { short: 'fo', type: 'boolean' } };
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_SHORT_OPTION'
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_ARG_VALUE'
   });
 
   t.end();
