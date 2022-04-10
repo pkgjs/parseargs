@@ -147,6 +147,7 @@ const args = ['-f', 'b'];
 const options = {
   foo: {
     short: 'f',
+    type: 'boolean'
   },
 };
 const { flags, values, positionals } = parseArgs({ args, options });
