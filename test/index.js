@@ -233,7 +233,7 @@ test('args are passed `type: "string"` and "multiple"', function(t) {
   t.end();
 });
 
-test('args are passed `type: "boolean"` and "multiple"', function(t) {
+test('when expecting `multiple:true` boolean option and option used multiple times then result includes array of booleans matching usage', function(t) {
   const passedArgs = ['--foo', '--foo'];
   const passedOptions = {
     foo: {
