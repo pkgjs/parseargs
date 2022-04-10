@@ -244,7 +244,7 @@ test('when expecting `multiple:true` boolean option and option used multiple tim
   const expected = { flags: { foo: true }, values: { foo: [true, true] }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'the array contains multiple `true`s');
+  t.deepEqual(args, expected);
 
   t.end();
 });
