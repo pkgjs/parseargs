@@ -447,7 +447,9 @@ test('invalid short option length', function(t) {
   const passedArgs = [];
   const passedOptions = { foo: { short: 'fo' } };
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); });
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_INVALID_SHORT_OPTION'
+  });
 
   t.end();
 });
