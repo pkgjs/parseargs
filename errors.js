@@ -14,9 +14,16 @@ class ERR_INVALID_SHORT_OPTION extends TypeError {
   }
 }
 
+class ERR_MULTIPLE_FLAG extends TypeError {
+  constructor(longOption) {
+    super(`options.${longOption}.multiple cannot be used with \`type: 'boolean'\``);
+    this.code = 'ERR_MULTIPLE_FLAG';
+  }
+}
 module.exports = {
   codes: {
     ERR_INVALID_ARG_TYPE,
-    ERR_INVALID_SHORT_OPTION
+    ERR_INVALID_SHORT_OPTION,
+    ERR_MULTIPLE_FLAG
   }
 };

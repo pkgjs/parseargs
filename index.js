@@ -35,6 +35,7 @@ const {
 const {
   codes: {
     ERR_INVALID_SHORT_OPTION,
+    ERR_MULTIPLE_FLAG,
   },
 } = require('./errors');
 
@@ -111,7 +112,8 @@ const parseArgs = ({
     ({ 0: longOption, 1: optionConfig }) => {
       validateObject(optionConfig, `options.${longOption}`);
 
-      if (ObjectHasOwn(optionConfig, 'type')) {
+      const hasType = ObjectHasOwn(optionConfig, 'type');
+      if (hasType) {
         validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
       }
 
@@ -125,6 +127,11 @@ const parseArgs = ({
 
       if (ObjectHasOwn(optionConfig, 'multiple')) {
         validateBoolean(optionConfig.multiple, `options.${longOption}.multiple`);
+        if (optionConfig.multiple &&
+          hasType &&
+          optionConfig.type === 'boolean') {
+          throw new ERR_MULTIPLE_FLAG(longOption);
+        }
       }
     }
   );

@@ -391,3 +391,14 @@ test('invalid short option length', function(t) {
 
   t.end();
 });
+
+test('`type: boolean` used with `multiple: true`', function(t) {
+  const passedArgs = [];
+  const passedOptions = { foo: { type: 'boolean', multiple: true } };
+
+  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_MULTIPLE_FLAG'
+  });
+
+  t.end();
+});
