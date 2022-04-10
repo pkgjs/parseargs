@@ -34,7 +34,9 @@ const {
 
 const {
   codes: {
+    ERR_INVALID_OPTION_VALUE,
     ERR_INVALID_SHORT_OPTION,
+    ERR_UNKNOWN_OPTION,
   },
 } = require('./errors');
 
@@ -79,15 +81,15 @@ function storeOptionValue(strict, options, longOption, value, result) {
 
   if (strict) {
     if (!hasOptionConfig) {
-      throw new Error(`Unknown option: --${longOption}`);
+      throw new ERR_UNKNOWN_OPTION(longOption);
     }
 
     if (options[longOption].type === 'string' && value == null) {
-      throw new Error(`Missing value for 'string' option: --${longOption}`);
+      throw new ERR_INVALID_OPTION_VALUE(`Missing value for '${longOption}' option with type:'string'`);
     }
 
     if (options[longOption].type === 'boolean' && value != null) {
-      throw new Error(`Unexpected value for 'boolean' option: --${longOption}`);
+      throw new ERR_INVALID_OPTION_VALUE(`Unexpected value '${value}' for '${longOption}' option with type:'boolean'`);
     }
   }
 
