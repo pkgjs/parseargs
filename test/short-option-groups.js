@@ -17,7 +17,7 @@ test('when pass zero-config group of booleans then parsed as booleans', (t) => {
 
 test('when pass low-config group of booleans then parsed as booleans', (t) => {
   const passedArgs = ['-rf', 'p'];
-  const passedOptions = { r: {}, f: {} };
+  const passedOptions = { r: { type: 'boolean' }, f: { type: 'boolean' } };
   const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['p'] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions });
