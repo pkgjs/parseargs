@@ -39,7 +39,7 @@ test('when short option `type: "string"` used with value then stored as value', 
 
 test('when short option listed in short used as flag then long option stored as flag', (t) => {
   const passedArgs = ['-f'];
-  const passedOptions = { foo: { short: 'f' } };
+  const passedOptions = { foo: { short: 'f', type: 'boolean' } };
   const expected = { flags: { foo: true }, values: { foo: undefined }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -114,7 +114,7 @@ test('handles short-option groups in conjunction with long-options', (t) => {
 
 test('handles short-option groups with "short" alias configured', (t) => {
   const passedArgs = ['-rf'];
-  const passedOptions = { remove: { short: 'r' } };
+  const passedOptions = { remove: { short: 'r', type: 'boolean' } };
   const expected = { flags: { remove: true, f: true }, values: { remove: undefined, f: undefined }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
@@ -375,6 +375,16 @@ test('invalid argument passed for options', (t) => {
   t.end();
 });
 
+test('then type property missing for option then throw', function(t) {
+  const knownOptions = { foo: { } };
+
+  t.throws(function() { parseArgs({ options: knownOptions }); }, {
+    code: 'ERR_INVALID_ARG_TYPE'
+  });
+
+  t.end();
+});
+
 test('boolean passed to "type" option', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { foo: { type: true } };
@@ -399,7 +409,7 @@ test('invalid union value passed to "type" option', (t) => {
 
 test('invalid short option length', (t) => {
   const passedArgs = [];
-  const passedOptions = { foo: { short: 'fo' } };
+  const passedOptions = { foo: { short: 'fo', type: 'boolean' } };
 
   t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_VALUE'
