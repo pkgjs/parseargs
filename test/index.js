@@ -249,7 +249,7 @@ test('when expecting `multiple:true` boolean option and option used multiple tim
   t.end();
 });
 
-test('order of option and positional does not matter (per README)', function(t) {
+test('order of option and positional does not matter (per README)', (t) => {
   const passedArgs1 = ['--foo=bar', 'baz'];
   const passedArgs2 = ['baz', '--foo=bar'];
   const passedOptions = { foo: { type: 'string' } };
@@ -368,17 +368,17 @@ test('invalid argument passed for options', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = 'bad value';
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
   t.end();
 });
 
-test('then type property missing for option then throw', function(t) {
+test('then type property missing for option then throw', (t) => {
   const knownOptions = { foo: { } };
 
-  t.throws(function() { parseArgs({ options: knownOptions }); }, {
+  t.throws(() => { parseArgs({ options: knownOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
@@ -389,7 +389,7 @@ test('boolean passed to "type" option', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { foo: { type: true } };
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
@@ -400,7 +400,7 @@ test('invalid union value passed to "type" option', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { foo: { type: 'str' } };
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
   });
 
@@ -411,7 +411,7 @@ test('invalid short option length', (t) => {
   const passedArgs = [];
   const passedOptions = { foo: { short: 'fo', type: 'boolean' } };
 
-  t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_VALUE'
   });
 
