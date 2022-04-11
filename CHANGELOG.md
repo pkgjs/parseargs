@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/pkgjs/parseargs/compare/v0.5.0...v0.6.0) (2022-04-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* rework results to remove redundant `flags` property and store value true for boolean options (#83)
+* switch to existing ERR_INVALID_ARG_VALUE (#97)
+
+### Code Refactoring
+
+* rework results to remove redundant `flags` property and store value true for boolean options ([#83](https://github.com/pkgjs/parseargs/issues/83)) ([be153db](https://github.com/pkgjs/parseargs/commit/be153dbed1d488cb7b6e27df92f601ba7337713d))
+* switch to existing ERR_INVALID_ARG_VALUE ([#97](https://github.com/pkgjs/parseargs/issues/97)) ([084a23f](https://github.com/pkgjs/parseargs/commit/084a23f9fde2da030b159edb1c2385f24579ce40))
+
 ## [0.5.0](https://github.com/pkgjs/parseargs/compare/v0.4.0...v0.5.0) (2022-04-10)
 
 
