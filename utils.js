@@ -43,7 +43,7 @@ function isOptionValue(value) {
 }
 
 /**
- * Determines if `arg` is a just a short option.
+ * Determines if `arg` is just a short option.
  * @example '-f'
  */
 function isLoneShortOption(arg) {
