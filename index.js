@@ -174,7 +174,6 @@ const parseArgs = ({
           ArrayPrototypePush(expanded, `-${shortOption}`);
         } else {
           // String option in middle. Yuck.
-          // ToDo: if strict then throw
           // Expand -abfFILE to -a -b -fFILE
           ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
