@@ -91,7 +91,7 @@ test('short option group does not consume subsequent positional', (t) => {
   t.end();
 });
 
-// // See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
+// See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
 test('if terminal of short-option group configured `type: "string"`, subsequent positional is stored', (t) => {
   const passedArgs = ['-rvf', 'foo'];
   const passedOptions = { f: { type: 'string' } };
