@@ -19,7 +19,6 @@ test('when pass low-config group of booleans then parsed as booleans', (t) => {
   const passedArgs = ['-rf', 'p'];
   const passedOptions = { r: {}, f: {} };
   const expected = { values: { r: true, f: true }, positionals: ['p'] };
-
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected);

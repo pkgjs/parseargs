@@ -6,7 +6,7 @@ const { parseArgs } = require('../index.js');
 
 // Test results are as we expect
 
-test('when short option used as flag then stored as flag', function(t) {
+test('when short option used as flag then stored as flag', (t) => {
   const passedArgs = ['-f'];
   const expected = { values: { f: true }, positionals: [] };
   const args = parseArgs({ args: passedArgs });
@@ -16,7 +16,7 @@ test('when short option used as flag then stored as flag', function(t) {
   t.end();
 });
 
-test('when short option used as flag before positional then stored as flag and positional (and not value)', function(t) {
+test('when short option used as flag before positional then stored as flag and positional (and not value)', (t) => {
   const passedArgs = ['-f', 'bar'];
   const expected = { values: { f: true }, positionals: [ 'bar' ] };
   const args = parseArgs({ args: passedArgs });
@@ -26,7 +26,7 @@ test('when short option used as flag before positional then stored as flag and p
   t.end();
 });
 
-test('when short option `type: "string"` used with value then stored as value', function(t) {
+test('when short option `type: "string"` used with value then stored as value', (t) => {
   const passedArgs = ['-f', 'bar'];
   const passedOptions = { f: { type: 'string' } };
   const expected = { values: { f: 'bar' }, positionals: [] };
@@ -37,7 +37,7 @@ test('when short option `type: "string"` used with value then stored as value', 
   t.end();
 });
 
-test('when short option listed in short used as flag then long option stored as flag', function(t) {
+test('when short option listed in short used as flag then long option stored as flag', (t) => {
   const passedArgs = ['-f'];
   const passedOptions = { foo: { short: 'f' } };
   const expected = { values: { foo: true }, positionals: [] };
@@ -48,7 +48,7 @@ test('when short option listed in short used as flag then long option stored as 
   t.end();
 });
 
-test('when short option listed in short and long listed in `type: "string"` and used with value then long option stored as value', function(t) {
+test('when short option listed in short and long listed in `type: "string"` and used with value then long option stored as value', (t) => {
   const passedArgs = ['-f', 'bar'];
   const passedOptions = { foo: { short: 'f', type: 'string' } };
   const expected = { values: { foo: 'bar' }, positionals: [] };
@@ -59,7 +59,7 @@ test('when short option listed in short and long listed in `type: "string"` and 
   t.end();
 });
 
-test('when short option `type: "string"` used without value then stored as flag', function(t) {
+test('when short option `type: "string"` used without value then stored as flag', (t) => {
   const passedArgs = ['-f'];
   const passedOptions = { f: { type: 'string' } };
   const expected = { values: { f: true }, positionals: [] };
@@ -70,7 +70,7 @@ test('when short option `type: "string"` used without value then stored as flag'
   t.end();
 });
 
-test('short option group behaves like multiple short options', function(t) {
+test('short option group behaves like multiple short options', (t) => {
   const passedArgs = ['-rf'];
   const passedOptions = { };
   const expected = { values: { r: true, f: true }, positionals: [] };
@@ -81,7 +81,7 @@ test('short option group behaves like multiple short options', function(t) {
   t.end();
 });
 
-test('short option group does not consume subsequent positional', function(t) {
+test('short option group does not consume subsequent positional', (t) => {
   const passedArgs = ['-rf', 'foo'];
   const passedOptions = { };
   const expected = { values: { r: true, f: true }, positionals: ['foo'] };
@@ -92,7 +92,7 @@ test('short option group does not consume subsequent positional', function(t) {
 });
 
 // // See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-test('if terminal of short-option group configured `type: "string"`, subsequent positional is stored', function(t) {
+test('if terminal of short-option group configured `type: "string"`, subsequent positional is stored', (t) => {
   const passedArgs = ['-rvf', 'foo'];
   const passedOptions = { f: { type: 'string' } };
   const expected = { values: { r: true, v: true, f: 'foo' }, positionals: [] };
@@ -102,7 +102,7 @@ test('if terminal of short-option group configured `type: "string"`, subsequent 
   t.end();
 });
 
-test('handles short-option groups in conjunction with long-options', function(t) {
+test('handles short-option groups in conjunction with long-options', (t) => {
   const passedArgs = ['-rf', '--foo', 'foo'];
   const passedOptions = { foo: { type: 'string' } };
   const expected = { values: { r: true, f: true, foo: 'foo' }, positionals: [] };
@@ -112,7 +112,7 @@ test('handles short-option groups in conjunction with long-options', function(t)
   t.end();
 });
 
-test('handles short-option groups with "short" alias configured', function(t) {
+test('handles short-option groups with "short" alias configured', (t) => {
   const passedArgs = ['-rf'];
   const passedOptions = { remove: { short: 'r' } };
   const expected = { values: { remove: true, f: true }, positionals: [] };
@@ -122,7 +122,7 @@ test('handles short-option groups with "short" alias configured', function(t) {
   t.end();
 });
 
-test('Everything after a bare `--` is considered a positional argument', function(t) {
+test('Everything after a bare `--` is considered a positional argument', (t) => {
   const passedArgs = ['--', 'barepositionals', 'mopositionals'];
   const expected = { values: {}, positionals: ['barepositionals', 'mopositionals'] };
   const args = parseArgs({ args: passedArgs });
@@ -132,7 +132,7 @@ test('Everything after a bare `--` is considered a positional argument', functio
   t.end();
 });
 
-test('args are true', function(t) {
+test('args are true', (t) => {
   const passedArgs = ['--foo', '--bar'];
   const expected = { values: { foo: true, bar: true }, positionals: [] };
   const args = parseArgs({ args: passedArgs });
@@ -142,7 +142,7 @@ test('args are true', function(t) {
   t.end();
 });
 
-test('arg is true and positional is identified', function(t) {
+test('arg is true and positional is identified', (t) => {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const expected = { values: { foo: true }, positionals: ['b'] };
   const args = parseArgs({ args: passedArgs });
@@ -152,7 +152,7 @@ test('arg is true and positional is identified', function(t) {
   t.end();
 });
 
-test('args equals are passed `type: "string"`', function(t) {
+test('args equals are passed `type: "string"`', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { so: { type: 'string' } };
   const expected = { values: { so: 'wat' }, positionals: [] };
@@ -163,7 +163,7 @@ test('args equals are passed `type: "string"`', function(t) {
   t.end();
 });
 
-test('when args include single dash then result stores dash as positional', function(t) {
+test('when args include single dash then result stores dash as positional', (t) => {
   const passedArgs = ['-'];
   const expected = { values: { }, positionals: ['-'] };
   const args = parseArgs({ args: passedArgs });
@@ -173,7 +173,7 @@ test('when args include single dash then result stores dash as positional', func
   t.end();
 });
 
-test('zero config args equals are parsed as if `type: "string"`', function(t) {
+test('zero config args equals are parsed as if `type: "string"`', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { };
   const expected = { values: { so: 'wat' }, positionals: [] };
@@ -184,7 +184,7 @@ test('zero config args equals are parsed as if `type: "string"`', function(t) {
   t.end();
 });
 
-test('same arg is passed twice `type: "string"` and last value is recorded', function(t) {
+test('same arg is passed twice `type: "string"` and last value is recorded', (t) => {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = { foo: { type: 'string' } };
   const expected = { values: { foo: 'b' }, positionals: [] };
@@ -195,7 +195,7 @@ test('same arg is passed twice `type: "string"` and last value is recorded', fun
   t.end();
 });
 
-test('args equals pass string including more equals', function(t) {
+test('args equals pass string including more equals', (t) => {
   const passedArgs = ['--so=wat=bing'];
   const passedOptions = { so: { type: 'string' } };
   const expected = { values: { so: 'wat=bing' }, positionals: [] };
@@ -206,7 +206,7 @@ test('args equals pass string including more equals', function(t) {
   t.end();
 });
 
-test('first arg passed for `type: "string"` and "multiple" is in array', function(t) {
+test('first arg passed for `type: "string"` and "multiple" is in array', (t) => {
   const passedArgs = ['--foo=a'];
   const passedOptions = { foo: { type: 'string', multiple: true } };
   const expected = { values: { foo: ['a'] }, positionals: [] };
@@ -217,7 +217,7 @@ test('first arg passed for `type: "string"` and "multiple" is in array', functio
   t.end();
 });
 
-test('args are passed `type: "string"` and "multiple"', function(t) {
+test('args are passed `type: "string"` and "multiple"', (t) => {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const passedOptions = {
     foo: {
@@ -233,7 +233,7 @@ test('args are passed `type: "string"` and "multiple"', function(t) {
   t.end();
 });
 
-test('when expecting `multiple:true` boolean option and option used multiple times then result includes array of booleans matching usage', function(t) {
+test('when expecting `multiple:true` boolean option and option used multiple times then result includes array of booleans matching usage', (t) => {
   const passedArgs = ['--foo', '--foo'];
   const passedOptions = {
     foo: {
@@ -261,7 +261,7 @@ test('order of option and positional does not matter (per README)', function(t) 
   t.end();
 });
 
-test('correct default args when use node -p', function(t) {
+test('correct default args when use node -p', (t) => {
   const holdArgv = process.argv;
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
@@ -277,7 +277,7 @@ test('correct default args when use node -p', function(t) {
   process.execArgv = holdExecArgv;
 });
 
-test('correct default args when use node --print', function(t) {
+test('correct default args when use node --print', (t) => {
   const holdArgv = process.argv;
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
@@ -293,7 +293,7 @@ test('correct default args when use node --print', function(t) {
   process.execArgv = holdExecArgv;
 });
 
-test('correct default args when use node -e', function(t) {
+test('correct default args when use node -e', (t) => {
   const holdArgv = process.argv;
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
@@ -309,7 +309,7 @@ test('correct default args when use node -e', function(t) {
   process.execArgv = holdExecArgv;
 });
 
-test('correct default args when use node --eval', function(t) {
+test('correct default args when use node --eval', (t) => {
   const holdArgv = process.argv;
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
@@ -325,7 +325,7 @@ test('correct default args when use node --eval', function(t) {
   process.execArgv = holdExecArgv;
 });
 
-test('correct default args when normal arguments', function(t) {
+test('correct default args when normal arguments', (t) => {
   const holdArgv = process.argv;
   process.argv = [process.argv0, 'script.js', '--foo'];
   const holdExecArgv = process.execArgv;
@@ -341,7 +341,7 @@ test('correct default args when normal arguments', function(t) {
   process.execArgv = holdExecArgv;
 });
 
-test('excess leading dashes on options are retained', function(t) {
+test('excess leading dashes on options are retained', (t) => {
   // Enforce a design decision for an edge case.
   const passedArgs = ['---triple'];
   const passedOptions = { };
@@ -358,7 +358,7 @@ test('excess leading dashes on options are retained', function(t) {
 
 // Test bad inputs
 
-test('invalid argument passed for options', function(t) {
+test('invalid argument passed for options', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = 'bad value';
 
@@ -369,7 +369,17 @@ test('invalid argument passed for options', function(t) {
   t.end();
 });
 
-test('boolean passed to "type" option', function(t) {
+test('then type property missing for option then throw', function(t) {
+  const knownOptions = { foo: { } };
+
+  t.throws(function() { parseArgs({ options: knownOptions }); }, {
+    code: 'ERR_INVALID_ARG_TYPE'
+  });
+
+  t.end();
+});
+
+test('boolean passed to "type" option', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { foo: { type: true } };
 
@@ -380,7 +390,7 @@ test('boolean passed to "type" option', function(t) {
   t.end();
 });
 
-test('invalid union value passed to "type" option', function(t) {
+test('invalid union value passed to "type" option', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { foo: { type: 'str' } };
 
@@ -391,12 +401,12 @@ test('invalid union value passed to "type" option', function(t) {
   t.end();
 });
 
-test('invalid short option length', function(t) {
+test('invalid short option length', (t) => {
   const passedArgs = [];
-  const passedOptions = { foo: { short: 'fo' } };
+  const passedOptions = { foo: { short: 'fo', type: 'boolean' } };
 
   t.throws(function() { parseArgs({ args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_SHORT_OPTION'
+    code: 'ERR_INVALID_ARG_VALUE'
   });
 
   t.end();

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/pkgjs/parseargs/compare/v0.4.0...v0.5.0) (2022-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require type to be specified for each supplied option (#95)
+
+### Features
+
+* Require type to be specified for each supplied option ([#95](https://github.com/pkgjs/parseargs/issues/95)) ([02cd018](https://github.com/pkgjs/parseargs/commit/02cd01885b8aaa59f2db8308f2d4479e64340068))
+
 ## [0.4.0](https://github.com/pkgjs/parseargs/compare/v0.3.0...v0.4.0) (2022-03-12)
 
 

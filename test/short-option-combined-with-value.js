@@ -64,7 +64,6 @@ test('when combine string short with value which matches configured flag then pa
   const passedArgs = ['-af'];
   const passedOptions = { alpha: { short: 'a', type: 'string' }, file: { short: 'f' } };
   const expected = { values: { alpha: 'f' }, positionals: [] };
-
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected);

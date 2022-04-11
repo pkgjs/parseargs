@@ -81,7 +81,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
   * `args` {string[]} (Optional) Array of argument strings; defaults
     to [`process.mainArgs`](process_argv)
   * `options` {Object} (Optional) An object describing the known options to look for in `args`; `options` keys are the long names of the known options, and the values are objects with the following properties:
-    * `type` {'string'|'boolean'} (Optional) Type of known option; defaults to `'boolean'`; 
+    * `type` {'string'|'boolean'} (Required) Type of known option
     * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
@@ -143,6 +143,7 @@ const args = ['-f', 'b'];
 const options = {
   foo: {
     short: 'f',
+    type: 'boolean'
   },
 };
 const { values, positionals } = parseArgs({ args, options });
