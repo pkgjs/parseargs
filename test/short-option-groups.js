@@ -7,18 +7,7 @@ const { parseArgs } = require('../index.js');
 test('when pass zero-config group of booleans then parsed as booleans', (t) => {
   const passedArgs = ['-rf', 'p'];
   const passedOptions = { };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['p'] };
-
-  const result = parseArgs({ args: passedArgs, options: passedOptions });
-
-  t.deepEqual(result, expected);
-  t.end();
-});
-
-test('when pass low-config group of booleans then parsed as booleans', (t) => {
-  const passedArgs = ['-rf', 'p'];
-  const passedOptions = { r: { type: 'boolean' }, f: { type: 'boolean' } };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['p'] };
+  const expected = { values: { r: true, f: true }, positionals: ['p'] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -29,7 +18,7 @@ test('when pass low-config group of booleans then parsed as booleans', (t) => {
 test('when pass full-config group of booleans then parsed as booleans', (t) => {
   const passedArgs = ['-rf', 'p'];
   const passedOptions = { r: { type: 'boolean' }, f: { type: 'boolean' } };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: undefined }, positionals: ['p'] };
+  const expected = { values: { r: true, f: true }, positionals: ['p'] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -40,7 +29,7 @@ test('when pass full-config group of booleans then parsed as booleans', (t) => {
 test('when pass group with string option on end then parsed as booleans and string option', (t) => {
   const passedArgs = ['-rf', 'p'];
   const passedOptions = { r: { type: 'boolean' }, f: { type: 'string' } };
-  const expected = { flags: { r: true, f: true }, values: { r: undefined, f: 'p' }, positionals: [] };
+  const expected = { values: { r: true, f: 'p' }, positionals: [] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -51,7 +40,7 @@ test('when pass group with string option on end then parsed as booleans and stri
 test('when pass group with string option in middle and strict:false then parsed as booleans and string option with trailing value', (t) => {
   const passedArgs = ['-afb', 'p'];
   const passedOptions = { f: { type: 'string' } };
-  const expected = { flags: { a: true, f: true }, values: { a: undefined, f: 'b' }, positionals: ['p'] };
+  const expected = { values: { a: true, f: 'b' }, positionals: ['p'] };
 
   const result = parseArgs({ args: passedArgs, options: passedOptions, strict: false });
 
