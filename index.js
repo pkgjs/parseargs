@@ -112,27 +112,24 @@ function storeOption({
 
   const optionConfig = hasOptionConfig ? options[longOption] : {};
 
-  // Flags
-  result.flags[longOption] = true;
-
   if (longOption === protoKey) {
     return;
   }
 
   // Values
+  const usedAsFlag = optionValue === undefined;
+  const newValue = usedAsFlag ? true : optionValue;
   if (optionConfig.multiple) {
     // Always store value in array, including for flags.
     // result.values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
-    const usedAsFlag = optionValue === undefined;
-    const newValue = usedAsFlag ? true : optionValue;
     if (result.values[longOption] !== undefined)
       ArrayPrototypePush(result.values[longOption], newValue);
     else
       result.values[longOption] = [newValue];
   } else {
-    result.values[longOption] = optionValue;
+    result.values[longOption] = newValue;
   }
 }
 
@@ -170,7 +167,6 @@ const parseArgs = ({
   );
 
   const result = {
-    flags: {},
     values: {},
     positionals: []
   };
@@ -223,7 +219,6 @@ const parseArgs = ({
           ArrayPrototypePush(expanded, `-${shortOption}`);
         } else {
           // String option in middle. Yuck.
-          // ToDo: if strict then throw
           // Expand -abfFILE to -a -b -fFILE
           ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
