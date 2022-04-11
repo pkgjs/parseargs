@@ -39,7 +39,7 @@ test('when short option `type: "string"` used with value then stored as value', 
 
 test('when short option listed in short used as flag then long option stored as flag', (t) => {
   const passedArgs = ['-f'];
-  const passedOptions = { foo: { short: 'f' } };
+  const passedOptions = { foo: { short: 'f', type: 'boolean' } };
   const expected = { values: { foo: true }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
@@ -114,7 +114,7 @@ test('handles short-option groups in conjunction with long-options', (t) => {
 
 test('handles short-option groups with "short" alias configured', (t) => {
   const passedArgs = ['-rf'];
-  const passedOptions = { remove: { short: 'r' } };
+  const passedOptions = { remove: { short: 'r', type: 'boolean' } };
   const expected = { values: { remove: true, f: true }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);

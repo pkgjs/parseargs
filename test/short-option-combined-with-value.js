@@ -62,7 +62,7 @@ test('when combine string short with value like negative number then parsed as v
 
 test('when combine string short with value which matches configured flag then parsed as value', (t) => {
   const passedArgs = ['-af'];
-  const passedOptions = { alpha: { short: 'a', type: 'string' }, file: { short: 'f' } };
+  const passedOptions = { alpha: { short: 'a', type: 'string' }, file: { short: 'f', type: 'boolean' } };
   const expected = { values: { alpha: 'f' }, positionals: [] };
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
