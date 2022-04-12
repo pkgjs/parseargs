@@ -128,23 +128,23 @@ const { values, positionals } = parseArgs({ args, options });
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
 // shorts
-const args = ['-f', 'b'];
 const options = {
   foo: {
     short: 'f',
     type: 'boolean'
   },
 };
+const args = ['-f', 'b'];
 const { values, positionals } = parseArgs({ args, options });
 // values = { foo: true }
 // positionals = ['b']
 ```
 
 ```js
-// unconfigured
 const { parseArgs } = require('@pkgjs/parseargs');
-const args = ['-f', '--foo=a', '--bar', 'b'];
+// unconfigured
 const options = {};
+const args = ['-f', '--foo=a', '--bar', 'b'];
 const { values, positionals } = parseArgs({ strict: false, args, options });
 // values = { f: true, foo: 'a', bar: true }
 // positionals = ['b']
