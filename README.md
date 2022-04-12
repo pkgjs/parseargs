@@ -84,7 +84,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `type` {'string'|'boolean'} (Required) Type of known option
     * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
-  * `strict` {Boolean} (Optional) A `Boolean` on wheather or not to throw an error when unknown args are encountered
+  * `strict` {Boolean} (Optional) A `Boolean` for whether or not to throw an error when unknown options are encountered, `type:'string'` options are missing an options-argument, or `type:'boolean'` options are passed an options-argument; defaults to `true`
 * Returns: {Object} An object having properties:
   * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array (of strings or booleans) for options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
@@ -98,23 +98,13 @@ const { parseArgs } = require('@pkgjs/parseargs');
 ```
 
 ```js
-// unconfigured
-const { parseArgs } = require('@pkgjs/parseargs');
-const args = ['-f', '--foo=a', '--bar', 'b'];
-const options = {};
-const { values, positionals } = parseArgs({ args, options });
-// values = { f: true, foo: 'a', bar: true }
-// positionals = ['b']
-```
-
-```js
 const { parseArgs } = require('@pkgjs/parseargs');
 // type:string
 const args = ['-f', '--foo=a', '--bar', 'b'];
 const options = {
-  bar: {
-    type: 'string',
-  },
+  f: { type: 'boolean' },
+  foo: { type: 'string'},
+  bar: { type: 'string' },
 };
 const { values, positionals } = parseArgs({ args, options });
 // values = { f: true, foo: 'a', bar: 'b' }
@@ -126,6 +116,7 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // type:string & multiple
 const args = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
+  f: { type: 'boolean' },
   foo: {
     type: 'string',
     multiple: true,
@@ -150,6 +141,17 @@ const { values, positionals } = parseArgs({ args, options });
 // values = { foo: true }
 // positionals = ['b']
 ```
+
+```js
+// unconfigured
+const { parseArgs } = require('@pkgjs/parseargs');
+const args = ['-f', '--foo=a', '--bar', 'b'];
+const options = {};
+const { values, positionals } = parseArgs({ strict: false, args, options });
+// values = { f: true, foo: 'a', bar: true }
+// positionals = ['b']
+```
+
 
 ### F.A.Qs
 
