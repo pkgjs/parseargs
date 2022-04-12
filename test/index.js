@@ -48,7 +48,8 @@ test('when short option listed in short used as flag then long option stored as 
   t.end();
 });
 
-test('when short option listed in short and long listed in `type: "string"` and used with value then long option stored as value', (t) => {
+test('when short option listed in short and long listed in `type: "string"` and ' +
+     'used with value then long option stored as value', (t) => {
   const passedArgs = ['-f', 'bar'];
   const passedOptions = { foo: { short: 'f', type: 'string' } };
   const expected = { values: { foo: 'bar' }, positionals: [] };
@@ -127,7 +128,7 @@ test('Everything after a bare `--` is considered a positional argument', (t) => 
   const expected = { values: {}, positionals: ['barepositionals', 'mopositionals'] };
   const args = parseArgs({ args: passedArgs });
 
-  t.deepEqual(args, expected, 'testing bare positionals');
+  t.deepEqual(args, expected, Error('testing bare positionals'));
 
   t.end();
 });
@@ -137,7 +138,7 @@ test('args are true', (t) => {
   const expected = { values: { foo: true, bar: true }, positionals: [] };
   const args = parseArgs({ args: passedArgs });
 
-  t.deepEqual(args, expected, 'args are true');
+  t.deepEqual(args, expected, Error('args are true'));
 
   t.end();
 });
@@ -147,7 +148,7 @@ test('arg is true and positional is identified', (t) => {
   const expected = { values: { foo: true }, positionals: ['b'] };
   const args = parseArgs({ args: passedArgs });
 
-  t.deepEqual(args, expected, 'arg is true and positional is identified');
+  t.deepEqual(args, expected, Error('arg is true and positional is identified'));
 
   t.end();
 });
@@ -158,7 +159,7 @@ test('args equals are passed `type: "string"`', (t) => {
   const expected = { values: { so: 'wat' }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'arg value is passed');
+  t.deepEqual(args, expected, Error('arg value is passed'));
 
   t.end();
 });
@@ -179,7 +180,7 @@ test('zero config args equals are parsed as if `type: "string"`', (t) => {
   const expected = { values: { so: 'wat' }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'arg value is passed');
+  t.deepEqual(args, expected, Error('arg value is passed'));
 
   t.end();
 });
@@ -190,7 +191,7 @@ test('same arg is passed twice `type: "string"` and last value is recorded', (t)
   const expected = { values: { foo: 'b' }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'last arg value is passed');
+  t.deepEqual(args, expected, Error('last arg value is passed'));
 
   t.end();
 });
@@ -201,7 +202,7 @@ test('args equals pass string including more equals', (t) => {
   const expected = { values: { so: 'wat=bing' }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'arg value is passed');
+  t.deepEqual(args, expected, Error('arg value is passed'));
 
   t.end();
 });
@@ -212,7 +213,7 @@ test('first arg passed for `type: "string"` and "multiple" is in array', (t) => 
   const expected = { values: { foo: ['a'] }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'first multiple in array');
+  t.deepEqual(args, expected, Error('first multiple in array'));
 
   t.end();
 });
@@ -228,7 +229,7 @@ test('args are passed `type: "string"` and "multiple"', (t) => {
   const expected = { values: { foo: ['a', 'b'] }, positionals: [] };
   const args = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(args, expected, 'both arg values are passed');
+  t.deepEqual(args, expected, Error('both arg values are passed'));
 
   t.end();
 });
@@ -255,8 +256,8 @@ test('order of option and positional does not matter (per README)', (t) => {
   const passedOptions = { foo: { type: 'string' } };
   const expected = { values: { foo: 'bar' }, positionals: ['baz'] };
 
-  t.deepEqual(parseArgs({ args: passedArgs1, options: passedOptions }), expected, 'option then positional');
-  t.deepEqual(parseArgs({ args: passedArgs2, options: passedOptions }), expected, 'positional then option');
+  t.deepEqual(parseArgs({ args: passedArgs1, options: passedOptions }), expected, Error('option then positional'));
+  t.deepEqual(parseArgs({ args: passedArgs2, options: passedOptions }), expected, Error('positional then option'));
 
   t.end();
 });
@@ -351,7 +352,7 @@ test('excess leading dashes on options are retained', (t) => {
   };
   const result = parseArgs({ args: passedArgs, options: passedOptions });
 
-  t.deepEqual(result, expected, 'excess option dashes are retained');
+  t.deepEqual(result, expected, Error('excess option dashes are retained'));
 
   t.end();
 });
