@@ -127,7 +127,7 @@ function storeOption({
 
 const parseArgs = ({
   args = getMainArgs(),
-  strict = false,
+  strict = true,
   options = {}
 } = {}) => {
   validateArray(args, 'args');
