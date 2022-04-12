@@ -99,31 +99,29 @@ const { parseArgs } = require('@pkgjs/parseargs');
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
-// type:string
-const args = ['-f', '--foo=a', '--bar', 'b'];
+// specify the options that may be used
 const options = {
-  f: { type: 'boolean' },
   foo: { type: 'string'},
-  bar: { type: 'string' },
+  bar: { type: 'boolean' },
 };
+const args = ['--foo=a', '--bar'];
 const { values, positionals } = parseArgs({ args, options });
-// values = { f: true, foo: 'a', bar: 'b' }
+// values = { foo: 'a', bar: true }
 // positionals = []
 ```
 
 ```js
 const { parseArgs } = require('@pkgjs/parseargs');
 // type:string & multiple
-const args = ['-f', '--foo=a', '--foo', 'b'];
 const options = {
-  f: { type: 'boolean' },
   foo: {
     type: 'string',
     multiple: true,
   },
 };
+const args = ['--foo=a', '--foo', 'b'];
 const { values, positionals } = parseArgs({ args, options });
-// values = { f: true, foo: [ 'a', 'b' ] }
+// values = { foo: [ 'a', 'b' ] }
 // positionals = []
 ```
 
