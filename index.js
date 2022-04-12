@@ -96,7 +96,7 @@ function storeOption({
     const shortOptionErr = ObjectHasOwn(optionConfig, 'short') ? `-${optionConfig.short}, ` : '';
 
     if (options[longOption].type === 'string' && optionValue == null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <${longOption}>' argument missing`);
+      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <value>' argument missing`);
     }
 
     if (options[longOption].type === 'boolean' && optionValue != null) {
