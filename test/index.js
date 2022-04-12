@@ -409,7 +409,7 @@ test('unknown long option --bar', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_UNKNOWN_OPTION'
   });
 
   t.end();
@@ -421,7 +421,7 @@ test('unknown short option -b', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_UNKNOWN_OPTION'
   });
 
   t.end();
@@ -433,7 +433,7 @@ test('unknown option -r in short option group -bar', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_UNKNOWN_OPTION'
   });
 
   t.end();
@@ -445,7 +445,7 @@ test('unknown option with explicit value', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_UNKNOWN_OPTION'
   });
 
   t.end();
@@ -457,7 +457,7 @@ test('string option used as boolean', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_INVALID_OPTION_VALUE'
   });
 
   t.end();
@@ -469,7 +469,7 @@ test('boolean option used with value', (t) => {
   const strict = true;
 
   t.throws(() => { parseArgs({ strict, args: passedArgs, options: passedOptions }); }, {
-    code: 'ERR_INVALID_ARG_VALUE'
+    code: 'ERR_INVALID_OPTION_VALUE'
   });
 
   t.end();

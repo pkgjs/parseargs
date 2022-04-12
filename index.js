@@ -35,6 +35,8 @@ const {
 const {
   codes: {
     ERR_INVALID_ARG_VALUE,
+    ERR_INVALID_OPTION_VALUE,
+    ERR_UNKNOWN_OPTION,
   },
 } = require('./errors');
 
@@ -84,33 +86,23 @@ function storeOption({
 }) {
   const hasOptionConfig = ObjectHasOwn(options, longOption);
 
-  if (strict) {
-    const longOrShortOption = shortOption == null ?
-      `--${longOption}` :
-      `-${shortOption}`;
+  const optionConfig = hasOptionConfig ? options[longOption] : {};
 
+  if (strict) {
     if (!hasOptionConfig) {
-      throw new ERR_INVALID_ARG_VALUE(`option.${longOption}`, undefined, 'must be configured');
+      throw new ERR_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
     }
 
+    const shortOptionErr = optionConfig.short ? `-${optionConfig.short}, ` : '';
+
     if (options[longOption].type === 'string' && optionValue == null) {
-      throw new ERR_INVALID_ARG_VALUE(
-        longOrShortOption,
-        optionValue,
-        'must be provided a value',
-      );
+      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <${longOption}>' argument missing`);
     }
 
     if (options[longOption].type === 'boolean' && optionValue != null) {
-      throw new ERR_INVALID_ARG_VALUE(
-        longOrShortOption,
-        optionValue,
-        'does not expect a value',
-      );
+      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption}' does not take an argument`);
     }
   }
-
-  const optionConfig = hasOptionConfig ? options[longOption] : {};
 
   if (longOption === protoKey) {
     return;
