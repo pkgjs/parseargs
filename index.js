@@ -93,7 +93,7 @@ function storeOption({
       throw new ERR_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
     }
 
-    const shortOptionErr = optionConfig.short ? `-${optionConfig.short}, ` : '';
+    const shortOptionErr = ObjectHasOwn(optionConfig, 'short') ? `-${optionConfig.short}, ` : '';
 
     if (options[longOption].type === 'string' && optionValue == null) {
       throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <${longOption}>' argument missing`);
