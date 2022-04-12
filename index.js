@@ -35,8 +35,8 @@ const {
 const {
   codes: {
     ERR_INVALID_ARG_VALUE,
-    ERR_INVALID_OPTION_VALUE,
-    ERR_UNKNOWN_OPTION,
+    ERR_PARSE_ARGS_INVALID_OPTION_VALUE,
+    ERR_PARSE_ARGS_UNKNOWN_OPTION,
   },
 } = require('./errors');
 
@@ -90,17 +90,17 @@ function storeOption({
 
   if (strict) {
     if (!hasOptionConfig) {
-      throw new ERR_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
+      throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
     }
 
     const shortOptionErr = ObjectHasOwn(optionConfig, 'short') ? `-${optionConfig.short}, ` : '';
 
     if (options[longOption].type === 'string' && optionValue == null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <value>' argument missing`);
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <value>' argument missing`);
     }
 
     if (options[longOption].type === 'boolean' && optionValue != null) {
-      throw new ERR_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption}' does not take an argument`);
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption}' does not take an argument`);
     }
   }
 
