@@ -85,7 +85,6 @@ function storeOption({
   optionValue,
 }) {
   const hasOptionConfig = ObjectHasOwn(options, longOption);
-
   const optionConfig = hasOptionConfig ? options[longOption] : {};
 
   if (strict) {
