@@ -9,7 +9,7 @@ const { parseArgs } = require('../index.js');
 test('when short option used as flag then stored as flag', (t) => {
   const passedArgs = ['-f'];
   const expected = { values: { f: true }, positionals: [] };
-  const args = parseArgs({ args: passedArgs });
+  const args = parseArgs({ strict: false, args: passedArgs });
 
   t.deepEqual(args, expected);
 
@@ -19,7 +19,7 @@ test('when short option used as flag then stored as flag', (t) => {
 test('when short option used as flag before positional then stored as flag and positional (and not value)', (t) => {
   const passedArgs = ['-f', 'bar'];
   const expected = { values: { f: true }, positionals: [ 'bar' ] };
-  const args = parseArgs({ args: passedArgs });
+  const args = parseArgs({ strict: false, args: passedArgs });
 
   t.deepEqual(args, expected);
 
@@ -64,7 +64,7 @@ test('when short option `type: "string"` used without value then stored as flag'
   const passedArgs = ['-f'];
   const passedOptions = { f: { type: 'string' } };
   const expected = { values: { f: true }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
@@ -75,7 +75,7 @@ test('short option group behaves like multiple short options', (t) => {
   const passedArgs = ['-rf'];
   const passedOptions = { };
   const expected = { values: { r: true, f: true }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected);
 
@@ -86,7 +86,7 @@ test('short option group does not consume subsequent positional', (t) => {
   const passedArgs = ['-rf', 'foo'];
   const passedOptions = { };
   const expected = { values: { r: true, f: true }, positionals: ['foo'] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -97,7 +97,7 @@ test('if terminal of short-option group configured `type: "string"`, subsequent 
   const passedArgs = ['-rvf', 'foo'];
   const passedOptions = { f: { type: 'string' } };
   const expected = { values: { r: true, v: true, f: 'foo' }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -107,7 +107,7 @@ test('handles short-option groups in conjunction with long-options', (t) => {
   const passedArgs = ['-rf', '--foo', 'foo'];
   const passedOptions = { foo: { type: 'string' } };
   const expected = { values: { r: true, f: true, foo: 'foo' }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -117,7 +117,7 @@ test('handles short-option groups with "short" alias configured', (t) => {
   const passedArgs = ['-rf'];
   const passedOptions = { remove: { short: 'r', type: 'boolean' } };
   const expected = { values: { remove: true, f: true }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
   t.deepEqual(args, expected);
 
   t.end();
@@ -136,7 +136,7 @@ test('Everything after a bare `--` is considered a positional argument', (t) => 
 test('args are true', (t) => {
   const passedArgs = ['--foo', '--bar'];
   const expected = { values: { foo: true, bar: true }, positionals: [] };
-  const args = parseArgs({ args: passedArgs });
+  const args = parseArgs({ strict: false, args: passedArgs });
 
   t.deepEqual(args, expected, Error('args are true'));
 
@@ -146,7 +146,7 @@ test('args are true', (t) => {
 test('arg is true and positional is identified', (t) => {
   const passedArgs = ['--foo=a', '--foo', 'b'];
   const expected = { values: { foo: true }, positionals: ['b'] };
-  const args = parseArgs({ args: passedArgs });
+  const args = parseArgs({ strict: false, args: passedArgs });
 
   t.deepEqual(args, expected, Error('arg is true and positional is identified'));
 
@@ -178,7 +178,7 @@ test('zero config args equals are parsed as if `type: "string"`', (t) => {
   const passedArgs = ['--so=wat'];
   const passedOptions = { };
   const expected = { values: { so: 'wat' }, positionals: [] };
-  const args = parseArgs({ args: passedArgs, options: passedOptions });
+  const args = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
 
   t.deepEqual(args, expected, Error('arg value is passed'));
 
@@ -267,7 +267,7 @@ test('correct default args when use node -p', (t) => {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['-p', '0'];
-  const result = parseArgs();
+  const result = parseArgs({ strict: false });
 
   const expected = { values: { foo: true },
                      positionals: [] };
@@ -283,7 +283,7 @@ test('correct default args when use node --print', (t) => {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['--print', '0'];
-  const result = parseArgs();
+  const result = parseArgs({ strict: false });
 
   const expected = { values: { foo: true },
                      positionals: [] };
@@ -299,7 +299,7 @@ test('correct default args when use node -e', (t) => {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['-e', '0'];
-  const result = parseArgs();
+  const result = parseArgs({ strict: false });
 
   const expected = { values: { foo: true },
                      positionals: [] };
@@ -315,7 +315,7 @@ test('correct default args when use node --eval', (t) => {
   process.argv = [process.argv0, '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = ['--eval', '0'];
-  const result = parseArgs();
+  const result = parseArgs({ strict: false });
 
   const expected = { values: { foo: true },
                      positionals: [] };
@@ -331,7 +331,7 @@ test('correct default args when normal arguments', (t) => {
   process.argv = [process.argv0, 'script.js', '--foo'];
   const holdExecArgv = process.execArgv;
   process.execArgv = [];
-  const result = parseArgs();
+  const result = parseArgs({ strict: false });
 
   const expected = { values: { foo: true },
                      positionals: [] };
@@ -350,7 +350,7 @@ test('excess leading dashes on options are retained', (t) => {
     values: { '-triple': true },
     positionals: []
   };
-  const result = parseArgs({ args: passedArgs, options: passedOptions });
+  const result = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected, Error('excess option dashes are retained'));
 
@@ -397,6 +397,74 @@ test('invalid union value passed to "type" option', (t) => {
 
   t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
+  });
+
+  t.end();
+});
+
+// Test strict mode
+
+test('unknown long option --bar', (t) => {
+  const passedArgs = ['--foo', '--bar'];
+  const passedOptions = { foo: { type: 'boolean' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown short option -b', (t) => {
+  const passedArgs = ['--foo', '-b'];
+  const passedOptions = { foo: { type: 'boolean' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown option -r in short option group -bar', (t) => {
+  const passedArgs = ['-bar'];
+  const passedOptions = { b: { type: 'boolean' }, a: { type: 'boolean' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('unknown option with explicit value', (t) => {
+  const passedArgs = ['--foo', '--bar=baz'];
+  const passedOptions = { foo: { type: 'boolean' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
+  });
+
+  t.end();
+});
+
+test('string option used as boolean', (t) => {
+  const passedArgs = ['--foo'];
+  const passedOptions = { foo: { type: 'string' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  });
+
+  t.end();
+});
+
+test('boolean option used with value', (t) => {
+  const passedArgs = ['--foo=bar'];
+  const passedOptions = { foo: { type: 'boolean' } };
+
+  t.throws(() => { parseArgs({ args: passedArgs, options: passedOptions }); }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
   });
 
   t.end();

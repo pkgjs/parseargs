@@ -9,7 +9,7 @@ test('when pass zero-config group of booleans then parsed as booleans', (t) => {
   const passedOptions = { };
   const expected = { values: { r: true, f: true }, positionals: ['p'] };
 
-  const result = parseArgs({ args: passedArgs, options: passedOptions });
+  const result = parseArgs({ strict: false, args: passedArgs, options: passedOptions });
 
   t.deepEqual(result, expected);
   t.end();

@@ -35,6 +35,8 @@ const {
 const {
   codes: {
     ERR_INVALID_ARG_VALUE,
+    ERR_PARSE_ARGS_INVALID_OPTION_VALUE,
+    ERR_PARSE_ARGS_UNKNOWN_OPTION,
   },
 } = require('./errors');
 
@@ -73,16 +75,41 @@ function getMainArgs() {
 }
 
 const protoKey = '__proto__';
-function storeOptionValue(options, longOption, value, result) {
-  const optionConfig = options[longOption] || {};
+
+function storeOption({
+  strict,
+  options,
+  result,
+  longOption,
+  shortOption,
+  optionValue,
+}) {
+  const hasOptionConfig = ObjectHasOwn(options, longOption);
+  const optionConfig = hasOptionConfig ? options[longOption] : {};
+
+  if (strict) {
+    if (!hasOptionConfig) {
+      throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
+    }
+
+    const shortOptionErr = ObjectHasOwn(optionConfig, 'short') ? `-${optionConfig.short}, ` : '';
+
+    if (options[longOption].type === 'string' && optionValue == null) {
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <value>' argument missing`);
+    }
+
+    if (options[longOption].type === 'boolean' && optionValue != null) {
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption}' does not take an argument`);
+    }
+  }
 
   if (longOption === protoKey) {
     return;
   }
 
   // Values
-  const usedAsFlag = value === undefined;
-  const newValue = usedAsFlag ? true : value;
+  const usedAsFlag = optionValue === undefined;
+  const newValue = usedAsFlag ? true : optionValue;
   if (optionConfig.multiple) {
     // Always store value in array, including for flags.
     // result.values[longOption] starts out not present,
@@ -99,9 +126,11 @@ function storeOptionValue(options, longOption, value, result) {
 
 const parseArgs = ({
   args = getMainArgs(),
+  strict = true,
   options = {}
 } = {}) => {
   validateArray(args, 'args');
+  validateBoolean(strict, 'strict');
   validateObject(options, 'options');
   ArrayPrototypeForEach(
     ObjectEntries(options),
@@ -158,7 +187,14 @@ const parseArgs = ({
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -188,7 +224,14 @@ const parseArgs = ({
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       const optionValue = StringPrototypeSlice(arg, 2);
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -200,7 +243,7 @@ const parseArgs = ({
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 
@@ -209,7 +252,7 @@ const parseArgs = ({
       const index = StringPrototypeIndexOf(arg, '=');
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 
