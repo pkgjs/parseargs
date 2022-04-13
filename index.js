@@ -124,11 +124,17 @@ function storeOption({
   }
 }
 
-const parseArgs = ({
-  args = getMainArgs(),
-  strict = true,
-  options = {}
-} = {}) => {
+// ToDo: move to utils.js
+function objectGetOwn(obj, prop) {
+  if (ObjectHasOwn(obj, prop))
+    return obj[prop];
+}
+
+const parseArgs = (config = {}) => {
+  const args = objectGetOwn(config, 'args') ?? getMainArgs();
+  const strict = objectGetOwn(config, 'strict') ?? true;
+  const options = objectGetOwn(config, 'options') ?? {};
+
   validateArray(args, 'args');
   validateBoolean(strict, 'strict');
   validateObject(options, 'options');
@@ -136,8 +142,7 @@ const parseArgs = ({
     ObjectEntries(options),
     ({ 0: longOption, 1: optionConfig }) => {
       validateObject(optionConfig, `options.${longOption}`);
-
-      validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
+      validateUnion(objectGetOwn(optionConfig, 'type'), `options.${longOption}.type`, ['string', 'boolean']);
 
       if (ObjectHasOwn(optionConfig, 'short')) {
         const shortOption = optionConfig.short;
