@@ -6,8 +6,9 @@ const {
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
-  ObjectPrototypeHasOwnProperty: ObjectHasOwn,
+  ObjectDefineProperty,
   ObjectEntries,
+  ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
@@ -101,6 +102,17 @@ function storeOption(longOption, optionValue, options, values) {
   if (longOption === '__proto__') {
     return;
   }
+
+  // Can be removed when value has a null prototype
+  const safeAssignProperty = (obj, prop, value) => {
+    ObjectDefineProperty(obj, prop, {
+      value,
+      writable: true,
+      enumerable: true,
+      configurable: true
+    });
+  };
+
   // We store based on the option value rather than option type,
   // preserving the users intent for author to deal with.
   const newValue = optionValue ?? true;
@@ -112,10 +124,10 @@ function storeOption(longOption, optionValue, options, values) {
     if (ObjectHasOwn(values, longOption)) {
       ArrayPrototypePush(values[longOption], newValue);
     } else {
-      values[longOption] = [newValue];
+      safeAssignProperty(values, longOption, [newValue]);
     }
   } else {
-    values[longOption] = newValue;
+    safeAssignProperty(values, longOption, newValue);
   }
 }
 
