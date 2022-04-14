@@ -133,7 +133,7 @@ function objectGetOwn(obj, prop) {
 const parseArgs = (config = {}) => {
   const args = objectGetOwn(config, 'args') ?? getMainArgs();
   const strict = objectGetOwn(config, 'strict') ?? true;
-  const options = objectGetOwn(config, 'options') ?? {};
+  const options = objectGetOwn(config, 'options') ?? { __proto__: null };
 
   validateArray(args, 'args');
   validateBoolean(strict, 'strict');
