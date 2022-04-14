@@ -124,7 +124,7 @@ function isShortOptionGroup(arg, options) {
 
   const firstShort = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(firstShort, options);
-  return options[longOption]?.type !== 'string';
+  return optionsGetOwn(options, longOption, 'type') !== 'string';
 }
 
 /**
@@ -145,7 +145,7 @@ function isShortOptionAndValue(arg, options) {
 
   const shortOption = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(shortOption, options);
-  return options[longOption]?.type === 'string';
+  return optionsGetOwn(options, longOption, 'type') === 'string';
 }
 
 /**
@@ -161,7 +161,7 @@ function findLongOptionForShort(shortOption, options) {
   validateObject(options, 'options');
   const { 0: longOption } = ArrayPrototypeFind(
     ObjectEntries(options),
-    ({ 1: optionConfig }) => optionConfig.short === shortOption
+    ({ 1: optionConfig }) => objectGetOwn(optionConfig, 'short') === shortOption
   ) || [];
   return longOption || shortOption;
 }
