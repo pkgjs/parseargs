@@ -29,7 +29,9 @@ const {
   isLongOptionAndValue,
   isOptionValue,
   isShortOptionAndValue,
-  isShortOptionGroup
+  isShortOptionGroup,
+  objectGetOwn,
+  optionsGetOwn
 } = require('./utils');
 
 const {
@@ -72,17 +74,6 @@ function getMainArgs() {
 
   // Normally first two arguments are executable and script, then CLI arguments
   return ArrayPrototypeSlice(process.argv, 2);
-}
-
-// ToDo: move to utils.js
-function objectGetOwn(obj, prop) {
-  if (ObjectHasOwn(obj, prop))
-    return obj[prop];
-}
-
-function optionsGetOwn(options, longOption, prop) {
-  if (ObjectHasOwn(options, longOption))
-    return objectGetOwn(options[longOption], prop);
 }
 
 function checkOptionUsage(longOption, optionValue, options,

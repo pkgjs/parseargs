@@ -3,6 +3,7 @@
 const {
   ArrayPrototypeFind,
   ObjectEntries,
+  ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeSlice,
@@ -19,6 +20,22 @@ const {
 // main file and just tested implicitly via API).
 //
 // These routines are for internal use, not for export to client.
+
+/**
+ * Return the named property, but only if it is an own property.
+ */
+function objectGetOwn(obj, prop) {
+  if (ObjectHasOwn(obj, prop))
+    return obj[prop];
+}
+
+/**
+ * Return the named options property, but only if it is an own property.
+ */
+function optionsGetOwn(options, longOption, prop) {
+  if (ObjectHasOwn(options, longOption))
+    return objectGetOwn(options[longOption], prop);
+}
 
 /**
  * Determines if the argument may be used as an option value.
@@ -156,5 +173,7 @@ module.exports = {
   isLongOptionAndValue,
   isOptionValue,
   isShortOptionAndValue,
-  isShortOptionGroup
+  isShortOptionGroup,
+  objectGetOwn,
+  optionsGetOwn
 };
