@@ -298,7 +298,7 @@ test('invalid argument passed for options', () => {
   });
 });
 
-test('then type property missing for option then throw', () => {
+test('type property missing for option then throw', () => {
   const knownOptions = { foo: { } };
   assert.throws(() => { parseArgs({ options: knownOptions }); }, {
     code: 'ERR_INVALID_ARG_TYPE'
