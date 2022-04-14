@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/pkgjs/parseargs/compare/v0.6.0...v0.7.0) (2022-04-13)
+
+
+### Features
+
+* Add strict mode to parser ([#74](https://github.com/pkgjs/parseargs/issues/74)) ([8267d02](https://github.com/pkgjs/parseargs/commit/8267d02083a87b8b8a71fcce08348d1e031ea91c))
+
 ## [0.6.0](https://github.com/pkgjs/parseargs/compare/v0.5.0...v0.6.0) (2022-04-11)
 
 
