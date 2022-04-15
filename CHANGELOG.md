@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://github.com/pkgjs/parseargs/compare/v0.7.0...v0.7.1) (2022-04-15)
+
+
+### Bug Fixes
+
+* resist pollution ([#106](https://github.com/pkgjs/parseargs/issues/106)) ([ecf2dec](https://github.com/pkgjs/parseargs/commit/ecf2dece0a9f2a76d789384d5d71c68ffe64022a))
+
 ## [0.7.0](https://github.com/pkgjs/parseargs/compare/v0.6.0...v0.7.0) (2022-04-13)
 
 
