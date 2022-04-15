@@ -41,6 +41,26 @@ const {
   },
 } = require('./errors');
 
+/**
+ * In strict mode, throw for possible usage errors like --foo --bar
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string|undefined} optionValue - value from user args
+ * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
+ * @param {boolean} strict - show errors, from parseArgs({ strict })
+ */
+function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
+  if (strict && isOptionLikeValue(optionValue)) {
+    // Only show short example if user used short option.
+    const example = (shortOrLong.length === 2) ?
+      `'--${longOption}=-XYZ' or '${shortOrLong}-XYZ'` :
+      `'--${longOption}=-XYZ'`;
+    const errorMessage = `Did you forget to specify the option argument for '${shortOrLong}'?
+To specify an option argument starting with a dash use ${example}.`;
+    throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
+  }
+}
+
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
@@ -158,14 +178,6 @@ const parseArgs = ({
     }
   );
 
-  const checkOptionLikeValue = (dashedOption, longOption, value) => {
-    if (strict && isOptionLikeValue(value)) {
-      const errorMessage = `Did you forget to specify the option argument for '${dashedOption}'?
-To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE'.`;
-      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
-    }
-  };
-
   const result = {
     values: {},
     positionals: []
@@ -195,7 +207,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkOptionLikeValue(arg, longOption, optionValue);
+        checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       storeOption({
         strict,
@@ -252,7 +264,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkOptionLikeValue(arg, longOption, optionValue);
+        checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       storeOption({ strict, options, result, longOption, optionValue });
       continue;
