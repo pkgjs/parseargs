@@ -28,7 +28,7 @@ const {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
-  isSafeOptionValue,
+  isOptionLikeValue,
   isShortOptionAndValue,
   isShortOptionGroup
 } = require('./utils');
@@ -158,11 +158,11 @@ const parseArgs = ({
     }
   );
 
-  const checkSafeOptionValue = (dashedOption, longOption, value) => {
-    if (strict && !isSafeOptionValue(value)) {
+  const checkOptionLikeValue = (dashedOption, longOption, value) => {
+    if (strict && isOptionLikeValue(value)) {
       const errorMessage = `Did you forget to specify the option argument for '${dashedOption}'?
 To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE'.`;
-      throw new Error(errorMessage);
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
     }
   };
 
@@ -195,7 +195,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkSafeOptionValue(arg, longOption, optionValue);
+        checkOptionLikeValue(arg, longOption, optionValue);
       }
       storeOption({
         strict,
@@ -252,7 +252,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       if (options[longOption]?.type === 'string' && isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        checkSafeOptionValue(arg, longOption, optionValue);
+        checkOptionLikeValue(arg, longOption, optionValue);
       }
       storeOption({ strict, options, result, longOption, optionValue });
       continue;

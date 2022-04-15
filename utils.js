@@ -39,14 +39,12 @@ function isOptionValue(value) {
 /**
  * Detect whether there is possible confusion and user may have omitted
  * the option argument, like `--port --verbose` when `port` of type:string.
- * In strict mode we throw errors if value is not safe.
+ * In strict mode we throw errors if value is option-like.
  */
-function isSafeOptionValue(value) {
+function isOptionLikeValue(value) {
   if (value == null) return false;
-  if (value === '-') return true;
-  if (value === '--') return false;
 
-  return StringPrototypeCharAt(value, 0) !== '-';
+  return value.length > 1 && StringPrototypeCharAt(value, 0) === '-';
 }
 
 /**
@@ -162,7 +160,7 @@ module.exports = {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
-  isSafeOptionValue,
+  isOptionLikeValue,
   isShortOptionAndValue,
   isShortOptionGroup
 };
