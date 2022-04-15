@@ -158,7 +158,7 @@ const parseArgs = ({
   );
 
   const result = {
-    values: {},
+    values: { __proto__: null },
     positionals: []
   };
 

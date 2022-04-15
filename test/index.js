@@ -378,3 +378,17 @@ test('invalid short option length', () => {
     code: 'ERR_INVALID_ARG_VALUE'
   });
 });
+
+test('null prototype: when no options then values.toString is undefined', () => {
+  const result = parseArgs({ args: [] });
+  assert.strictEqual(result.values.toString, undefined);
+});
+
+test('null prototype: when --toString then values.toString is true', () => {
+  const args = ['--toString'];
+  const options = { toString: { type: 'boolean' } };
+  const expectedResult = { __proto__: null, values: { toString: true }, positionals: [] };
+
+  const result = parseArgs({ args, options });
+  assert.deepStrictEqual(result, expectedResult);
+});
