@@ -387,7 +387,7 @@ test('null prototype: when no options then values.toString is undefined', () => 
 test('null prototype: when --toString then values.toString is true', () => {
   const args = ['--toString'];
   const options = { toString: { type: 'boolean' } };
-  const expectedResult = { __proto__: null, values: { toString: true }, positionals: [] };
+  const expectedResult = { values: { __proto__: null, toString: true }, positionals: [] };
 
   const result = parseArgs({ args, options });
   assert.deepStrictEqual(result, expectedResult);
