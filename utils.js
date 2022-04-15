@@ -3,6 +3,7 @@
 const {
   ArrayPrototypeFind,
   ObjectEntries,
+  ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeSlice,
@@ -19,6 +20,22 @@ const {
 // main file and just tested implicitly via API).
 //
 // These routines are for internal use, not for export to client.
+
+/**
+ * Return the named property, but only if it is an own property.
+ */
+function objectGetOwn(obj, prop) {
+  if (ObjectHasOwn(obj, prop))
+    return obj[prop];
+}
+
+/**
+ * Return the named options property, but only if it is an own property.
+ */
+function optionsGetOwn(options, longOption, prop) {
+  if (ObjectHasOwn(options, longOption))
+    return objectGetOwn(options[longOption], prop);
+}
 
 /**
  * Determines if the argument may be used as an option value.
@@ -112,7 +129,7 @@ function isShortOptionGroup(arg, options) {
 
   const firstShort = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(firstShort, options);
-  return options[longOption]?.type !== 'string';
+  return optionsGetOwn(options, longOption, 'type') !== 'string';
 }
 
 /**
@@ -133,7 +150,7 @@ function isShortOptionAndValue(arg, options) {
 
   const shortOption = StringPrototypeCharAt(arg, 1);
   const longOption = findLongOptionForShort(shortOption, options);
-  return options[longOption]?.type === 'string';
+  return optionsGetOwn(options, longOption, 'type') === 'string';
 }
 
 /**
@@ -149,7 +166,7 @@ function findLongOptionForShort(shortOption, options) {
   validateObject(options, 'options');
   const { 0: longOption } = ArrayPrototypeFind(
     ObjectEntries(options),
-    ({ 1: optionConfig }) => optionConfig.short === shortOption
+    ({ 1: optionConfig }) => objectGetOwn(optionConfig, 'short') === shortOption
   ) || [];
   return longOption || shortOption;
 }
@@ -162,5 +179,7 @@ module.exports = {
   isOptionValue,
   isOptionLikeValue,
   isShortOptionAndValue,
-  isShortOptionGroup
+  isShortOptionGroup,
+  objectGetOwn,
+  optionsGetOwn
 };
