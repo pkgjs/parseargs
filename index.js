@@ -44,26 +44,6 @@ const {
   },
 } = require('./errors');
 
-/**
- * In strict mode, throw for possible usage errors like --foo --bar
- *
- * @param {string} longOption - long option name e.g. 'foo'
- * @param {string|undefined} optionValue - value from user args
- * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
- * @param {boolean} strict - show errors, from parseArgs({ strict })
- */
-function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
-  if (strict && isOptionLikeValue(optionValue)) {
-    // Only show short example if user used short option.
-    const example = (shortOrLong.length === 2) ?
-      `'--${longOption}=-XYZ' or '${shortOrLong}-XYZ'` :
-      `'--${longOption}=-XYZ'`;
-    const errorMessage = `Did you forget to specify the option argument for '${shortOrLong}'?
-To specify an option argument starting with a dash use ${example}.`;
-    throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
-  }
-}
-
 function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
@@ -96,6 +76,26 @@ function getMainArgs() {
 
   // Normally first two arguments are executable and script, then CLI arguments
   return ArrayPrototypeSlice(process.argv, 2);
+}
+
+/**
+ * In strict mode, throw for possible usage errors like --foo --bar
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string|undefined} optionValue - value from user args
+ * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
+ * @param {boolean} strict - show errors, from parseArgs({ strict })
+ */
+function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
+  if (strict && isOptionLikeValue(optionValue)) {
+    // Only show short example if user used short option.
+    const example = (shortOrLong.length === 2) ?
+      `'--${longOption}=-XYZ' or '${shortOrLong}-XYZ'` :
+      `'--${longOption}=-XYZ'`;
+    const errorMessage = `Did you forget to specify the option argument for '${shortOrLong}'?
+To specify an option argument starting with a dash use ${example}.`;
+    throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
+  }
 }
 
 /**
