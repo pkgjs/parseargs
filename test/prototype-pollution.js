@@ -8,16 +8,16 @@ const { parseArgs } = require('../index.js');
 // See index.js for tests shared with upstream.
 
 function setObjectPrototype(prop, value) {
-  const oldValue = Object.prototype[prop];
+  const oldDescriptor = Object.getOwnPropertyDescriptor(Object.prototype, prop);
   Object.prototype[prop] = value;
-  return oldValue;
+  return oldDescriptor;
 }
 
-function restoreObjectPrototype(prop, oldValue) {
-  if (oldValue == null) {
+function restoreObjectPrototype(prop, oldDescriptor) {
+  if (oldDescriptor == null) {
     delete Object.prototype[prop];
   } else {
-    Object.prototype[prop] = oldValue;
+    Object.defineProperty(Object.prototype, prop, oldDescriptor);
   }
 }
 
@@ -36,9 +36,9 @@ test('when prototype has multiple then ignored', (t) => {
   const options = { foo: { type: 'string' } };
   const expectedResult = { values: { foo: '2' }, positionals: [] };
 
-  const holdValue = setObjectPrototype('multiple', true);
+  const holdDescriptor = setObjectPrototype('multiple', true);
   const result = parseArgs({ args, options });
-  restoreObjectPrototype('multiple', holdValue);
+  restoreObjectPrototype('multiple', holdDescriptor);
   t.deepEqual(result, expectedResult);
   t.end();
 });
@@ -47,11 +47,11 @@ test('when prototype has type then ignored', (t) => {
   const args = ['--foo', '1'];
   const options = { foo: { } };
 
-  const holdValue = setObjectPrototype('type', 'string');
+  const holdDescriptor = setObjectPrototype('type', 'string');
   t.throws(() => {
     parseArgs({ args, options });
   });
-  restoreObjectPrototype('type', holdValue);
+  restoreObjectPrototype('type', holdDescriptor);
   t.end();
 });
 
@@ -59,29 +59,29 @@ test('when prototype has short then ignored', (t) => {
   const args = ['-f', '1'];
   const options = { foo: { type: 'string' } };
 
-  const holdValue = setObjectPrototype('short', 'f');
+  const holdDescriptor = setObjectPrototype('short', 'f');
   t.throws(() => {
     parseArgs({ args, options });
   });
-  restoreObjectPrototype('short', holdValue);
+  restoreObjectPrototype('short', holdDescriptor);
   t.end();
 });
 
 test('when prototype has strict then ignored', (t) => {
   const args = ['-f'];
 
-  const holdValue = setObjectPrototype('strict', false);
+  const holdDescriptor = setObjectPrototype('strict', false);
   t.throws(() => {
     parseArgs({ args });
   });
-  restoreObjectPrototype('strict', holdValue);
+  restoreObjectPrototype('strict', holdDescriptor);
   t.end();
 });
 
 test('when prototype has args then ignored', (t) => {
-  const holdValue = setObjectPrototype('args', ['--foo']);
+  const holdDescriptor = setObjectPrototype('args', ['--foo']);
   const result = parseArgs({ strict: false });
-  restoreObjectPrototype('args', holdValue);
+  restoreObjectPrototype('args', holdDescriptor);
   t.false(result.values.foo);
   t.end();
 });
