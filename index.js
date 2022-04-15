@@ -35,7 +35,9 @@ const {
 
 const {
   codes: {
-    ERR_INVALID_SHORT_OPTION,
+    ERR_INVALID_ARG_VALUE,
+    ERR_PARSE_ARGS_INVALID_OPTION_VALUE,
+    ERR_PARSE_ARGS_UNKNOWN_OPTION,
   },
 } = require('./errors');
 
@@ -74,54 +76,79 @@ function getMainArgs() {
 }
 
 const protoKey = '__proto__';
-function storeOptionValue(options, longOption, value, result) {
-  const optionConfig = options[longOption] || {};
 
-  // Flags
-  result.flags[longOption] = true;
+function storeOption({
+  strict,
+  options,
+  result,
+  longOption,
+  shortOption,
+  optionValue,
+}) {
+  const hasOptionConfig = ObjectHasOwn(options, longOption);
+  const optionConfig = hasOptionConfig ? options[longOption] : {};
+
+  if (strict) {
+    if (!hasOptionConfig) {
+      throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOption == null ? `--${longOption}` : `-${shortOption}`);
+    }
+
+    const shortOptionErr = ObjectHasOwn(optionConfig, 'short') ? `-${optionConfig.short}, ` : '';
+
+    if (options[longOption].type === 'string' && optionValue == null) {
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption} <value>' argument missing`);
+    }
+
+    if (options[longOption].type === 'boolean' && optionValue != null) {
+      throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortOptionErr}--${longOption}' does not take an argument`);
+    }
+  }
 
   if (longOption === protoKey) {
     return;
   }
 
   // Values
+  const usedAsFlag = optionValue === undefined;
+  const newValue = usedAsFlag ? true : optionValue;
   if (optionConfig.multiple) {
     // Always store value in array, including for flags.
     // result.values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
-    const usedAsFlag = value === undefined;
-    const newValue = usedAsFlag ? true : value;
     if (result.values[longOption] !== undefined)
       ArrayPrototypePush(result.values[longOption], newValue);
     else
       result.values[longOption] = [newValue];
   } else {
-    result.values[longOption] = value;
+    result.values[longOption] = newValue;
   }
 }
 
 const parseArgs = ({
   args = getMainArgs(),
-  strict = false,
+  strict = true,
   options = {}
 } = {}) => {
   validateArray(args, 'args');
+  validateBoolean(strict, 'strict');
   validateObject(options, 'options');
   ArrayPrototypeForEach(
     ObjectEntries(options),
     ({ 0: longOption, 1: optionConfig }) => {
       validateObject(optionConfig, `options.${longOption}`);
 
-      if (ObjectHasOwn(optionConfig, 'type')) {
-        validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
-      }
+      validateUnion(optionConfig.type, `options.${longOption}.type`, ['string', 'boolean']);
 
       if (ObjectHasOwn(optionConfig, 'short')) {
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
         if (shortOption.length !== 1) {
-          throw new ERR_INVALID_SHORT_OPTION(longOption, shortOption);
+          throw new ERR_INVALID_ARG_VALUE(
+            `options.${longOption}.short`,
+            shortOption,
+            'must be a single character'
+          );
         }
       }
 
@@ -140,7 +167,6 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
   };
 
   const result = {
-    flags: {},
     values: {},
     positionals: []
   };
@@ -171,7 +197,14 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
         optionValue = ArrayPrototypeShift(remainingArgs);
         checkSafeOptionValue(arg, longOption, optionValue);
       }
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -187,7 +220,6 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
           ArrayPrototypePush(expanded, `-${shortOption}`);
         } else {
           // String option in middle. Yuck.
-          // ToDo: if strict then throw
           // Expand -abfFILE to -a -b -fFILE
           ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
@@ -202,7 +234,14 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       const optionValue = StringPrototypeSlice(arg, 2);
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({
+        strict,
+        options,
+        result,
+        longOption,
+        shortOption,
+        optionValue,
+      });
       continue;
     }
 
@@ -215,7 +254,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
         optionValue = ArrayPrototypeShift(remainingArgs);
         checkSafeOptionValue(arg, longOption, optionValue);
       }
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 
@@ -224,7 +263,7 @@ To specify an option argument starting with a dash use '--${longOption}=-EXAMPLE
       const index = StringPrototypeIndexOf(arg, '=');
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
-      storeOptionValue(options, longOption, optionValue, result);
+      storeOption({ strict, options, result, longOption, optionValue });
       continue;
     }
 

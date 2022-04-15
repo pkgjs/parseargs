@@ -50,7 +50,7 @@ function isSafeOptionValue(value) {
 }
 
 /**
- * Determines if `arg` is a just a short option.
+ * Determines if `arg` is just a short option.
  * @example '-f'
  */
 function isLoneShortOption(arg) {
@@ -64,8 +64,8 @@ function isLoneShortOption(arg) {
  * @example
  * isLoneLongOption('a') // returns false
  * isLoneLongOption('-a') // returns false
- * isLoneLongOption('--foo) // returns true
- * isLoneLongOption('--foo=bar) // returns false
+ * isLoneLongOption('--foo') // returns true
+ * isLoneLongOption('--foo=bar') // returns false
  */
 function isLoneLongOption(arg) {
   return arg.length > 2 &&
@@ -74,10 +74,10 @@ function isLoneLongOption(arg) {
 }
 
 /**
- * Determines if `arg` is a long option and value in same argument.
+ * Determines if `arg` is a long option and value in the same argument.
  * @example
- * isLongOptionAndValue('--foo) // returns false
- * isLongOptionAndValue('--foo=bar) // returns true
+ * isLongOptionAndValue('--foo') // returns false
+ * isLongOptionAndValue('--foo=bar') // returns true
  */
 function isLongOptionAndValue(arg) {
   return arg.length > 2 &&
@@ -97,14 +97,14 @@ function isLongOptionAndValue(arg) {
  * isShortOptionGroup('-ab', {}) // returns true
  * // -fb is an option and a value, not a short option group
  * isShortOptionGroup('-fb', {
- *   options: { f: { type: 'string' }}
+ *   options: { f: { type: 'string' } }
  * }) // returns false
  * isShortOptionGroup('-bf', {
- *   options: { f: { type: 'string' }}
+ *   options: { f: { type: 'string' } }
  * }) // returns true
  * // -bfb is an edge case, return true and caller sorts it out
  * isShortOptionGroup('-bfb', {
- *   options: { f: { type: 'string' }}
+ *   options: { f: { type: 'string' } }
  * }) // returns true
  */
 function isShortOptionGroup(arg, options) {
@@ -118,10 +118,10 @@ function isShortOptionGroup(arg, options) {
 }
 
 /**
- * Determine is arg is a short string option followed by its value.
+ * Determine if arg is a short string option followed by its value.
  * @example
- * isShortOptionAndValue('-a, {}); // returns false
- * isShortOptionAndValue('-ab, {}); // returns false
+ * isShortOptionAndValue('-a', {}); // returns false
+ * isShortOptionAndValue('-ab', {}); // returns false
  * isShortOptionAndValue('-fFILE', {
  *   options: { foo: { short: 'f', type: 'string' }}
  * }) // returns true
@@ -140,11 +140,11 @@ function isShortOptionAndValue(arg, options) {
 
 /**
  * Find the long option associated with a short option. Looks for a configured
- * `short` and returns the short option itself if long option not found.
+ * `short` and returns the short option itself if a long option is not found.
  * @example
  * findLongOptionForShort('a', {}) // returns 'a'
  * findLongOptionForShort('b', {
- *   options: { bar: { short: 'b' }}
+ *   options: { bar: { short: 'b' } }
  * }) // returns 'bar'
  */
 function findLongOptionForShort(shortOption, options) {
