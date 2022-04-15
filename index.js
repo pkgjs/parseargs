@@ -77,6 +77,15 @@ function getMainArgs() {
   return ArrayPrototypeSlice(process.argv, 2);
 }
 
+/**
+ * In strict mode, throw for usage errors.
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string|undefined} optionValue - value from user args
+ * @param {Object} options - option configs, from parseArgs({ options })
+ * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
+ * @param {boolean} strict - show errors, from parseArgs({ strict })
+ */
 function checkOptionUsage(longOption, optionValue, options,
                           shortOrLong, strict) {
   // Strict and options are used from local context.
@@ -98,6 +107,14 @@ function checkOptionUsage(longOption, optionValue, options,
   }
 }
 
+/**
+ * Store the option value in `values`.
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string|undefined} optionValue - value from user args
+ * @param {Object} options - option configs, from parseArgs({ options })
+ * @param {Object} values - option values returned in `values` by parseArgs
+ */
 function storeOption(longOption, optionValue, options, values) {
   if (longOption === '__proto__') {
     return;
