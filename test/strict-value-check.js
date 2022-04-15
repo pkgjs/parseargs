@@ -1,105 +1,110 @@
+/* global assert */
+/* eslint max-len: ["error", {"code": 120}], */
 'use strict';
-/* eslint max-len: 0 */
 
-const test = require('tape');
+const { test } = require('./utils');
 const { parseArgs } = require('../index.js');
 
-test('strict: when candidate option value is plain text then does not throw', (t) => {
+test('strict: when candidate option value is plain text then does not throw', () => {
   const args = ['--with', 'abc'];
   const options = { with: { type: 'string' } };
+  const expectedResult = { values: { with: 'abc' }, positionals: [] };
 
-  t.doesNotThrow(() => {
-    parseArgs({ args, options, strict: true });
-  });
-  t.end();
+  const result = parseArgs({ args, options, strict: true });
+  assert.deepStrictEqual(result, expectedResult);
 });
 
-test("strict: when candidate option value is '-' then does not throw", (t) => {
+test("strict: when candidate option value is '-' then does not throw", () => {
   const args = ['--with', '-'];
   const options = { with: { type: 'string' } };
+  const expectedResult = { values: { with: '-' }, positionals: [] };
 
-  t.doesNotThrow(() => {
-    parseArgs({ args, options, strict: true });
-  });
-  t.end();
+  const result = parseArgs({ args, options, strict: true });
+  assert.deepStrictEqual(result, expectedResult);
 });
 
-test("strict: when candidate option value is '--' then throws", (t) => {
+test("strict: when candidate option value is '--' then throws", () => {
   const args = ['--with', '--'];
   const options = { with: { type: 'string' } };
 
-  t.throws(() => {
-    parseArgs({ args, options, strict: true });
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
   });
-  t.end();
 });
 
-test('strict: when candidate option value is short option then throws', (t) => {
+test('strict: when candidate option value is short option then throws', () => {
   const args = ['--with', '-a'];
   const options = { with: { type: 'string' } };
 
-  t.throws(() => {
-    parseArgs({ args, options, strict: true });
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
   });
-  t.end();
 });
 
-test('strict: when candidate option value is short option digit then throws', (t) => {
-  const passedArgs = ['--with', '-1'];
+test('strict: when candidate option value is short option digit then throws', () => {
+  const args = ['--with', '-1'];
   const options = { with: { type: 'string' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
   });
-  t.end();
 });
 
-test('strict: when candidate option value is long option then throws', (t) => {
-  const passedArgs = ['--with', '--foo'];
+test('strict: when candidate option value is long option then throws', () => {
+  const args = ['--with', '--foo'];
   const options = { with: { type: 'string' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
   });
-  t.end();
 });
 
-test('strict: when short option and suspect value then throws with short option in error message', (t) => {
-  const passedArgs = ['-w', '--foo'];
+test('strict: when short option and suspect value then throws with short option in error message', () => {
+  const args = ['-w', '--foo'];
   const options = { with: { type: 'string', short: 'w' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
-  }, /for '-w'/);
-  t.end();
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, /for '-w'/
+  );
 });
 
-test('strict: when long option and suspect value then throws with long option in error message', (t) => {
-  const passedArgs = ['--with', '--foo'];
+test('strict: when long option and suspect value then throws with long option in error message', () => {
+  const args = ['--with', '--foo'];
   const options = { with: { type: 'string' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
-  }, /for '--with'/);
-  t.end();
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, /for '--with'/
+  );
 });
 
-test('strict: when short option and suspect value then throws with whole expected message', (t) => {
-  const passedArgs = ['-w', '--foo'];
+test('strict: when short option and suspect value then throws with whole expected message', () => {
+  const args = ['-w', '--foo'];
   const options = { with: { type: 'string', short: 'w' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
-  }, /Did you forget to specify the option argument for '-w'\?\nTo specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./);
-  t.end();
+  assert.throws(() => {
+    parseArgs({ args, options });
+  // eslint-disable-next-line max-len
+  }, /Did you forget to specify the option argument for '-w'\?\nTo specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
+  );
 });
 
-test('strict: when long option and suspect value then throws with whole expected message', (t) => {
-  const passedArgs = ['--with', '--foo'];
+test('strict: when long option and suspect value then throws with whole expected message', () => {
+  const args = ['--with', '--foo'];
   const options = { with: { type: 'string', short: 'w' } };
 
-  t.throws(() => {
-    parseArgs({ args: passedArgs, options, strict: true });
-  }, /Did you forget to specify the option argument for '--with'\?\nTo specify an option argument starting with a dash use '--with=-XYZ'\./);
-  t.end();
+  assert.throws(() => {
+    parseArgs({ args, options });
+  // eslint-disable-next-line max-len
+  }, /Did you forget to specify the option argument for '--with'\?\nTo specify an option argument starting with a dash use '--with=-XYZ'\./
+  );
 });
