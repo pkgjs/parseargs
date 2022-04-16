@@ -47,14 +47,3 @@ test('when pass group with string option in middle and strict:false then parsed 
   t.deepEqual(result, expected);
   t.end();
 });
-
-// Hopefully coming:
-// test('when pass group with string option in middle and strict:true then error', (t) => {
-//   const args = ['-afb', 'p'];
-//   const options = { f: { type: 'string' } };
-//
-//   t.throws(() => {
-//     parseArgs({ args, options, strict: true });
-//   });
-//   t.end();
-// });
