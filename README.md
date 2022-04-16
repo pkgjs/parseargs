@@ -3,27 +3,89 @@
 
 [![Coverage][coverage-image]][coverage-url]
 
->
-> 🚨  THIS REPO IS AN EARLY WIP -- DO NOT USE ... yet 🚨
->
+Polyfill of proposal for `util.parseArgs()`
 
-Polyfill of future proposal to the [nodejs/tooling](https://github.com/nodejs/tooling) repo for `util.parseArgs()`
+## `util.parseArgs([config])`
 
-### Scope
+<!-- YAML
+added: REPLACEME
+-->
 
-It is already possible to build great arg parsing modules on top of what Node.js provides; the prickly API is abstracted away by these modules. Thus, process.parseArgs() is not necessarily intended for library authors; it is intended for developers of simple CLI tools, ad-hoc scripts, deployed Node.js applications, and learning materials.
+> Stability: 1 - Experimental
 
-It is exceedingly difficult to provide an API which would both be friendly to these Node.js users while being extensible enough for libraries to build upon. We chose to prioritize these use cases because these are currently not well-served by Node.js' API.
+* `config` {Object} Used to provide arguments for parsing and to configure
+  the parser. `config` supports the following properties:
+  * `args` {string\[]} array of argument strings. **Default:** `process.argv`
+    with `execPath` and `filename` removed.
+  * `options` {Object} Used to describe arguments known to the parser.
+    Keys of `options` are the long names of options and values are an
+    {Object} accepting the following properties:
+    * `type` {string} Type of argument, which must be either `boolean` or `string`.
+      **Default:** `boolean`.
+    * `multiple` {boolean} Whether this option can be provided multiple
+      times. If `true`, all values will be collected in an array. If
+      `false`, values for the option are last-wins. **Default:** `false`.
+    * `short` {string} A single character alias for the option.
+  * `strict`: {boolean} Should an error be thrown when unknown arguments
+    are encountered, or when arguments are passed that do not match the
+    `type` configured in `options`.
+    **Default:** `true`.
 
-### Links & Resources
+* Returns: {Object} An {Object} representing the parsed command line
+  arguments:
+  * `values` {Object} With properties and {string} or {boolean} values
+    corresponding to parsed options passed.
+  * `positionals` {string\[]}, containing positional arguments.
 
-* [Initial Tooling Issue](https://github.com/nodejs/tooling/issues/19)
-* [Initial Proposal](https://github.com/nodejs/node/pull/35015)
+Provides a higher level API for command-line argument parsing than interacting
+with `process.argv` directly.
 
-----
+```mjs
+import { parseArgs } from 'util';
+const args = ['-f', '--bar', 'b'];
+const options = {
+  foo: {
+    type: 'boolean',
+    short: 'f'
+  },
+  bar: {
+    type: 'string'
+  }
+};
+const {
+  values,
+  positionals
+} = parseArgs({ args, options });
+```
+
+```cjs
+const { parseArgs } = require('util');
+const args = ['-f', '--bar', 'b'];
+const options = {
+  foo: {
+    type: 'boolean',
+    short: 'f'
+  },
+  bar: {
+    type: 'string'
+  }
+};
+const {
+  values,
+  positionals
+} = parseArgs({ args, options });
+```
+
+`util.parseArgs` is experimental and behavior may change. Join the
+conversation in [pkgjs/parseargs][] to contribute to the design.
+
+-----
 
 <!-- omit in toc -->
 ## Table of Contents
+- [`util.parseArgs([config])`](#utilparseargsconfig)
+  - [Scope](#scope)
+  - [Links & Resources](#links--resources)
 - [🚀 Getting Started](#-getting-started)
 - [🙌 Contributing](#-contributing)
 - [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
@@ -32,7 +94,13 @@ It is exceedingly difficult to provide an API which would both be friendly to th
 - [📃 Examples](#-examples)
   - [F.A.Qs](#faqs)
 
-----
+-----
+
+## Scope
+
+It is already possible to build great arg parsing modules on top of what Node.js provides; the prickly API is abstracted away by these modules. Thus, process.parseArgs() is not necessarily intended for library authors; it is intended for developers of simple CLI tools, ad-hoc scripts, deployed Node.js applications, and learning materials.
+
+It is exceedingly difficult to provide an API which would both be friendly to these Node.js users while being extensible enough for libraries to build upon. We chose to prioritize these use cases because these are currently not well-served by Node.js' API.
 
 ## 🚀 Getting Started
 
@@ -210,6 +278,12 @@ const { values, positionals } = parseArgs({ strict: false, args, options });
   - the second is a long option named `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`
   - yes
+
+## Links & Resources
+
+* [Initial Tooling Issue](https://github.com/nodejs/tooling/issues/19)
+* [Initial Proposal](https://github.com/nodejs/node/pull/35015)
+* [parseArgs Proposal](https://github.com/nodejs/node/pull/42675)
 
 [coverage-image]: https://img.shields.io/nycrc/pkgjs/parseargs
 [coverage-url]: https://github.com/pkgjs/parseargs/blob/main/.nycrc
