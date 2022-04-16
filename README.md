@@ -287,3 +287,4 @@ const { values, positionals } = parseArgs({ strict: false, args, options });
 
 [coverage-image]: https://img.shields.io/nycrc/pkgjs/parseargs
 [coverage-url]: https://github.com/pkgjs/parseargs/blob/main/.nycrc
+[pkgjs/parseargs]: https://github.com/pkgjs/parseargs
