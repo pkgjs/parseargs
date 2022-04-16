@@ -23,11 +23,11 @@ function restoreObjectPrototype(prop, oldDescriptor) {
 
 test('should not allow __proto__ key to be set on object', (t) => {
   const args = ['--__proto__=hello'];
-  const expected = { values: {}, positionals: [] };
+  const expected = { values: { __proto__: null }, positionals: [] };
 
   const result = parseArgs({ strict: false, args });
 
-  t.deepEqual({ ...result.values }, expected.values);
+  t.deepEqual(result, expected);
   t.end();
 });
 
