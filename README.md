@@ -40,7 +40,7 @@ added: REPLACEME
   * `positionals` {string\[]}, containing positional arguments.
 
 Provides a higher level API for command-line argument parsing than interacting
-with `process.argv` directly. Takes a specification for the expected options and returns a structured object corresponding to passed arguments.
+with `process.argv` directly. Takes a specification for the expected arguments and returns a structured object with the parsed options and positionals.
 
 ```mjs
 import { parseArgs } from 'util';
