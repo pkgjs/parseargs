@@ -40,7 +40,7 @@ added: REPLACEME
   * `positionals` {string\[]}, containing positional arguments.
 
 Provides a higher level API for command-line argument parsing than interacting
-with `process.argv` directly.
+with `process.argv` directly. Takes a specification for the expected options and returns a structured object corresponding to passed arguments.
 
 ```mjs
 import { parseArgs } from 'util';
@@ -155,6 +155,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` for whether or not to throw an error when unknown options are encountered, `type:'string'` options are missing an options-argument, or `type:'boolean'` options are passed an options-argument; defaults to `true`
+  * `allowPositionals` {Boolean} (Optional) Whether this command accepts positional arguments. Defaults `false` if `strict` is `true`, otherwise defaults to `true`.
 * Returns: {Object} An object having properties:
   * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array (of strings or booleans) for options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
@@ -205,7 +206,7 @@ const options = {
   },
 };
 const args = ['-f', 'b'];
-const { values, positionals } = parseArgs({ args, options });
+const { values, positionals } = parseArgs({ args, options, allowPositionals: true });
 // values = { foo: true }
 // positionals = ['b']
 ```
@@ -215,7 +216,7 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // unconfigured
 const options = {};
 const args = ['-f', '--foo=a', '--bar', 'b'];
-const { values, positionals } = parseArgs({ strict: false, args, options });
+const { values, positionals } = parseArgs({ strict: false, args, options, allowPositionals: true });
 // values = { f: true, foo: 'a', bar: true }
 // positionals = ['b']
 ```
