@@ -12,10 +12,10 @@ const { parseArgs } = require('../index.js');
 // A different usage and example is `git switch -` to switch back to the previous branch.
 
 test("dash: when args include '-' used as positional then result has '-' in positionals", (t) => {
-  const passedArgs = ['-'];
-  const expected = { values: {}, positionals: ['-'] };
+  const args = ['-'];
+  const expected = { values: { __proto__: null }, positionals: ['-'] };
 
-  const result = parseArgs({ args: passedArgs });
+  const result = parseArgs({ args });
 
   t.deepEqual(result, expected);
   t.end();
@@ -23,11 +23,11 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 
 // If '-' is a valid positional, it is symmetrical to allow it as an option value too.
 test("dash: when args include '-' used as space-separated option value then result has '-' in option value", (t) => {
-  const passedArgs = ['-v', '-'];
-  const passedOptions = { v: { type: 'string' } };
-  const expected = { values: { v: '-' }, positionals: [] };
+  const args = ['-v', '-'];
+  const options = { v: { type: 'string' } };
+  const expected = { values: { __proto__: null, v: '-' }, positionals: [] };
 
-  const result = parseArgs({ args: passedArgs, options: passedOptions });
+  const result = parseArgs({ args, options });
 
   t.deepEqual(result, expected);
   t.end();

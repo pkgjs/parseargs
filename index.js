@@ -6,7 +6,6 @@ const {
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
-  ObjectDefineProperty,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
@@ -117,18 +116,8 @@ function checkOptionUsage(longOption, optionValue, options,
  */
 function storeOption(longOption, optionValue, options, values) {
   if (longOption === '__proto__') {
-    return;
+    return; // No. Just no.
   }
-
-  // Can be removed when value has a null prototype
-  const safeAssignProperty = (obj, prop, value) => {
-    ObjectDefineProperty(obj, prop, {
-      value,
-      writable: true,
-      enumerable: true,
-      configurable: true
-    });
-  };
 
   // We store based on the option value rather than option type,
   // preserving the users intent for author to deal with.
@@ -138,13 +127,14 @@ function storeOption(longOption, optionValue, options, values) {
     // values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
-    if (ObjectHasOwn(values, longOption)) {
+    // (note: values has null prototype, so simpler usage)
+    if (values[longOption]) {
       ArrayPrototypePush(values[longOption], newValue);
     } else {
-      safeAssignProperty(values, longOption, [newValue]);
+      values[longOption] = [newValue];
     }
   } else {
-    safeAssignProperty(values, longOption, newValue);
+    values[longOption] = newValue;
   }
 }
 
@@ -184,7 +174,7 @@ const parseArgs = (config = { __proto__: null }) => {
   );
 
   const result = {
-    values: {},
+    values: { __proto__: null },
     positionals: []
   };
 
