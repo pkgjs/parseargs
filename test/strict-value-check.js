@@ -8,7 +8,7 @@ const { parseArgs } = require('../index.js');
 test('strict: when candidate option value is plain text then does not throw', () => {
   const args = ['--with', 'abc'];
   const options = { with: { type: 'string' } };
-  const expectedResult = { values: { with: 'abc' }, positionals: [] };
+  const expectedResult = { values: { __proto__: null, with: 'abc' }, positionals: [] };
 
   const result = parseArgs({ args, options, strict: true });
   assert.deepStrictEqual(result, expectedResult);
@@ -17,7 +17,7 @@ test('strict: when candidate option value is plain text then does not throw', ()
 test("strict: when candidate option value is '-' then does not throw", () => {
   const args = ['--with', '-'];
   const options = { with: { type: 'string' } };
-  const expectedResult = { values: { with: '-' }, positionals: [] };
+  const expectedResult = { values: { __proto__: null, with: '-' }, positionals: [] };
 
   const result = parseArgs({ args, options, strict: true });
   assert.deepStrictEqual(result, expectedResult);

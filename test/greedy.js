@@ -19,7 +19,7 @@ candidateGreedyOptions.forEach((value) => {
   test(`greedy: when short option with value '${value}' then eaten`, () => {
     const args = ['-w', value];
     const options = { with: { type: 'string', short: 'w' } };
-    const expectedResult = { values: { with: value }, positionals: [] };
+    const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
 
     const result = parseArgs({ args, options, strict: false });
     assert.deepStrictEqual(result, expectedResult);
@@ -28,7 +28,7 @@ candidateGreedyOptions.forEach((value) => {
   test(`greedy: when long option with value '${value}' then eaten`, () => {
     const args = ['--with', value];
     const options = { with: { type: 'string', short: 'w' } };
-    const expectedResult = { values: { with: value }, positionals: [] };
+    const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
 
     const result = parseArgs({ args, options, strict: false });
     assert.deepStrictEqual(result, expectedResult);
