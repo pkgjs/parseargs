@@ -94,7 +94,7 @@ test('strict: when short option and suspect value then throws with whole expecte
   assert.throws(() => {
     parseArgs({ args, options });
   // eslint-disable-next-line max-len
-  }, /Did you forget to specify the option argument for '-w'\?\nTo specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
+  }, /Error: Option '-w' argument starts with a dash\.\nDid you forget to specify the option argument for '-w'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
   );
 });
 
@@ -105,6 +105,6 @@ test('strict: when long option and suspect value then throws with whole expected
   assert.throws(() => {
     parseArgs({ args, options });
   // eslint-disable-next-line max-len
-  }, /Did you forget to specify the option argument for '--with'\?\nTo specify an option argument starting with a dash use '--with=-XYZ'\./
+  }, /Error: Option '--with' argument starts with a dash\.\nDid you forget to specify the option argument for '--with'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ'\./
   );
 });

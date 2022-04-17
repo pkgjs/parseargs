@@ -92,8 +92,9 @@ function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
     const example = (shortOrLong.length === 2) ?
       `'--${longOption}=-XYZ' or '${shortOrLong}-XYZ'` :
       `'--${longOption}=-XYZ'`;
-    const errorMessage = `Did you forget to specify the option argument for '${shortOrLong}'?
-To specify an option argument starting with a dash use ${example}.`;
+    const errorMessage = `Option '${shortOrLong}' argument starts with a dash.
+Did you forget to specify the option argument for '${shortOrLong}'?
+Or to specify an option argument starting with a dash use ${example}.`;
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
   }
 }
