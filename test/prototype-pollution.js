@@ -22,10 +22,10 @@ function restoreObjectPrototype(prop, oldDescriptor) {
 }
 
 test('should not allow __proto__ key to be set on object', (t) => {
-  const passedArgs = ['--__proto__=hello'];
-  const expected = { values: {}, positionals: [] };
+  const args = ['--__proto__=hello'];
+  const expected = { values: { __proto__: null }, positionals: [] };
 
-  const result = parseArgs({ strict: false, args: passedArgs });
+  const result = parseArgs({ strict: false, args });
 
   t.deepEqual(result, expected);
   t.end();
@@ -34,7 +34,7 @@ test('should not allow __proto__ key to be set on object', (t) => {
 test('when prototype has multiple then ignored', (t) => {
   const args = ['--foo', '1', '--foo', '2'];
   const options = { foo: { type: 'string' } };
-  const expectedResult = { values: { foo: '2' }, positionals: [] };
+  const expectedResult = { values: { __proto__: null, foo: '2' }, positionals: [] };
 
   const holdDescriptor = setObjectPrototype('multiple', true);
   const result = parseArgs({ args, options });
