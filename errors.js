@@ -28,11 +28,19 @@ class ERR_PARSE_ARGS_UNKNOWN_OPTION extends Error {
   }
 }
 
+class ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL extends Error {
+  constructor(positional) {
+    super(`Unexpected argument '${positional}'. This command does not take positional arguments`);
+    this.code = 'ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL';
+  }
+}
+
 module.exports = {
   codes: {
     ERR_INVALID_ARG_TYPE,
     ERR_INVALID_ARG_VALUE,
     ERR_PARSE_ARGS_INVALID_OPTION_VALUE,
     ERR_PARSE_ARGS_UNKNOWN_OPTION,
+    ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL,
   }
 };

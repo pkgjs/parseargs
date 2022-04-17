@@ -15,7 +15,7 @@ test("dash: when args include '-' used as positional then result has '-' in posi
   const args = ['-'];
   const expected = { values: { __proto__: null }, positionals: ['-'] };
 
-  const result = parseArgs({ args });
+  const result = parseArgs({ allowPositionals: true, args });
 
   t.deepEqual(result, expected);
   t.end();

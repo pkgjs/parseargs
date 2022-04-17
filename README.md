@@ -30,6 +30,8 @@ added: REPLACEME
     are encountered, or when arguments are passed that do not match the
     `type` configured in `options`.
     **Default:** `true`.
+  * `allowPositionals`: {boolean} Whether this command accepts positional arguments.
+    **Default:** `false` if `strict` is `true`, otherwise `true`.
 
 * Returns: {Object} An {Object} representing the parsed command line
   arguments:
@@ -133,7 +135,7 @@ This package was implemented using [tape](https://www.npmjs.com/package/tape) as
 ## 💡 `process.mainArgs` Proposal
 
 > Note: This can be moved forward independently of the `util.parseArgs()` proposal/work.
- 
+
 ### Implementation:
 
 ```javascript
@@ -273,7 +275,7 @@ const { values, positionals } = parseArgs({ strict: false, args, options });
   - no, `-bar` is a short option or options, with expansion logic that follows the
     [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
-  - no 
+  - no
   - the first is a long option named `'-foo'`
   - the second is a long option named `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`
