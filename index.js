@@ -87,12 +87,12 @@ function getMainArgs() {
  * @param {boolean} strict - show errors, from parseArgs({ strict })
  */
 function checkOptionUsage(longOption, optionValue, options,
-                          shortOrLong, strict) {
+                          shortOrLong, strict, allowPositionals) {
   // Strict and options are used from local context.
   if (!strict) return;
 
   if (!ObjectHasOwn(options, longOption)) {
-    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOrLong);
+    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOrLong, allowPositionals);
   }
 
   const short = optionsGetOwn(options, longOption, 'short');
@@ -211,7 +211,8 @@ const parseArgs = (config = { __proto__: null }) => {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      checkOptionUsage(longOption, optionValue, options, arg, strict);
+      checkOptionUsage(longOption, optionValue, options,
+                       arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -242,7 +243,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       const optionValue = StringPrototypeSlice(arg, 2);
-      checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict);
+      checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -256,7 +257,8 @@ const parseArgs = (config = { __proto__: null }) => {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      checkOptionUsage(longOption, optionValue, options, arg, strict);
+      checkOptionUsage(longOption, optionValue, options,
+                       arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -266,7 +268,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const index = StringPrototypeIndexOf(arg, '=');
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
-      checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict);
+      checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }

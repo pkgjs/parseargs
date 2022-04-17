@@ -22,8 +22,9 @@ class ERR_PARSE_ARGS_INVALID_OPTION_VALUE extends Error {
 }
 
 class ERR_PARSE_ARGS_UNKNOWN_OPTION extends Error {
-  constructor(option) {
-    super(`Unknown option '${option}'`);
+  constructor(option, allowPositionals) {
+    const suggestDashDash = allowPositionals ? `. To specify a positional argument starting with a '-', place it at the end of the command after '--', as in '-- ${JSON.stringify(option)}` : '';
+    super(`Unknown option '${option}'${suggestDashDash}`);
     this.code = 'ERR_PARSE_ARGS_UNKNOWN_OPTION';
   }
 }
