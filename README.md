@@ -30,6 +30,8 @@ added: REPLACEME
     are encountered, or when arguments are passed that do not match the
     `type` configured in `options`.
     **Default:** `true`.
+  * `allowPositionals`: {boolean} Whether this command accepts positional arguments.
+    **Default:** `false` if `strict` is `true`, otherwise `true`.
 
 * Returns: {Object} An {Object} representing the parsed command line
   arguments:
@@ -38,7 +40,7 @@ added: REPLACEME
   * `positionals` {string\[]}, containing positional arguments.
 
 Provides a higher level API for command-line argument parsing than interacting
-with `process.argv` directly.
+with `process.argv` directly. Takes a specification for the expected arguments and returns a structured object with the parsed options and positionals.
 
 ```mjs
 import { parseArgs } from 'util';
@@ -133,7 +135,7 @@ This package was implemented using [tape](https://www.npmjs.com/package/tape) as
 ## 💡 `process.mainArgs` Proposal
 
 > Note: This can be moved forward independently of the `util.parseArgs()` proposal/work.
- 
+
 ### Implementation:
 
 ```javascript
@@ -153,6 +155,7 @@ process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
     * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
     * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
   * `strict` {Boolean} (Optional) A `Boolean` for whether or not to throw an error when unknown options are encountered, `type:'string'` options are missing an options-argument, or `type:'boolean'` options are passed an options-argument; defaults to `true`
+  * `allowPositionals` {Boolean} (Optional) Whether this command accepts positional arguments. Defaults `false` if `strict` is `true`, otherwise defaults to `true`.
 * Returns: {Object} An object having properties:
   * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array (of strings or booleans) for options configured as `multiple:true`.
   * `positionals` {string[]}, containing [Positionals][]
@@ -203,7 +206,7 @@ const options = {
   },
 };
 const args = ['-f', 'b'];
-const { values, positionals } = parseArgs({ args, options });
+const { values, positionals } = parseArgs({ args, options, allowPositionals: true });
 // values = { foo: true }
 // positionals = ['b']
 ```
@@ -213,7 +216,7 @@ const { parseArgs } = require('@pkgjs/parseargs');
 // unconfigured
 const options = {};
 const args = ['-f', '--foo=a', '--bar', 'b'];
-const { values, positionals } = parseArgs({ strict: false, args, options });
+const { values, positionals } = parseArgs({ strict: false, args, options, allowPositionals: true });
 // values = { f: true, foo: 'a', bar: true }
 // positionals = ['b']
 ```
@@ -273,7 +276,7 @@ const { values, positionals } = parseArgs({ strict: false, args, options });
   - no, `-bar` is a short option or options, with expansion logic that follows the
     [Utility Syntax Guidelines in POSIX.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html). `-bar` expands to `-b`, `-a`, `-r`.
 - Is `---foo` the same as `--foo`?
-  - no 
+  - no
   - the first is a long option named `'-foo'`
   - the second is a long option named `'foo'`
 - Is `-` a positional? ie, `bash some-test.sh | tap -`

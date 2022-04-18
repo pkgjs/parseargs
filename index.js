@@ -39,6 +39,7 @@ const {
     ERR_INVALID_ARG_VALUE,
     ERR_PARSE_ARGS_INVALID_OPTION_VALUE,
     ERR_PARSE_ARGS_UNKNOWN_OPTION,
+    ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL,
   },
 } = require('./errors');
 
@@ -86,12 +87,12 @@ function getMainArgs() {
  * @param {boolean} strict - show errors, from parseArgs({ strict })
  */
 function checkOptionUsage(longOption, optionValue, options,
-                          shortOrLong, strict) {
+                          shortOrLong, strict, allowPositionals) {
   // Strict and options are used from local context.
   if (!strict) return;
 
   if (!ObjectHasOwn(options, longOption)) {
-    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOrLong);
+    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(shortOrLong, allowPositionals);
   }
 
   const short = optionsGetOwn(options, longOption, 'short');
@@ -141,11 +142,13 @@ function storeOption(longOption, optionValue, options, values) {
 const parseArgs = (config = { __proto__: null }) => {
   const args = objectGetOwn(config, 'args') ?? getMainArgs();
   const strict = objectGetOwn(config, 'strict') ?? true;
+  const allowPositionals = objectGetOwn(config, 'allowPositionals') ?? !strict;
   const options = objectGetOwn(config, 'options') ?? { __proto__: null };
 
   // Validate input configuration.
   validateArray(args, 'args');
   validateBoolean(strict, 'strict');
+  validateBoolean(allowPositionals, 'allowPositionals');
   validateObject(options, 'options');
   ArrayPrototypeForEach(
     ObjectEntries(options),
@@ -186,6 +189,10 @@ const parseArgs = (config = { __proto__: null }) => {
     // Check if `arg` is an options terminator.
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
+      if (!allowPositionals && remainingArgs.length > 0) {
+        throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(nextArg);
+      }
+
       // Everything after a bare '--' is considered a positional argument.
       result.positionals = ArrayPrototypeConcat(
         result.positionals,
@@ -204,7 +211,8 @@ const parseArgs = (config = { __proto__: null }) => {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      checkOptionUsage(longOption, optionValue, options, arg, strict);
+      checkOptionUsage(longOption, optionValue, options,
+                       arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -235,7 +243,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       const optionValue = StringPrototypeSlice(arg, 2);
-      checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict);
+      checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -249,7 +257,8 @@ const parseArgs = (config = { __proto__: null }) => {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
       }
-      checkOptionUsage(longOption, optionValue, options, arg, strict);
+      checkOptionUsage(longOption, optionValue, options,
+                       arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
@@ -259,12 +268,16 @@ const parseArgs = (config = { __proto__: null }) => {
       const index = StringPrototypeIndexOf(arg, '=');
       const longOption = StringPrototypeSlice(arg, 2, index);
       const optionValue = StringPrototypeSlice(arg, index + 1);
-      checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict);
+      checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       continue;
     }
 
     // Anything left is a positional
+    if (!allowPositionals) {
+      throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(arg);
+    }
+
     ArrayPrototypePush(result.positionals, arg);
   }
 
