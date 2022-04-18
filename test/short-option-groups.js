@@ -20,7 +20,7 @@ test('when pass full-config group of booleans then parsed as booleans', (t) => {
   const options = { r: { type: 'boolean' }, f: { type: 'boolean' } };
   const expected = { values: { __proto__: null, r: true, f: true }, positionals: ['p'] };
 
-  const result = parseArgs({ args, options });
+  const result = parseArgs({ allowPositionals: true, args, options });
 
   t.deepEqual(result, expected);
   t.end();

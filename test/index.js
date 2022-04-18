@@ -98,7 +98,7 @@ test('handles short-option groups with "short" alias configured', () => {
 test('Everything after a bare `--` is considered a positional argument', () => {
   const args = ['--', 'barepositionals', 'mopositionals'];
   const expected = { values: { __proto__: null }, positionals: ['barepositionals', 'mopositionals'] };
-  const result = parseArgs({ args });
+  const result = parseArgs({ allowPositionals: true, args });
   assert.deepStrictEqual(result, expected, Error('testing bare positionals'));
 });
 
@@ -127,7 +127,7 @@ test('args equals are passed `type: "string"`', () => {
 test('when args include single dash then result stores dash as positional', () => {
   const args = ['-'];
   const expected = { values: { __proto__: null }, positionals: ['-'] };
-  const result = parseArgs({ args });
+  const result = parseArgs({ allowPositionals: true, args });
   assert.deepStrictEqual(result, expected);
 });
 
@@ -196,12 +196,12 @@ test('order of option and positional does not matter (per README)', () => {
   const options = { foo: { type: 'string' } };
   const expected = { values: { __proto__: null, foo: 'bar' }, positionals: ['baz'] };
   assert.deepStrictEqual(
-    parseArgs({ args: args1, options }),
+    parseArgs({ allowPositionals: true, args: args1, options }),
     expected,
     Error('option then positional')
   );
   assert.deepStrictEqual(
-    parseArgs({ args: args2, options }),
+    parseArgs({ allowPositionals: true, args: args2, options }),
     expected,
     Error('positional then option')
   );
@@ -288,6 +288,25 @@ test('excess leading dashes on options are retained', () => {
   assert.deepStrictEqual(result, expected, Error('excess option dashes are retained'));
 });
 
+test('positional arguments are allowed by default in strict:false', () => {
+  const args = ['foo'];
+  const options = { };
+  const expected = {
+    values: { __proto__: null },
+    positionals: ['foo']
+  };
+  const result = parseArgs({ strict: false, args, options });
+  assert.deepStrictEqual(result, expected);
+});
+
+test('positional arguments may be explicitly disallowed in strict:false', () => {
+  const args = ['foo'];
+  const options = { };
+  assert.throws(() => { parseArgs({ strict: false, allowPositionals: false, args, options }); }, {
+    code: 'ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL'
+  });
+});
+
 // Test bad inputs
 
 test('invalid argument passed for options', () => {
@@ -353,6 +372,31 @@ test('unknown option with explicit value', () => {
   assert.throws(() => { parseArgs({ args, options }); }, {
     code: 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
   });
+});
+
+test('unexpected positional', () => {
+  const args = ['foo'];
+  const options = { foo: { type: 'boolean' } };
+  assert.throws(() => { parseArgs({ args, options }); }, {
+    code: 'ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL'
+  });
+});
+
+test('unexpected positional after --', () => {
+  const args = ['--', 'foo'];
+  const options = { foo: { type: 'boolean' } };
+  assert.throws(() => { parseArgs({ args, options }); }, {
+    code: 'ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL'
+  });
+});
+
+test('-- by itself is not a positional', () => {
+  const args = ['--foo', '--'];
+  const options = { foo: { type: 'boolean' } };
+  const result = parseArgs({ args, options });
+  const expected = { values: { __proto__: null, foo: true },
+                     positionals: [] };
+  assert.deepStrictEqual(result, expected);
 });
 
 test('string option used as boolean', () => {
