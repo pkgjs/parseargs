@@ -94,7 +94,7 @@ function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
       `'--${longOption}=-XYZ'`;
     const errorMessage = `Option '${shortOrLong}' argument is ambiguous.
 Did you forget to specify the option argument for '${shortOrLong}'?
-Or to specify an option argument starting with a dash use ${example}.`;
+To specify an option argument starting with a dash use ${example}.`;
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
   }
 }
@@ -104,7 +104,7 @@ Or to specify an option argument starting with a dash use ${example}.`;
  *
  * @param {string} longOption - long option name e.g. 'foo'
  * @param {string|undefined} optionValue - value from user args
- * @param {Object} options - option configs, from parseArgs({ options })
+ * @param {object} options - option configs, from parseArgs({ options })
  * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
  * @param {boolean} strict - show errors, from parseArgs({ strict })
  */
@@ -134,8 +134,8 @@ function checkOptionUsage(longOption, optionValue, options,
  *
  * @param {string} longOption - long option name e.g. 'foo'
  * @param {string|undefined} optionValue - value from user args
- * @param {Object} options - option configs, from parseArgs({ options })
- * @param {Object} values - option values returned in `values` by parseArgs
+ * @param {object} options - option configs, from parseArgs({ options })
+ * @param {object} values - option values returned in `values` by parseArgs
  */
 function storeOption(longOption, optionValue, options, values) {
   if (longOption === '__proto__') {

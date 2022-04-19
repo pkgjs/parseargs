@@ -555,8 +555,7 @@ test('strict: when short option and suspect value then throws with whole expecte
 
   assert.throws(() => {
     parseArgs({ args, options });
-  // eslint-disable-next-line max-len
-  }, /Error: Option '-w' argument is ambiguous\.\nDid you forget to specify the option argument for '-w'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
+  }, /To specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
   );
 });
 
@@ -566,7 +565,6 @@ test('strict: when long option and suspect value then throws with whole expected
 
   assert.throws(() => {
     parseArgs({ args, options });
-  // eslint-disable-next-line max-len
-  }, /Error: Option '--with' argument is ambiguous\.\nDid you forget to specify the option argument for '--with'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ'\./
+  }, /To specify an option argument starting with a dash use '--with=-XYZ'/
   );
 });
