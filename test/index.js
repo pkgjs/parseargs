@@ -436,3 +436,137 @@ test('null prototype: when --toString then values.toString is true', () => {
   const result = parseArgs({ args, options });
   assert.deepStrictEqual(result, expectedResult);
 });
+
+const candidateGreedyOptions = [
+  '',
+  '-',
+  '--',
+  'abc',
+  '123',
+  '-s',
+  '--foo',
+];
+
+candidateGreedyOptions.forEach((value) => {
+  test(`greedy: when short option with value '${value}' then eaten`, () => {
+    const args = ['-w', value];
+    const options = { with: { type: 'string', short: 'w' } };
+    const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
+
+    const result = parseArgs({ args, options, strict: false });
+    assert.deepStrictEqual(result, expectedResult);
+  });
+
+  test(`greedy: when long option with value '${value}' then eaten`, () => {
+    const args = ['--with', value];
+    const options = { with: { type: 'string', short: 'w' } };
+    const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
+
+    const result = parseArgs({ args, options, strict: false });
+    assert.deepStrictEqual(result, expectedResult);
+  });
+});
+
+test('strict: when candidate option value is plain text then does not throw', () => {
+  const args = ['--with', 'abc'];
+  const options = { with: { type: 'string' } };
+  const expectedResult = { values: { __proto__: null, with: 'abc' }, positionals: [] };
+
+  const result = parseArgs({ args, options, strict: true });
+  assert.deepStrictEqual(result, expectedResult);
+});
+
+test("strict: when candidate option value is '-' then does not throw", () => {
+  const args = ['--with', '-'];
+  const options = { with: { type: 'string' } };
+  const expectedResult = { values: { __proto__: null, with: '-' }, positionals: [] };
+
+  const result = parseArgs({ args, options, strict: true });
+  assert.deepStrictEqual(result, expectedResult);
+});
+
+test("strict: when candidate option value is '--' then throws", () => {
+  const args = ['--with', '--'];
+  const options = { with: { type: 'string' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  });
+});
+
+test('strict: when candidate option value is short option then throws', () => {
+  const args = ['--with', '-a'];
+  const options = { with: { type: 'string' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  });
+});
+
+test('strict: when candidate option value is short option digit then throws', () => {
+  const args = ['--with', '-1'];
+  const options = { with: { type: 'string' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  });
+});
+
+test('strict: when candidate option value is long option then throws', () => {
+  const args = ['--with', '--foo'];
+  const options = { with: { type: 'string' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, {
+    code: 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  });
+});
+
+test('strict: when short option and suspect value then throws with short option in error message', () => {
+  const args = ['-w', '--foo'];
+  const options = { with: { type: 'string', short: 'w' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, /for '-w'/
+  );
+});
+
+test('strict: when long option and suspect value then throws with long option in error message', () => {
+  const args = ['--with', '--foo'];
+  const options = { with: { type: 'string' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  }, /for '--with'/
+  );
+});
+
+test('strict: when short option and suspect value then throws with whole expected message', () => {
+  const args = ['-w', '--foo'];
+  const options = { with: { type: 'string', short: 'w' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  // eslint-disable-next-line max-len
+  }, /Error: Option '-w' argument is ambiguous\.\nDid you forget to specify the option argument for '-w'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ' or '-w-XYZ'\./
+  );
+});
+
+test('strict: when long option and suspect value then throws with whole expected message', () => {
+  const args = ['--with', '--foo'];
+  const options = { with: { type: 'string', short: 'w' } };
+
+  assert.throws(() => {
+    parseArgs({ args, options });
+  // eslint-disable-next-line max-len
+  }, /Error: Option '--with' argument is ambiguous\.\nDid you forget to specify the option argument for '--with'\?\nOr to specify an option argument starting with a dash use '--with=-XYZ'\./
+  );
+});

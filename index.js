@@ -28,6 +28,7 @@ const {
   isLoneShortOption,
   isLongOptionAndValue,
   isOptionValue,
+  isOptionLikeValue,
   isShortOptionAndValue,
   isShortOptionGroup,
   objectGetOwn,
@@ -75,6 +76,27 @@ function getMainArgs() {
 
   // Normally first two arguments are executable and script, then CLI arguments
   return ArrayPrototypeSlice(process.argv, 2);
+}
+
+/**
+ * In strict mode, throw for possible usage errors like --foo --bar
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string|undefined} optionValue - value from user args
+ * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
+ * @param {boolean} strict - show errors, from parseArgs({ strict })
+ */
+function checkOptionLikeValue(longOption, optionValue, shortOrLong, strict) {
+  if (strict && isOptionLikeValue(optionValue)) {
+    // Only show short example if user used short option.
+    const example = (shortOrLong.length === 2) ?
+      `'--${longOption}=-XYZ' or '${shortOrLong}-XYZ'` :
+      `'--${longOption}=-XYZ'`;
+    const errorMessage = `Option '${shortOrLong}' argument is ambiguous.
+Did you forget to specify the option argument for '${shortOrLong}'?
+Or to specify an option argument starting with a dash use ${example}.`;
+    throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
+  }
 }
 
 /**
@@ -210,6 +232,7 @@ const parseArgs = (config = { __proto__: null }) => {
           isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
@@ -256,6 +279,7 @@ const parseArgs = (config = { __proto__: null }) => {
           isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
