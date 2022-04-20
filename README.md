@@ -21,7 +21,6 @@ added: REPLACEME
     Keys of `options` are the long names of options and values are an
     {Object} accepting the following properties:
     * `type` {string} Type of argument, which must be either `boolean` or `string`.
-      **Default:** `boolean`.
     * `multiple` {boolean} Whether this option can be provided multiple
       times. If `true`, all values will be collected in an array. If
       `false`, values for the option are last-wins. **Default:** `false`.
