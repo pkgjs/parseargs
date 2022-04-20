@@ -49,7 +49,7 @@ function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
 
-  // Electron is an interested example, with work-arounds implemented in
+  // Electron is an interesting example, with work-arounds implemented in
   // Commander and Yargs. Hopefully Electron would support process.mainArgs
   // itself and render this work-around moot.
   //
@@ -108,6 +108,7 @@ To specify an option argument starting with a dash use ${example}.`;
  * @param {object} options - option configs, from parseArgs({ options })
  * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
  * @param {boolean} strict - show errors, from parseArgs({ strict })
+ * @param {boolean} allowPositionals - from parseArgs({ allowPositionals })
  */
 function checkOptionUsage(longOption, optionValue, options,
                           shortOrLong, strict, allowPositionals) {
