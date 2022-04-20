@@ -6,13 +6,13 @@ const {
   ArrayPrototypeSlice,
   ArrayPrototypePush,
   ArrayPrototypePushApply,
+  ArrayPrototypeUnshiftApply,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
-  ArrayPrototypeUnshiftApply
 } = require('./primordials');
 
 const {
