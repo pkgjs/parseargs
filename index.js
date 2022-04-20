@@ -1,17 +1,18 @@
 'use strict';
 
 const {
-  ArrayPrototypeConcat,
   ArrayPrototypeForEach,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
+  ArrayPrototypePushApply,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
+  ArrayPrototypeUnshiftApply
 } = require('./primordials');
 
 const {
@@ -32,7 +33,7 @@ const {
   isShortOptionAndValue,
   isShortOptionGroup,
   objectGetOwn,
-  optionsGetOwn
+  optionsGetOwn,
 } = require('./utils');
 
 const {
@@ -203,7 +204,7 @@ const parseArgs = (config = { __proto__: null }) => {
     positionals: []
   };
 
-  let remainingArgs = ArrayPrototypeSlice(args);
+  const remainingArgs = ArrayPrototypeSlice(args);
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
@@ -216,7 +217,7 @@ const parseArgs = (config = { __proto__: null }) => {
       }
 
       // Everything after a bare '--' is considered a positional argument.
-      result.positionals = ArrayPrototypeConcat(
+      ArrayPrototypePushApply(
         result.positionals,
         remainingArgs
       );
@@ -257,7 +258,7 @@ const parseArgs = (config = { __proto__: null }) => {
           break; // finished short group
         }
       }
-      remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
+      ArrayPrototypeUnshiftApply(remainingArgs, expanded);
       continue;
     }
 
@@ -309,5 +310,5 @@ const parseArgs = (config = { __proto__: null }) => {
 };
 
 module.exports = {
-  parseArgs
+  parseArgs,
 };

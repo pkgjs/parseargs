@@ -33,17 +33,16 @@ added: REPLACEME
   * `allowPositionals`: {boolean} Whether this command accepts positional arguments.
     **Default:** `false` if `strict` is `true`, otherwise `true`.
 
-* Returns: {Object} An {Object} representing the parsed command line
-  arguments:
-  * `values` {Object} With properties and {string} or {boolean} values
-    corresponding to parsed options passed.
-  * `positionals` {string\[]}, containing positional arguments.
+* Returns: {Object} The parsed command line arguments:
+  * `values` {Object} A mapping of parsed option names with their {string}
+    or {boolean} values.
+  * `positionals` {string\[]} Positional arguments.
 
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments and returns a structured object with the parsed options and positionals.
 
 ```mjs
-import { parseArgs } from 'util';
+import { parseArgs } from 'node:util';
 const args = ['-f', '--bar', 'b'];
 const options = {
   foo: {
@@ -61,7 +60,7 @@ const {
 ```
 
 ```cjs
-const { parseArgs } = require('util');
+const { parseArgs } = require('node:util');
 const args = ['-f', '--bar', 'b'];
 const options = {
   foo: {
