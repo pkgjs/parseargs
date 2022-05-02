@@ -29,7 +29,8 @@ added: REPLACEME
     are encountered, or when arguments are passed that do not match the
     `type` configured in `options`.
     **Default:** `true`.
-  * `allowPositionals`: {boolean} Whether this command accepts positional arguments.
+  * `allowPositionals`: {boolean} Whether this command accepts positional
+    arguments.
     **Default:** `false` if `strict` is `true`, otherwise `true`.
 
 * Returns: {Object} The parsed command line arguments:
@@ -38,7 +39,8 @@ added: REPLACEME
   * `positionals` {string\[]} Positional arguments.
 
 Provides a higher level API for command-line argument parsing than interacting
-with `process.argv` directly. Takes a specification for the expected arguments and returns a structured object with the parsed options and positionals.
+with `process.argv` directly. Takes a specification for the expected arguments
+and returns a structured object with the parsed options and positionals.
 
 ```mjs
 import { parseArgs } from 'node:util';
@@ -56,6 +58,8 @@ const {
   values,
   positionals
 } = parseArgs({ args, options });
+console.log(values, positionals);
+// Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
 ```cjs
@@ -74,6 +78,8 @@ const {
   values,
   positionals
 } = parseArgs({ args, options });
+console.log(values, positionals);
+// Prints: [Object: null prototype] { foo: true, bar: 'b' } []ss
 ```
 
 `util.parseArgs` is experimental and behavior may change. Join the

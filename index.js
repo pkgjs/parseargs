@@ -49,20 +49,20 @@ function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
 
-  // Electron is an interesting example, with work-arounds implemented in
+  // Electron is an interesting example, with workarounds implemented in
   // Commander and Yargs. Hopefully Electron would support process.mainArgs
-  // itself and render this work-around moot.
+  // itself and render this workaround moot.
   //
   // In a bundled Electron app, the user CLI args directly
   // follow executable. (No special processing required for unbundled.)
   // 1) process.versions.electron is either set by electron, or undefined
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  //    see: https://www.electronjs.org/docs/latest/api/process#processdefaultapp-readonly
   // 2) process.defaultApp is undefined in a bundled Electron app, and set
   //    in an unbundled Electron app
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  //    see: https://www.electronjs.org/docs/latest/api/process#processdefaultapp-readonly
   // (Not included in tests as hopefully temporary example.)
   /* c8 ignore next 3 */
-  if (process.versions && process.versions.electron && !process.defaultApp) {
+  if (process.versions?.electron && !process.defaultApp) {
     return ArrayPrototypeSlice(process.argv, 1);
   }
 
