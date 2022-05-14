@@ -200,16 +200,21 @@ const parseArgs = (config = { __proto__: null }) => {
 
   const result = {
     values: { __proto__: null },
-    positionals: []
+    positionals: [],
   };
   const ast = [];
+  result.originalArgs = ArrayPrototypeSlice(args);
+  let argIndex = -1;
+  let groupCount = 0;
 
   let remainingArgs = ArrayPrototypeSlice(args);
-  let originalArgs = ArrayPrototypeSlice(args); // Before splitting groups
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
-    const originalArg = ArrayPrototypeShift(originalArgs);
+    if (groupCount > 0)
+      groupCount--;
+    else
+      argIndex++;
 
     // Check if `arg` is an options terminator.
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
@@ -223,9 +228,9 @@ const parseArgs = (config = { __proto__: null }) => {
         result.positionals,
         remainingArgs
       );
-      ast.push({ symbol: 'option-terminator' });
+      ast.push({ symbol: 'option-terminator', argIndex });
       remainingArgs.forEach((arg) =>
-        ast.push({ symbol: 'positional', value: arg }));
+        ast.push({ symbol: 'positional', value: arg, argIndex: ++argIndex }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -234,25 +239,26 @@ const parseArgs = (config = { __proto__: null }) => {
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       let optionValue;
+      let valueIndex;
       if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        valueIndex = argIndex + 1;
         checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 usage: arg, value: optionValue ?? null, originalArg,
-                 valueSource: optionValue != null ? 'arg' : 'none' });
+                 short: shortOption, argIndex,
+                 value: optionValue, valueIndex });
       continue;
     }
 
     if (isShortOptionGroup(arg, options)) {
       // Expand -fXzy to -f -X -z -y
       const expanded = [];
-      const expandedOriginal = [];
       for (let index = 1; index < arg.length; index++) {
         const shortOption = StringPrototypeCharAt(arg, index);
         const longOption = findLongOptionForShort(shortOption, options);
@@ -266,10 +272,9 @@ const parseArgs = (config = { __proto__: null }) => {
           ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
         }
-        ArrayPrototypePush(expandedOriginal, originalArg);
       }
       remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
-      originalArgs = ArrayPrototypeConcat(expandedOriginal, originalArgs);
+      groupCount = expanded.length;
       continue;
     }
 
@@ -281,8 +286,8 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 usage: `-${shortOption}`, value: optionValue, originalArg,
-                 valueSource: 'embedded' });
+                 short: shortOption, argIndex,
+                 value: optionValue, valueIndex: argIndex });
       continue;
     }
 
@@ -290,18 +295,20 @@ const parseArgs = (config = { __proto__: null }) => {
       // e.g. '--foo'
       const longOption = StringPrototypeSlice(arg, 2);
       let optionValue;
+      let valueIndex;
       if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
+        valueIndex = argIndex + 1;
         checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 value: optionValue ?? null, usage: arg, originalArg,
-                 valueSource: optionValue != null ? 'arg' : 'none' });
+                 short: null, argIndex,
+                 value: optionValue, valueIndex });
       continue;
     }
 
@@ -313,8 +320,8 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 value: optionValue, usage: `--${longOption}`, originalArg,
-                 valueSource: 'embedded' });
+                 short: null, argIndex,
+                 value: optionValue, valueIndex: argIndex });
       continue;
     }
 
@@ -324,7 +331,7 @@ const parseArgs = (config = { __proto__: null }) => {
     }
 
     ArrayPrototypePush(result.positionals, arg);
-    ast.push({ symbol: 'positional', value: arg });
+    ast.push({ symbol: 'positional', value: arg, argIndex });
   }
 
   result.ast = ast;
