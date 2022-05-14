@@ -202,11 +202,14 @@ const parseArgs = (config = { __proto__: null }) => {
     values: { __proto__: null },
     positionals: []
   };
+  const ast = [];
 
   let remainingArgs = ArrayPrototypeSlice(args);
+  let originalArgs = ArrayPrototypeSlice(args); // Before splitting groups
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
+    const originalArg = ArrayPrototypeShift(originalArgs);
 
     // Check if `arg` is an options terminator.
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
@@ -220,6 +223,9 @@ const parseArgs = (config = { __proto__: null }) => {
         result.positionals,
         remainingArgs
       );
+      ast.push({ symbol: 'option-terminator' });
+      remainingArgs.forEach((arg) =>
+        ast.push({ symbol: 'positional', value: arg }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -237,12 +243,16 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
+      ast.push({ symbol: 'option', optionName: longOption,
+                 usage: arg, value: optionValue ?? null, originalArg,
+                 valueSource: optionValue != null ? 'arg' : 'none' });
       continue;
     }
 
     if (isShortOptionGroup(arg, options)) {
       // Expand -fXzy to -f -X -z -y
       const expanded = [];
+      const expandedOriginal = [];
       for (let index = 1; index < arg.length; index++) {
         const shortOption = StringPrototypeCharAt(arg, index);
         const longOption = findLongOptionForShort(shortOption, options);
@@ -256,8 +266,10 @@ const parseArgs = (config = { __proto__: null }) => {
           ArrayPrototypePush(expanded, `-${StringPrototypeSlice(arg, index)}`);
           break; // finished short group
         }
+        ArrayPrototypePush(expandedOriginal, originalArg);
       }
       remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
+      originalArgs = ArrayPrototypeConcat(expandedOriginal, originalArgs);
       continue;
     }
 
@@ -268,6 +280,9 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, 2);
       checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
+      ast.push({ symbol: 'option', optionName: longOption,
+                 usage: `-${shortOption}`, value: optionValue, originalArg,
+                 valueSource: 'embedded' });
       continue;
     }
 
@@ -284,6 +299,9 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
+      ast.push({ symbol: 'option', optionName: longOption,
+                 value: optionValue ?? null, usage: arg, originalArg,
+                 valueSource: optionValue != null ? 'arg' : 'none' });
       continue;
     }
 
@@ -294,6 +312,9 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, index + 1);
       checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
+      ast.push({ symbol: 'option', optionName: longOption,
+                 value: optionValue, usage: `--${longOption}`, originalArg,
+                 valueSource: 'embedded' });
       continue;
     }
 
@@ -303,8 +324,10 @@ const parseArgs = (config = { __proto__: null }) => {
     }
 
     ArrayPrototypePush(result.positionals, arg);
+    ast.push({ symbol: 'positional', value: arg });
   }
 
+  result.ast = ast;
   return result;
 };
 
