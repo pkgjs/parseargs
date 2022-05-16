@@ -1,15 +1,16 @@
 'use strict';
 
 const {
-  ArrayPrototypeConcat,
   ArrayPrototypeForEach,
+  ArrayPrototypeIncludes,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
+  ArrayPrototypePushApply,
+  ArrayPrototypeUnshiftApply,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
-  StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
 } = require('./primordials');
@@ -32,7 +33,7 @@ const {
   isShortOptionAndValue,
   isShortOptionGroup,
   objectGetOwn,
-  optionsGetOwn
+  optionsGetOwn,
 } = require('./utils');
 
 const {
@@ -48,29 +49,29 @@ function getMainArgs() {
   // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
 
-  // Electron is an interested example, with work-arounds implemented in
+  // Electron is an interesting example, with workarounds implemented in
   // Commander and Yargs. Hopefully Electron would support process.mainArgs
-  // itself and render this work-around moot.
+  // itself and render this workaround moot.
   //
   // In a bundled Electron app, the user CLI args directly
   // follow executable. (No special processing required for unbundled.)
   // 1) process.versions.electron is either set by electron, or undefined
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  //    see: https://www.electronjs.org/docs/latest/api/process#processversionselectron-readonly
   // 2) process.defaultApp is undefined in a bundled Electron app, and set
   //    in an unbundled Electron app
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
+  //    see: https://www.electronjs.org/docs/latest/api/process#processdefaultapp-readonly
   // (Not included in tests as hopefully temporary example.)
   /* c8 ignore next 3 */
-  if (process.versions && process.versions.electron && !process.defaultApp) {
+  if (process.versions?.electron && !process.defaultApp) {
     return ArrayPrototypeSlice(process.argv, 1);
   }
 
   // Check node options for scenarios where user CLI args follow executable.
   const execArgv = process.execArgv;
-  if (StringPrototypeIncludes(execArgv, '-e') ||
-      StringPrototypeIncludes(execArgv, '--eval') ||
-      StringPrototypeIncludes(execArgv, '-p') ||
-      StringPrototypeIncludes(execArgv, '--print')) {
+  if (ArrayPrototypeIncludes(execArgv, '-e') ||
+      ArrayPrototypeIncludes(execArgv, '--eval') ||
+      ArrayPrototypeIncludes(execArgv, '-p') ||
+      ArrayPrototypeIncludes(execArgv, '--print')) {
     return ArrayPrototypeSlice(process.argv, 1);
   }
 
@@ -107,6 +108,7 @@ To specify an option argument starting with a dash use ${example}.`;
  * @param {object} options - option configs, from parseArgs({ options })
  * @param {string} shortOrLong - option used, with dashes e.g. `-l` or `--long`
  * @param {boolean} strict - show errors, from parseArgs({ strict })
+ * @param {boolean} allowPositionals - from parseArgs({ allowPositionals })
  */
 function checkOptionUsage(longOption, optionValue, options,
                           shortOrLong, strict, allowPositionals) {
@@ -203,7 +205,7 @@ const parseArgs = (config = { __proto__: null }) => {
     positionals: []
   };
 
-  let remainingArgs = ArrayPrototypeSlice(args);
+  const remainingArgs = ArrayPrototypeSlice(args);
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
@@ -216,7 +218,7 @@ const parseArgs = (config = { __proto__: null }) => {
       }
 
       // Everything after a bare '--' is considered a positional argument.
-      result.positionals = ArrayPrototypeConcat(
+      ArrayPrototypePushApply(
         result.positionals,
         remainingArgs
       );
@@ -257,7 +259,7 @@ const parseArgs = (config = { __proto__: null }) => {
           break; // finished short group
         }
       }
-      remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
+      ArrayPrototypeUnshiftApply(remainingArgs, expanded);
       continue;
     }
 
@@ -309,5 +311,5 @@ const parseArgs = (config = { __proto__: null }) => {
 };
 
 module.exports = {
-  parseArgs
+  parseArgs,
 };
