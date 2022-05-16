@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.0](https://github.com/pkgjs/parseargs/compare/v0.7.1...v0.8.0) (2022-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* switch type:string option arguments to greedy, but with error for suspect cases in strict mode (#88)
+* positionals now opt-in when strict:true (#116)
+* create result.values with null prototype (#111)
+
+### Features
+
+* create result.values with null prototype ([#111](https://github.com/pkgjs/parseargs/issues/111)) ([9d539c3](https://github.com/pkgjs/parseargs/commit/9d539c3d57f269c160e74e0656ad4fa84ff92ec2))
+* positionals now opt-in when strict:true ([#116](https://github.com/pkgjs/parseargs/issues/116)) ([3643338](https://github.com/pkgjs/parseargs/commit/364333826b746e8a7dc5505b4b22fd19ac51df3b))
+* switch type:string option arguments to greedy, but with error for suspect cases in strict mode ([#88](https://github.com/pkgjs/parseargs/issues/88)) ([c2b5e72](https://github.com/pkgjs/parseargs/commit/c2b5e72161991dfdc535909f1327cc9b970fe7e8))
+
 ### [0.7.1](https://github.com/pkgjs/parseargs/compare/v0.7.0...v0.7.1) (2022-04-15)
 
 
