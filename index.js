@@ -56,7 +56,7 @@ function getMainArgs() {
   // In a bundled Electron app, the user CLI args directly
   // follow executable. (No special processing required for unbundled.)
   // 1) process.versions.electron is either set by electron, or undefined
-  //    see: see: https://www.electronjs.org/docs/latest/api/process#processversionselectron-readonly
+  //    see: https://www.electronjs.org/docs/latest/api/process#processversionselectron-readonly
   // 2) process.defaultApp is undefined in a bundled Electron app, and set
   //    in an unbundled Electron app
   //    see: https://www.electronjs.org/docs/latest/api/process#processdefaultapp-readonly
