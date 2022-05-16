@@ -2,6 +2,7 @@
 
 const {
   ArrayPrototypeForEach,
+  ArrayPrototypeIncludes,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypePush,
@@ -10,7 +11,6 @@ const {
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
-  StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
 } = require('./primordials');
@@ -68,10 +68,10 @@ function getMainArgs() {
 
   // Check node options for scenarios where user CLI args follow executable.
   const execArgv = process.execArgv;
-  if (StringPrototypeIncludes(execArgv, '-e') ||
-      StringPrototypeIncludes(execArgv, '--eval') ||
-      StringPrototypeIncludes(execArgv, '-p') ||
-      StringPrototypeIncludes(execArgv, '--print')) {
+  if (ArrayPrototypeIncludes(execArgv, '-e') ||
+      ArrayPrototypeIncludes(execArgv, '--eval') ||
+      ArrayPrototypeIncludes(execArgv, '-p') ||
+      ArrayPrototypeIncludes(execArgv, '--print')) {
     return ArrayPrototypeSlice(process.argv, 1);
   }
 
