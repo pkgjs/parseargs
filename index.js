@@ -3,10 +3,10 @@
 const {
   ArrayPrototypeForEach,
   ArrayPrototypeIncludes,
-  ArrayPrototypeShift,
-  ArrayPrototypeSlice,
   ArrayPrototypePush,
   ArrayPrototypePushApply,
+  ArrayPrototypeShift,
+  ArrayPrototypeSlice,
   ArrayPrototypeUnshiftApply,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
@@ -17,10 +17,10 @@ const {
 
 const {
   validateArray,
+  validateBoolean,
   validateObject,
   validateString,
   validateUnion,
-  validateBoolean,
 } = require('./validators');
 
 const {
