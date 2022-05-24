@@ -251,7 +251,7 @@ const parseArgs = (config = { __proto__: null }) => {
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 short: shortOption, argIndex,
+                 short: true, argIndex,
                  value: optionValue, valueIndex });
       continue;
     }
@@ -286,7 +286,7 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 short: shortOption, argIndex,
+                 short: true, argIndex,
                  value: optionValue, valueIndex: argIndex });
       continue;
     }
@@ -307,7 +307,7 @@ const parseArgs = (config = { __proto__: null }) => {
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 short: null, argIndex,
+                 short: false, argIndex,
                  value: optionValue, valueIndex });
       continue;
     }
@@ -320,7 +320,7 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
-                 short: null, argIndex,
+                 short: false, argIndex,
                  value: optionValue, valueIndex: argIndex });
       continue;
     }
