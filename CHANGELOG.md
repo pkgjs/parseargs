@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.0](https://github.com/pkgjs/parseargs/compare/v0.8.0...v0.9.0) (2022-05-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop handling of electron arguments (#121)
+
+### Code Refactoring
+
+* drop handling of electron arguments ([#121](https://github.com/pkgjs/parseargs/issues/121)) ([a2ffd53](https://github.com/pkgjs/parseargs/commit/a2ffd537c244a062371522b955acb45a404fc9f2))
+
 ## [0.8.0](https://github.com/pkgjs/parseargs/compare/v0.7.1...v0.8.0) (2022-05-16)
 
 
