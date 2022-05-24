@@ -202,7 +202,7 @@ const parseArgs = (config = { __proto__: null }) => {
     values: { __proto__: null },
     positionals: [],
   };
-  const ast = [];
+  const elements = [];
   result.originalArgs = ArrayPrototypeSlice(args);
   let argIndex = -1;
   let groupCount = 0;
@@ -228,9 +228,10 @@ const parseArgs = (config = { __proto__: null }) => {
         result.positionals,
         remainingArgs
       );
-      ast.push({ kind: 'option-terminator', argIndex });
+      elements.push({ kind: 'option-terminator', argIndex });
       remainingArgs.forEach((arg) =>
-        ast.push({ kind: 'positional', value: arg, argIndex: ++argIndex }));
+        elements.push({ kind: 'positional',
+                        value: arg, argIndex: ++argIndex }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -250,9 +251,9 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ kind: 'option', optionName: longOption,
-                 short: true, argIndex,
-                 value: optionValue, inlineValue });
+      elements.push({ kind: 'option', optionName: longOption,
+                      short: true, argIndex,
+                      value: optionValue, inlineValue });
       continue;
     }
 
@@ -285,9 +286,9 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, 2);
       checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ kind: 'option', optionName: longOption,
-                 short: true, argIndex,
-                 value: optionValue, inlineValue: true });
+      elements.push({ kind: 'option', optionName: longOption,
+                      short: true, argIndex,
+                      value: optionValue, inlineValue: true });
       continue;
     }
 
@@ -306,9 +307,9 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ kind: 'option', optionName: longOption,
-                 short: false, argIndex,
-                 value: optionValue, inlineValue });
+      elements.push({ kind: 'option', optionName: longOption,
+                      short: false, argIndex,
+                      value: optionValue, inlineValue });
       continue;
     }
 
@@ -319,9 +320,9 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, index + 1);
       checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ kind: 'option', optionName: longOption,
-                 short: false, argIndex,
-                 value: optionValue, inlineValue: true });
+      elements.push({ kind: 'option', optionName: longOption,
+                      short: false, argIndex,
+                      value: optionValue, inlineValue: true });
       continue;
     }
 
@@ -331,10 +332,10 @@ const parseArgs = (config = { __proto__: null }) => {
     }
 
     ArrayPrototypePush(result.positionals, arg);
-    ast.push({ kind: 'positional', value: arg, argIndex });
+    elements.push({ kind: 'positional', value: arg, argIndex });
   }
 
-  result.ast = ast;
+  result.parseElements = elements;
   return result;
 };
 
