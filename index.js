@@ -228,9 +228,9 @@ const parseArgs = (config = { __proto__: null }) => {
         result.positionals,
         remainingArgs
       );
-      ast.push({ symbol: 'option-terminator', argIndex });
+      ast.push({ kind: 'option-terminator', argIndex });
       remainingArgs.forEach((arg) =>
-        ast.push({ symbol: 'positional', value: arg, argIndex: ++argIndex }));
+        ast.push({ kind: 'positional', value: arg, argIndex: ++argIndex }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -250,7 +250,7 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ symbol: 'option', optionName: longOption,
+      ast.push({ kind: 'option', optionName: longOption,
                  short: true, argIndex,
                  value: optionValue, inlineValue });
       continue;
@@ -285,7 +285,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, 2);
       checkOptionUsage(longOption, optionValue, options, `-${shortOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ symbol: 'option', optionName: longOption,
+      ast.push({ kind: 'option', optionName: longOption,
                  short: true, argIndex,
                  value: optionValue, inlineValue: true });
       continue;
@@ -306,7 +306,7 @@ const parseArgs = (config = { __proto__: null }) => {
       checkOptionUsage(longOption, optionValue, options,
                        arg, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ symbol: 'option', optionName: longOption,
+      ast.push({ kind: 'option', optionName: longOption,
                  short: false, argIndex,
                  value: optionValue, inlineValue });
       continue;
@@ -319,7 +319,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionValue = StringPrototypeSlice(arg, index + 1);
       checkOptionUsage(longOption, optionValue, options, `--${longOption}`, strict, allowPositionals);
       storeOption(longOption, optionValue, options, result.values);
-      ast.push({ symbol: 'option', optionName: longOption,
+      ast.push({ kind: 'option', optionName: longOption,
                  short: false, argIndex,
                  value: optionValue, inlineValue: true });
       continue;
@@ -331,7 +331,7 @@ const parseArgs = (config = { __proto__: null }) => {
     }
 
     ArrayPrototypePush(result.positionals, arg);
-    ast.push({ symbol: 'positional', value: arg, argIndex });
+    ast.push({ kind: 'positional', value: arg, argIndex });
   }
 
   result.ast = ast;
