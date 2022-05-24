@@ -239,12 +239,12 @@ const parseArgs = (config = { __proto__: null }) => {
       const shortOption = StringPrototypeCharAt(arg, 1);
       const longOption = findLongOptionForShort(shortOption, options);
       let optionValue;
-      let valueIndex;
+      let inlineValue;
       if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        valueIndex = argIndex + 1;
+        inlineValue = false;
         checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
@@ -252,7 +252,7 @@ const parseArgs = (config = { __proto__: null }) => {
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
                  short: true, argIndex,
-                 value: optionValue, valueIndex });
+                 value: optionValue, inlineValue });
       continue;
     }
 
@@ -287,7 +287,7 @@ const parseArgs = (config = { __proto__: null }) => {
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
                  short: true, argIndex,
-                 value: optionValue, valueIndex: argIndex });
+                 value: optionValue, inlineValue: true });
       continue;
     }
 
@@ -295,12 +295,12 @@ const parseArgs = (config = { __proto__: null }) => {
       // e.g. '--foo'
       const longOption = StringPrototypeSlice(arg, 2);
       let optionValue;
-      let valueIndex;
+      let inlineValue;
       if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         optionValue = ArrayPrototypeShift(remainingArgs);
-        valueIndex = argIndex + 1;
+        inlineValue = false;
         checkOptionLikeValue(longOption, optionValue, arg, strict);
       }
       checkOptionUsage(longOption, optionValue, options,
@@ -308,7 +308,7 @@ const parseArgs = (config = { __proto__: null }) => {
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
                  short: false, argIndex,
-                 value: optionValue, valueIndex });
+                 value: optionValue, inlineValue });
       continue;
     }
 
@@ -321,7 +321,7 @@ const parseArgs = (config = { __proto__: null }) => {
       storeOption(longOption, optionValue, options, result.values);
       ast.push({ symbol: 'option', optionName: longOption,
                  short: false, argIndex,
-                 value: optionValue, valueIndex: argIndex });
+                 value: optionValue, inlineValue: true });
       continue;
     }
 
