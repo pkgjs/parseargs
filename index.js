@@ -4,7 +4,6 @@ const {
   ArrayPrototypeForEach,
   ArrayPrototypeIncludes,
   ArrayPrototypePush,
-  ArrayPrototypePushApply,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypeUnshiftApply,
@@ -181,12 +180,7 @@ const parseArgs = (config = { __proto__: null }) => {
     }
   );
 
-  const result = {
-    values: { __proto__: null },
-    positionals: [],
-    // parseElements: [],
-  };
-  const elements = []; // result.parseElements;
+  const elements = [];
   let argIndex = -1;
   let groupCount = 0;
 
@@ -203,10 +197,6 @@ const parseArgs = (config = { __proto__: null }) => {
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
-      ArrayPrototypePushApply(
-        result.positionals,
-        remainingArgs
-      );
       elements.push({ kind: 'option-terminator', argIndex });
       remainingArgs.forEach((arg) =>
         elements.push({ kind: 'positional',
@@ -293,17 +283,23 @@ const parseArgs = (config = { __proto__: null }) => {
       continue;
     }
 
-    ArrayPrototypePush(result.positionals, arg);
     elements.push({ kind: 'positional', value: arg, argIndex });
   }
 
+  const result = {
+    values: { __proto__: null },
+    positionals: [],
+    // parseElements = elements
+  };
   elements.forEach((element) => {
     switch (element.kind) {
       case 'option-terminator':
         break;
       case 'positional':
-        if (!allowPositionals)
+        if (!allowPositionals) {
           throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(element.value);
+        }
+        ArrayPrototypePush(result.positionals, element.value);
         break;
       case 'option':
         checkOptionUsage(parseConfig, element);
