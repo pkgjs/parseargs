@@ -198,7 +198,7 @@ const parseArgs = (config = { __proto__: null }) => {
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
       ArrayPrototypePush(elements, { kind: 'option-terminator', argIndex });
-      remainingArgs.forEach((arg) =>
+      ArrayPrototypeForEach(remainingArgs, (arg) =>
         ArrayPrototypePush(
           elements,
           { kind: 'positional', value: arg, argIndex: ++argIndex }));
@@ -296,7 +296,7 @@ const parseArgs = (config = { __proto__: null }) => {
     positionals: [],
     // parseElements = elements
   };
-  elements.forEach((element) => {
+  ArrayPrototypeForEach(elements, (element) => {
     switch (element.kind) {
       case 'option-terminator':
         break;
