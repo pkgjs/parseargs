@@ -6,12 +6,11 @@ const {
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
   StringPrototypeIncludes,
-  StringPrototypeSlice,
   StringPrototypeStartsWith,
 } = require('./primordials');
 
 const {
-  validateObject
+  validateObject,
 } = require('./validators');
 
 // These are internal utilities to make the parsing logic easier to read, and
@@ -85,7 +84,7 @@ function isLoneShortOption(arg) {
 function isLoneLongOption(arg) {
   return arg.length > 2 &&
     StringPrototypeStartsWith(arg, '--') &&
-    !StringPrototypeIncludes(StringPrototypeSlice(arg, 3), '=');
+    !StringPrototypeIncludes(arg, '=', 3);
 }
 
 /**
@@ -97,7 +96,7 @@ function isLoneLongOption(arg) {
 function isLongOptionAndValue(arg) {
   return arg.length > 2 &&
     StringPrototypeStartsWith(arg, '--') &&
-    StringPrototypeIncludes(StringPrototypeSlice(arg, 3), '=');
+    StringPrototypeIncludes(arg, '=', 3);
 }
 
 /**
@@ -164,11 +163,11 @@ function isShortOptionAndValue(arg, options) {
  */
 function findLongOptionForShort(shortOption, options) {
   validateObject(options, 'options');
-  const { 0: longOption } = ArrayPrototypeFind(
+  const longOptionEntry = ArrayPrototypeFind(
     ObjectEntries(options),
     ({ 1: optionConfig }) => objectGetOwn(optionConfig, 'short') === shortOption
-  ) || [];
-  return longOption || shortOption;
+  );
+  return longOptionEntry?.[0] ?? shortOption;
 }
 
 module.exports = {
@@ -181,5 +180,5 @@ module.exports = {
   isShortOptionAndValue,
   isShortOptionGroup,
   objectGetOwn,
-  optionsGetOwn
+  optionsGetOwn,
 };

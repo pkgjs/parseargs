@@ -1,25 +1,26 @@
 'use strict';
 
 const {
-  ArrayPrototypeConcat,
   ArrayPrototypeForEach,
+  ArrayPrototypeIncludes,
+  ArrayPrototypePush,
+  ArrayPrototypePushApply,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
-  ArrayPrototypePush,
+  ArrayPrototypeUnshiftApply,
   ObjectEntries,
   ObjectPrototypeHasOwnProperty: ObjectHasOwn,
   StringPrototypeCharAt,
-  StringPrototypeIncludes,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
 } = require('./primordials');
 
 const {
   validateArray,
+  validateBoolean,
   validateObject,
   validateString,
   validateUnion,
-  validateBoolean,
 } = require('./validators');
 
 const {
@@ -32,7 +33,7 @@ const {
   isShortOptionAndValue,
   isShortOptionGroup,
   objectGetOwn,
-  optionsGetOwn
+  optionsGetOwn,
 } = require('./utils');
 
 const {
@@ -45,32 +46,14 @@ const {
 } = require('./errors');
 
 function getMainArgs() {
-  // This function is a placeholder for proposed process.mainArgs.
   // Work out where to slice process.argv for user supplied arguments.
-
-  // Electron is an interested example, with work-arounds implemented in
-  // Commander and Yargs. Hopefully Electron would support process.mainArgs
-  // itself and render this work-around moot.
-  //
-  // In a bundled Electron app, the user CLI args directly
-  // follow executable. (No special processing required for unbundled.)
-  // 1) process.versions.electron is either set by electron, or undefined
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
-  // 2) process.defaultApp is undefined in a bundled Electron app, and set
-  //    in an unbundled Electron app
-  //    see https://github.com/electron/electron/blob/master/docs/api/process.md#processversionselectron-readonly
-  // (Not included in tests as hopefully temporary example.)
-  /* c8 ignore next 3 */
-  if (process.versions && process.versions.electron && !process.defaultApp) {
-    return ArrayPrototypeSlice(process.argv, 1);
-  }
 
   // Check node options for scenarios where user CLI args follow executable.
   const execArgv = process.execArgv;
-  if (StringPrototypeIncludes(execArgv, '-e') ||
-      StringPrototypeIncludes(execArgv, '--eval') ||
-      StringPrototypeIncludes(execArgv, '-p') ||
-      StringPrototypeIncludes(execArgv, '--print')) {
+  if (ArrayPrototypeIncludes(execArgv, '-e') ||
+      ArrayPrototypeIncludes(execArgv, '--eval') ||
+      ArrayPrototypeIncludes(execArgv, '-p') ||
+      ArrayPrototypeIncludes(execArgv, '--print')) {
     return ArrayPrototypeSlice(process.argv, 1);
   }
 
@@ -207,7 +190,7 @@ const parseArgs = (config = { __proto__: null }) => {
   let argIndex = -1;
   let groupCount = 0;
 
-  let remainingArgs = ArrayPrototypeSlice(args);
+  const remainingArgs = ArrayPrototypeSlice(args);
   while (remainingArgs.length > 0) {
     const arg = ArrayPrototypeShift(remainingArgs);
     const nextArg = remainingArgs[0];
@@ -220,7 +203,7 @@ const parseArgs = (config = { __proto__: null }) => {
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
-      result.positionals = ArrayPrototypeConcat(
+      ArrayPrototypePushApply(
         result.positionals,
         remainingArgs
       );
@@ -266,7 +249,7 @@ const parseArgs = (config = { __proto__: null }) => {
           break; // finished short group
         }
       }
-      remainingArgs = ArrayPrototypeConcat(expanded, remainingArgs);
+      ArrayPrototypeUnshiftApply(remainingArgs, expanded);
       groupCount = expanded.length;
       continue;
     }
@@ -334,5 +317,5 @@ const parseArgs = (config = { __proto__: null }) => {
 };
 
 module.exports = {
-  parseArgs
+  parseArgs,
 };
