@@ -197,10 +197,11 @@ const parseArgs = (config = { __proto__: null }) => {
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
-      elements.push({ kind: 'option-terminator', argIndex });
+      ArrayPrototypePush(elements, { kind: 'option-terminator', argIndex });
       remainingArgs.forEach((arg) =>
-        elements.push({ kind: 'positional',
-                        value: arg, argIndex: ++argIndex }));
+        ArrayPrototypePush(
+          elements,
+          { kind: 'positional', value: arg, argIndex: ++argIndex }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -216,9 +217,10 @@ const parseArgs = (config = { __proto__: null }) => {
         value = ArrayPrototypeShift(remainingArgs);
         inlineValue = false;
       }
-      elements.push({ kind: 'option', optionName,
-                      isShort: true, argIndex,
-                      value, inlineValue });
+      ArrayPrototypePush(
+        elements,
+        { kind: 'option', optionName, isShort: true, argIndex,
+          value, inlineValue });
       continue;
     }
 
@@ -249,9 +251,10 @@ const parseArgs = (config = { __proto__: null }) => {
       const shortOption = StringPrototypeCharAt(arg, 1);
       const optionName = findLongOptionForShort(shortOption, options);
       const value = StringPrototypeSlice(arg, 2);
-      elements.push({ kind: 'option', optionName,
-                      isShort: true, argIndex,
-                      value, inlineValue: true });
+      ArrayPrototypePush(
+        elements,
+        { kind: 'option', optionName, isShort: true, argIndex,
+          value, inlineValue: true });
       continue;
     }
 
@@ -266,9 +269,10 @@ const parseArgs = (config = { __proto__: null }) => {
         value = ArrayPrototypeShift(remainingArgs);
         inlineValue = false;
       }
-      elements.push({ kind: 'option', optionName,
-                      isShort: false, argIndex,
-                      value, inlineValue });
+      ArrayPrototypePush(
+        elements,
+        { kind: 'option', optionName, isShort: false, argIndex,
+          value, inlineValue });
       continue;
     }
 
@@ -277,13 +281,14 @@ const parseArgs = (config = { __proto__: null }) => {
       const index = StringPrototypeIndexOf(arg, '=');
       const optionName = StringPrototypeSlice(arg, 2, index);
       const value = StringPrototypeSlice(arg, index + 1);
-      elements.push({ kind: 'option', optionName,
-                      isShort: false, argIndex,
-                      value, inlineValue: true });
+      ArrayPrototypePush(
+        elements,
+        { kind: 'option', optionName, isShort: false, argIndex,
+          value, inlineValue: true });
       continue;
     }
 
-    elements.push({ kind: 'positional', value: arg, argIndex });
+    ArrayPrototypePush(elements, { kind: 'positional', value: arg, argIndex });
   }
 
   const result = {
