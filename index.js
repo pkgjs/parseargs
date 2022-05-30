@@ -179,7 +179,7 @@ const parseArgs = (config = { __proto__: null }) => {
   );
 
   const elements = [];
-  let argIndex = -1;
+  let index = -1;
   let groupCount = 0;
 
   const remainingArgs = ArrayPrototypeSlice(args);
@@ -189,17 +189,17 @@ const parseArgs = (config = { __proto__: null }) => {
     if (groupCount > 0)
       groupCount--;
     else
-      argIndex++;
+      index++;
 
     // Check if `arg` is an options terminator.
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
-      ArrayPrototypePush(elements, { kind: 'option-terminator', argIndex });
+      ArrayPrototypePush(elements, { kind: 'option-terminator', index });
       ArrayPrototypeForEach(remainingArgs, (arg) =>
         ArrayPrototypePush(
           elements,
-          { kind: 'positional', value: arg, argIndex: ++argIndex }));
+          { kind: 'positional', index: ++index, value: arg }));
       break; // Finished processing args, leave while loop.
     }
 
@@ -218,7 +218,7 @@ const parseArgs = (config = { __proto__: null }) => {
       ArrayPrototypePush(
         elements,
         { kind: 'option', optionName, optionUsed: arg,
-          argIndex, value, inlineValue });
+          index, value, inlineValue });
       continue;
     }
 
@@ -252,7 +252,7 @@ const parseArgs = (config = { __proto__: null }) => {
       ArrayPrototypePush(
         elements,
         { kind: 'option', optionName, optionUsed: `-${shortOption}`,
-          argIndex, value, inlineValue: true });
+          index, value, inlineValue: true });
       continue;
     }
 
@@ -270,7 +270,7 @@ const parseArgs = (config = { __proto__: null }) => {
       ArrayPrototypePush(
         elements,
         { kind: 'option', optionName, optionUsed: arg,
-          argIndex, value, inlineValue });
+          index, value, inlineValue });
       continue;
     }
 
@@ -282,17 +282,17 @@ const parseArgs = (config = { __proto__: null }) => {
       ArrayPrototypePush(
         elements,
         { kind: 'option', optionName, optionUsed: `--${optionName}`,
-          argIndex, value, inlineValue: true });
+          index, value, inlineValue: true });
       continue;
     }
 
-    ArrayPrototypePush(elements, { kind: 'positional', value: arg, argIndex });
+    ArrayPrototypePush(elements, { kind: 'positional', index, value: arg });
   }
 
   const result = {
     values: { __proto__: null },
     positionals: [],
-    // parseElements = elements
+    tokens: elements,
   };
   ArrayPrototypeForEach(elements, (element) => {
     switch (element.kind) {
