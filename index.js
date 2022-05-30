@@ -12,6 +12,7 @@ const {
   StringPrototypeCharAt,
   StringPrototypeIndexOf,
   StringPrototypeSlice,
+  StringPrototypeStartsWith,
 } = require('./primordials');
 
 const {
@@ -70,10 +71,9 @@ function checkOptionLikeValue(config, element) {
   if (config.strict && (element.inlineValue === false) &&
     isOptionLikeValue(element.value)) {
     // Only show short example if user used short option.
-    const short = optionsGetOwn(config.options, element.optionName, 'short');
-    const example = (element.isShort ?? short) ?
-      `'--${element.optionName}=-XYZ' or '-${short}-XYZ'` :
-      `'--${element.optionName}=-XYZ'`;
+    const example = StringPrototypeStartsWith(element.optionUsed, '--') ?
+      `'${element.optionUsed}=-XYZ'` :
+      `'--${element.optionName}=-XYZ' or '${element.optionUsed}-XYZ'`;
     const arg = config.args[element.argIndex];
     const errorMessage = `Option '${arg}' argument is ambiguous.
 Did you forget to specify the option argument for '${arg}'?
@@ -92,9 +92,8 @@ function checkOptionUsage(config, element) {
   if (!config.strict) return;
 
   if (!ObjectHasOwn(config.options, element.optionName)) {
-    const optionUsed = element.isShort ? `-${element.optionName}` : `--${element.optionName}`;
-    // eslint-disable-next-line max-len
-    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(optionUsed, config.allowPositionals);
+    throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(
+      element.optionUsed, config.allowPositionals);
   }
 
   const short = optionsGetOwn(config.options, element.optionName, 'short');
@@ -219,8 +218,8 @@ const parseArgs = (config = { __proto__: null }) => {
       }
       ArrayPrototypePush(
         elements,
-        { kind: 'option', optionName, isShort: true, argIndex,
-          value, inlineValue });
+        { kind: 'option', optionName, optionUsed: arg,
+          argIndex, value, inlineValue });
       continue;
     }
 
@@ -253,8 +252,8 @@ const parseArgs = (config = { __proto__: null }) => {
       const value = StringPrototypeSlice(arg, 2);
       ArrayPrototypePush(
         elements,
-        { kind: 'option', optionName, isShort: true, argIndex,
-          value, inlineValue: true });
+        { kind: 'option', optionName, optionUsed: `-${shortOption}`,
+          argIndex, value, inlineValue: true });
       continue;
     }
 
@@ -271,8 +270,8 @@ const parseArgs = (config = { __proto__: null }) => {
       }
       ArrayPrototypePush(
         elements,
-        { kind: 'option', optionName, isShort: false, argIndex,
-          value, inlineValue });
+        { kind: 'option', optionName, optionUsed: arg,
+          argIndex, value, inlineValue });
       continue;
     }
 
@@ -283,8 +282,8 @@ const parseArgs = (config = { __proto__: null }) => {
       const value = StringPrototypeSlice(arg, index + 1);
       ArrayPrototypePush(
         elements,
-        { kind: 'option', optionName, isShort: false, argIndex,
-          value, inlineValue: true });
+        { kind: 'option', optionName, optionUsed: `--${optionName}`,
+          argIndex, value, inlineValue: true });
       continue;
     }
 
