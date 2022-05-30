@@ -68,15 +68,14 @@ function getMainArgs() {
  * @param {object} element- array item from parseElements returned by parseArgs
  */
 function checkOptionLikeValue(config, element) {
-  if (config.strict && (element.inlineValue === false) &&
-    isOptionLikeValue(element.value)) {
+  if (config.strict && (element.kind === 'option') &&
+    (element.inlineValue === false) && isOptionLikeValue(element.value)) {
     // Only show short example if user used short option.
     const example = StringPrototypeStartsWith(element.optionUsed, '--') ?
       `'${element.optionUsed}=-XYZ'` :
       `'--${element.optionName}=-XYZ' or '${element.optionUsed}-XYZ'`;
-    const arg = config.args[element.argIndex];
-    const errorMessage = `Option '${arg}' argument is ambiguous.
-Did you forget to specify the option argument for '${arg}'?
+    const errorMessage = `Option '${element.optionUsed}' argument is ambiguous.
+Did you forget to specify the option argument for '${element.optionUsed}'?
 To specify an option argument starting with a dash use ${example}.`;
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
   }
