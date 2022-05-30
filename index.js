@@ -292,7 +292,7 @@ const parseArgs = (config = { __proto__: null }) => {
   const result = {
     values: { __proto__: null },
     positionals: [],
-    tokens: elements,
+    // tokens: elements,
   };
   ArrayPrototypeForEach(elements, (element) => {
     switch (element.kind) {
