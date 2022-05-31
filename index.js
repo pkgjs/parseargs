@@ -69,7 +69,7 @@ function getMainArgs() {
  */
 function checkOptionLikeValue(config, element) {
   if (config.strict && (element.kind === 'option') &&
-    (element.inlineValue === false) && isOptionLikeValue(element.value)) {
+    !element.inlineValue && isOptionLikeValue(element.value)) {
     // Only show short example if user used short option.
     const example = StringPrototypeStartsWith(element.optionUsed, '--') ?
       `'${element.optionUsed}=-XYZ'` :
