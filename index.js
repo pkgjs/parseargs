@@ -191,6 +191,7 @@ function argsToTokens(args, options) {
         tokens,
         { kind: 'option', optionName, optionUsed: arg,
           index, value, inlineValue });
+      if (value != null) ++index;
       continue;
     }
 
@@ -243,6 +244,7 @@ function argsToTokens(args, options) {
         tokens,
         { kind: 'option', optionName, optionUsed: arg,
           index, value, inlineValue });
+      if (value != null) ++index;
       continue;
     }
 
