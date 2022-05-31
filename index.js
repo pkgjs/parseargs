@@ -248,9 +248,9 @@ function argsToTokens(args, options) {
 
     if (isLongOptionAndValue(arg)) {
       // e.g. --foo=bar
-      const index = StringPrototypeIndexOf(arg, '=');
-      const optionName = StringPrototypeSlice(arg, 2, index);
-      const value = StringPrototypeSlice(arg, index + 1);
+      const equalIndex = StringPrototypeIndexOf(arg, '=');
+      const optionName = StringPrototypeSlice(arg, 2, equalIndex);
+      const value = StringPrototypeSlice(arg, equalIndex + 1);
       ArrayPrototypePush(
         tokens,
         { kind: 'option', optionName, optionUsed: `--${optionName}`,
