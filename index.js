@@ -140,45 +140,17 @@ function storeOption(optionName, optionValue, options, values) {
   }
 }
 
-const parseArgs = (config = { __proto__: null }) => {
-  const args = objectGetOwn(config, 'args') ?? getMainArgs();
-  const strict = objectGetOwn(config, 'strict') ?? true;
-  const allowPositionals = objectGetOwn(config, 'allowPositionals') ?? !strict;
-  const options = objectGetOwn(config, 'options') ?? { __proto__: null };
-  const parseConfig = { args, strict, options, allowPositionals };
-
-  // Validate input configuration.
-  validateArray(args, 'args');
-  validateBoolean(strict, 'strict');
-  validateBoolean(allowPositionals, 'allowPositionals');
-  validateObject(options, 'options');
-  ArrayPrototypeForEach(
-    ObjectEntries(options),
-    ({ 0: longOption, 1: optionConfig }) => {
-      validateObject(optionConfig, `options.${longOption}`);
-
-      // type is required
-      validateUnion(objectGetOwn(optionConfig, 'type'), `options.${longOption}.type`, ['string', 'boolean']);
-
-      if (ObjectHasOwn(optionConfig, 'short')) {
-        const shortOption = optionConfig.short;
-        validateString(shortOption, `options.${longOption}.short`);
-        if (shortOption.length !== 1) {
-          throw new ERR_INVALID_ARG_VALUE(
-            `options.${longOption}.short`,
-            shortOption,
-            'must be a single character'
-          );
-        }
-      }
-
-      if (ObjectHasOwn(optionConfig, 'multiple')) {
-        validateBoolean(optionConfig.multiple, `options.${longOption}.multiple`);
-      }
-    }
-  );
-
-  const elements = [];
+/**
+ * Process args and turn into identified tokens:
+ * - option (along with value, if any)
+ * - positional
+ * - option-terminator
+ *
+ * @param {string[]} args, from parseArgs({ args }) or mainArgs
+ * @param {object} options - option configs, from parseArgs({ options })
+ */
+function argsToTokens(args, options) {
+  const tokens = [];
   let index = -1;
   let groupCount = 0;
 
@@ -195,10 +167,10 @@ const parseArgs = (config = { __proto__: null }) => {
     // Guideline 10 in https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
-      ArrayPrototypePush(elements, { kind: 'option-terminator', index });
+      ArrayPrototypePush(tokens, { kind: 'option-terminator', index });
       ArrayPrototypeForEach(remainingArgs, (arg) =>
         ArrayPrototypePush(
-          elements,
+          tokens,
           { kind: 'positional', index: ++index, value: arg }));
       break; // Finished processing args, leave while loop.
     }
@@ -216,7 +188,7 @@ const parseArgs = (config = { __proto__: null }) => {
         inlineValue = false;
       }
       ArrayPrototypePush(
-        elements,
+        tokens,
         { kind: 'option', optionName, optionUsed: arg,
           index, value, inlineValue });
       continue;
@@ -250,7 +222,7 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionName = findLongOptionForShort(shortOption, options);
       const value = StringPrototypeSlice(arg, 2);
       ArrayPrototypePush(
-        elements,
+        tokens,
         { kind: 'option', optionName, optionUsed: `-${shortOption}`,
           index, value, inlineValue: true });
       continue;
@@ -268,7 +240,7 @@ const parseArgs = (config = { __proto__: null }) => {
         inlineValue = false;
       }
       ArrayPrototypePush(
-        elements,
+        tokens,
         { kind: 'option', optionName, optionUsed: arg,
           index, value, inlineValue });
       continue;
@@ -280,34 +252,79 @@ const parseArgs = (config = { __proto__: null }) => {
       const optionName = StringPrototypeSlice(arg, 2, index);
       const value = StringPrototypeSlice(arg, index + 1);
       ArrayPrototypePush(
-        elements,
+        tokens,
         { kind: 'option', optionName, optionUsed: `--${optionName}`,
           index, value, inlineValue: true });
       continue;
     }
 
-    ArrayPrototypePush(elements, { kind: 'positional', index, value: arg });
+    ArrayPrototypePush(tokens, { kind: 'positional', index, value: arg });
   }
+  return tokens;
+}
 
+const parseArgs = (config = { __proto__: null }) => {
+  const args = objectGetOwn(config, 'args') ?? getMainArgs();
+  const strict = objectGetOwn(config, 'strict') ?? true;
+  const allowPositionals = objectGetOwn(config, 'allowPositionals') ?? !strict;
+  const options = objectGetOwn(config, 'options') ?? { __proto__: null };
+  // Bundle these up for passing to strict-mode checks.
+  const parseConfig = { args, strict, options, allowPositionals };
+
+  // Validate input configuration.
+  validateArray(args, 'args');
+  validateBoolean(strict, 'strict');
+  validateBoolean(allowPositionals, 'allowPositionals');
+  validateObject(options, 'options');
+  ArrayPrototypeForEach(
+    ObjectEntries(options),
+    ({ 0: longOption, 1: optionConfig }) => {
+      validateObject(optionConfig, `options.${longOption}`);
+
+      // type is required
+      validateUnion(objectGetOwn(optionConfig, 'type'), `options.${longOption}.type`, ['string', 'boolean']);
+
+      if (ObjectHasOwn(optionConfig, 'short')) {
+        const shortOption = optionConfig.short;
+        validateString(shortOption, `options.${longOption}.short`);
+        if (shortOption.length !== 1) {
+          throw new ERR_INVALID_ARG_VALUE(
+            `options.${longOption}.short`,
+            shortOption,
+            'must be a single character'
+          );
+        }
+      }
+
+      if (ObjectHasOwn(optionConfig, 'multiple')) {
+        validateBoolean(optionConfig.multiple, `options.${longOption}.multiple`);
+      }
+    }
+  );
+
+  // Phase 1: identify tokens
+  const tokens = argsToTokens(args, options);
+
+  // Phase 2: process tokens into parsed option values and positionals
   const result = {
     values: { __proto__: null },
     positionals: [],
     // tokens: elements,
   };
-  ArrayPrototypeForEach(elements, (element) => {
-    switch (element.kind) {
+  ArrayPrototypeForEach(tokens, (token) => {
+    switch (token.kind) {
       case 'option-terminator':
         break;
       case 'positional':
         if (!allowPositionals) {
-          throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(element.value);
+          throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(token.value);
         }
-        ArrayPrototypePush(result.positionals, element.value);
+        ArrayPrototypePush(result.positionals, token.value);
         break;
       case 'option':
-        checkOptionUsage(parseConfig, element);
-        checkOptionLikeValue(parseConfig, element);
-        storeOption(element.optionName, element.value, options, result.values);
+        checkOptionUsage(parseConfig, token);
+        checkOptionLikeValue(parseConfig, token);
+        storeOption(token.optionName, token.value, options, result.values);
         break;
     }
   });
