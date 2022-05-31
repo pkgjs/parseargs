@@ -17,7 +17,7 @@ test("dash: when args include '-' used as positional then result has '-' in posi
 
   const result = parseArgs({ allowPositionals: true, args });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -29,6 +29,6 @@ test("dash: when args include '-' used as space-separated option value then resu
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });

@@ -11,7 +11,7 @@ test('when pass zero-config group of booleans then parsed as booleans', (t) => {
 
   const result = parseArgs({ strict: false, args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -22,7 +22,7 @@ test('when pass full-config group of booleans then parsed as booleans', (t) => {
 
   const result = parseArgs({ allowPositionals: true, args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -33,7 +33,7 @@ test('when pass group with string option on end then parsed as booleans and stri
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -44,6 +44,6 @@ test('when pass group with string option in middle and strict:false then parsed 
 
   const result = parseArgs({ args, options, strict: false });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });

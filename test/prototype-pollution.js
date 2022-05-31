@@ -27,7 +27,7 @@ test('should not allow __proto__ key to be set on object', (t) => {
 
   const result = parseArgs({ strict: false, args });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -39,7 +39,7 @@ test('when prototype has multiple then ignored', (t) => {
   const holdDescriptor = setObjectPrototype('multiple', true);
   const result = parseArgs({ args, options });
   restoreObjectPrototype('multiple', holdDescriptor);
-  t.deepEqual(result, expectedResult);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expectedResult);
   t.end();
 });
 

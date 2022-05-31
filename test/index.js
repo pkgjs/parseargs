@@ -11,14 +11,14 @@ test('when short option used as flag then stored as flag', () => {
   const args = ['-f'];
   const expected = { values: { __proto__: null, f: true }, positionals: [] };
   const result = parseArgs({ strict: false, args });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when short option used as flag before positional then stored as flag and positional (and not value)', () => {
   const args = ['-f', 'bar'];
   const expected = { values: { __proto__: null, f: true }, positionals: [ 'bar' ] };
   const result = parseArgs({ strict: false, args });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when short option `type: "string"` used with value then stored as value', () => {
@@ -26,7 +26,7 @@ test('when short option `type: "string"` used with value then stored as value', 
   const options = { f: { type: 'string' } };
   const expected = { values: { __proto__: null, f: 'bar' }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when short option listed in short used as flag then long option stored as flag', () => {
@@ -34,7 +34,7 @@ test('when short option listed in short used as flag then long option stored as 
   const options = { foo: { short: 'f', type: 'boolean' } };
   const expected = { values: { __proto__: null, foo: true }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when short option listed in short and long listed in `type: "string"` and ' +
@@ -43,7 +43,7 @@ test('when short option listed in short and long listed in `type: "string"` and 
   const options = { foo: { short: 'f', type: 'string' } };
   const expected = { values: { __proto__: null, foo: 'bar' }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when short option `type: "string"` used without value then stored as flag', () => {
@@ -51,7 +51,7 @@ test('when short option `type: "string"` used without value then stored as flag'
   const options = { f: { type: 'string' } };
   const expected = { values: { __proto__: null, f: true }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('short option group behaves like multiple short options', () => {
@@ -59,7 +59,7 @@ test('short option group behaves like multiple short options', () => {
   const options = { };
   const expected = { values: { __proto__: null, r: true, f: true }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('short option group does not consume subsequent positional', () => {
@@ -67,7 +67,7 @@ test('short option group does not consume subsequent positional', () => {
   const options = { };
   const expected = { values: { __proto__: null, r: true, f: true }, positionals: ['foo'] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 // See: Guideline 5 https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
@@ -76,7 +76,7 @@ test('if terminal of short-option group configured `type: "string"`, subsequent 
   const options = { f: { type: 'string' } };
   const expected = { values: { __proto__: null, r: true, v: true, f: 'foo' }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('handles short-option groups in conjunction with long-options', () => {
@@ -84,7 +84,7 @@ test('handles short-option groups in conjunction with long-options', () => {
   const options = { foo: { type: 'string' } };
   const expected = { values: { __proto__: null, r: true, f: true, foo: 'foo' }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('handles short-option groups with "short" alias configured', () => {
@@ -92,28 +92,28 @@ test('handles short-option groups with "short" alias configured', () => {
   const options = { remove: { short: 'r', type: 'boolean' } };
   const expected = { values: { __proto__: null, remove: true, f: true }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('Everything after a bare `--` is considered a positional argument', () => {
   const args = ['--', 'barepositionals', 'mopositionals'];
   const expected = { values: { __proto__: null }, positionals: ['barepositionals', 'mopositionals'] };
   const result = parseArgs({ allowPositionals: true, args });
-  assert.deepStrictEqual(result, expected, Error('testing bare positionals'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('args are true', () => {
   const args = ['--foo', '--bar'];
   const expected = { values: { __proto__: null, foo: true, bar: true }, positionals: [] };
   const result = parseArgs({ strict: false, args });
-  assert.deepStrictEqual(result, expected, Error('args are true'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('arg is true and positional is identified', () => {
   const args = ['--foo=a', '--foo', 'b'];
   const expected = { values: { __proto__: null, foo: true }, positionals: ['b'] };
   const result = parseArgs({ strict: false, args });
-  assert.deepStrictEqual(result, expected, Error('arg is true and positional is identified'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('args equals are passed `type: "string"`', () => {
@@ -121,14 +121,14 @@ test('args equals are passed `type: "string"`', () => {
   const options = { so: { type: 'string' } };
   const expected = { values: { __proto__: null, so: 'wat' }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected, Error('arg value is passed'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when args include single dash then result stores dash as positional', () => {
   const args = ['-'];
   const expected = { values: { __proto__: null }, positionals: ['-'] };
   const result = parseArgs({ allowPositionals: true, args });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('zero config args equals are parsed as if `type: "string"`', () => {
@@ -136,7 +136,7 @@ test('zero config args equals are parsed as if `type: "string"`', () => {
   const options = { };
   const expected = { values: { __proto__: null, so: 'wat' }, positionals: [] };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected, Error('arg value is passed'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('same arg is passed twice `type: "string"` and last value is recorded', () => {
@@ -144,7 +144,7 @@ test('same arg is passed twice `type: "string"` and last value is recorded', () 
   const options = { foo: { type: 'string' } };
   const expected = { values: { __proto__: null, foo: 'b' }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected, Error('last arg value is passed'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('args equals pass string including more equals', () => {
@@ -152,7 +152,7 @@ test('args equals pass string including more equals', () => {
   const options = { so: { type: 'string' } };
   const expected = { values: { __proto__: null, so: 'wat=bing' }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected, Error('arg value is passed'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('first arg passed for `type: "string"` and "multiple" is in array', () => {
@@ -160,7 +160,7 @@ test('first arg passed for `type: "string"` and "multiple" is in array', () => {
   const options = { foo: { type: 'string', multiple: true } };
   const expected = { values: { __proto__: null, foo: ['a'] }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected, Error('first multiple in array'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('args are passed `type: "string"` and "multiple"', () => {
@@ -173,7 +173,7 @@ test('args are passed `type: "string"` and "multiple"', () => {
   };
   const expected = { values: { __proto__: null, foo: ['a', 'b'] }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected, Error('both arg values are passed'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('when expecting `multiple:true` boolean option and option used multiple times then result includes array of ' +
@@ -187,7 +187,7 @@ test('when expecting `multiple:true` boolean option and option used multiple tim
   };
   const expected = { values: { __proto__: null, foo: [true, true] }, positionals: [] };
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('order of option and positional does not matter (per README)', () => {
@@ -195,13 +195,15 @@ test('order of option and positional does not matter (per README)', () => {
   const args2 = ['baz', '--foo=bar'];
   const options = { foo: { type: 'string' } };
   const expected = { values: { __proto__: null, foo: 'bar' }, positionals: ['baz'] };
+  let result = parseArgs({ allowPositionals: true, args: args1, options });
   assert.deepStrictEqual(
-    parseArgs({ allowPositionals: true, args: args1, options }),
+    { values: result.values, positionals: result.positionals },
     expected,
     Error('option then positional')
   );
+  result = parseArgs({ allowPositionals: true, args: args2, options });
   assert.deepStrictEqual(
-    parseArgs({ allowPositionals: true, args: args2, options }),
+    { values: result.values, positionals: result.positionals },
     expected,
     Error('positional then option')
   );
@@ -216,7 +218,7 @@ test('correct default args when use node -p', () => {
 
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
@@ -230,7 +232,7 @@ test('correct default args when use node --print', () => {
 
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
@@ -244,7 +246,7 @@ test('correct default args when use node -e', () => {
 
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
@@ -257,7 +259,7 @@ test('correct default args when use node --eval', () => {
   const result = parseArgs({ strict: false });
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
@@ -271,7 +273,7 @@ test('correct default args when normal arguments', () => {
 
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
   process.argv = holdArgv;
   process.execArgv = holdExecArgv;
 });
@@ -285,7 +287,7 @@ test('excess leading dashes on options are retained', () => {
     positionals: []
   };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected, Error('excess option dashes are retained'));
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('positional arguments are allowed by default in strict:false', () => {
@@ -296,7 +298,7 @@ test('positional arguments are allowed by default in strict:false', () => {
     positionals: ['foo']
   };
   const result = parseArgs({ strict: false, args, options });
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('positional arguments may be explicitly disallowed in strict:false', () => {
@@ -396,7 +398,7 @@ test('-- by itself is not a positional', () => {
   const result = parseArgs({ args, options });
   const expected = { values: { __proto__: null, foo: true },
                      positionals: [] };
-  assert.deepStrictEqual(result, expected);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expected);
 });
 
 test('string option used as boolean', () => {
@@ -434,7 +436,7 @@ test('null prototype: when --toString then values.toString is true', () => {
   const expectedResult = { values: { __proto__: null, toString: true }, positionals: [] };
 
   const result = parseArgs({ args, options });
-  assert.deepStrictEqual(result, expectedResult);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expectedResult);
 });
 
 const candidateGreedyOptions = [
@@ -454,7 +456,7 @@ candidateGreedyOptions.forEach((value) => {
     const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
 
     const result = parseArgs({ args, options, strict: false });
-    assert.deepStrictEqual(result, expectedResult);
+    assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expectedResult);
   });
 
   test(`greedy: when long option with value '${value}' then eaten`, () => {
@@ -463,7 +465,7 @@ candidateGreedyOptions.forEach((value) => {
     const expectedResult = { values: { __proto__: null, with: value }, positionals: [] };
 
     const result = parseArgs({ args, options, strict: false });
-    assert.deepStrictEqual(result, expectedResult);
+    assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expectedResult);
   });
 });
 
@@ -473,7 +475,7 @@ test('strict: when candidate option value is plain text then does not throw', ()
   const expectedResult = { values: { __proto__: null, with: 'abc' }, positionals: [] };
 
   const result = parseArgs({ args, options, strict: true });
-  assert.deepStrictEqual(result, expectedResult);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expectedResult);
 });
 
 test("strict: when candidate option value is '-' then does not throw", () => {
@@ -482,7 +484,7 @@ test("strict: when candidate option value is '-' then does not throw", () => {
   const expectedResult = { values: { __proto__: null, with: '-' }, positionals: [] };
 
   const result = parseArgs({ args, options, strict: true });
-  assert.deepStrictEqual(result, expectedResult);
+  assert.deepStrictEqual({ values: result.values, positionals: result.positionals }, expectedResult);
 });
 
 test("strict: when candidate option value is '--' then throws", () => {

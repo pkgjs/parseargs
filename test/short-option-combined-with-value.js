@@ -11,7 +11,7 @@ test('when combine string short with plain text then parsed as value', (t) => {
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -22,7 +22,7 @@ test('when combine low-config string short with plain text then parsed as value'
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -33,7 +33,7 @@ test('when combine string short with value like short option then parsed as valu
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -44,7 +44,7 @@ test('when combine string short with value like long option then parsed as value
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -55,7 +55,7 @@ test('when combine string short with value like negative number then parsed as v
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -66,7 +66,7 @@ test('when combine string short with value which matches configured flag then pa
   const expected = { values: { __proto__: null, alpha: 'f' }, positionals: [] };
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
 
@@ -77,6 +77,6 @@ test('when combine string short with value including equals then parsed with equ
 
   const result = parseArgs({ args, options });
 
-  t.deepEqual(result, expected);
+  t.deepEqual({ values: result.values, positionals: result.positionals }, expected);
   t.end();
 });
