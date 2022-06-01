@@ -196,17 +196,9 @@ test('order of option and positional does not matter (per README)', () => {
   const options = { foo: { type: 'string' } };
   const expected = { values: { __proto__: null, foo: 'bar' }, positionals: ['baz'] };
   let result = parseArgs({ allowPositionals: true, args: args1, options });
-  assert.deepStrictEqual(
-    { values: result.values, positionals: result.positionals },
-    expected,
-    Error('option then positional')
-  );
+  assert.deepStrictEqual(result, expected, Error('option then positional'));
   result = parseArgs({ allowPositionals: true, args: args2, options });
-  assert.deepStrictEqual(
-    { values: result.values, positionals: result.positionals },
-    expected,
-    Error('positional then option')
-  );
+  assert.deepStrictEqual(result, expected, Error('positional then option'));
 });
 
 test('correct default args when use node -p', () => {
