@@ -588,7 +588,7 @@ test('tokens: strict:true boolean short', () => {
     file: { short: 'f', type: 'boolean' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '-f',
+    { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -601,7 +601,7 @@ test('tokens: strict:true boolean long', () => {
     file: { short: 'f', type: 'boolean' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -611,7 +611,7 @@ test('tokens: strict:true boolean long', () => {
 test('tokens: strict:false boolean short', () => {
   const args = ['-f'];
   const expectedTokens = [
-    { kind: 'option', optionName: 'f', optionUsed: '-f',
+    { kind: 'option', name: 'f', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: false, args, details: true });
@@ -621,7 +621,7 @@ test('tokens: strict:false boolean short', () => {
 test('tokens: strict:false boolean long', () => {
   const args = ['--file'];
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: false, args, details: true });
@@ -631,9 +631,9 @@ test('tokens: strict:false boolean long', () => {
 test('tokens: strict:false boolean option group', () => {
   const args = ['-ab'];
   const expectedTokens = [
-    { kind: 'option', optionName: 'a', optionUsed: '-a',
+    { kind: 'option', name: 'a', optionUsed: '-a',
       index: 0, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'b', optionUsed: '-b',
+    { kind: 'option', name: 'b', optionUsed: '-b',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: false, args, details: true });
@@ -647,7 +647,7 @@ test('tokens: strict:true string short with value after space', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '-f',
+    { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: 'bar', inlineValue: false },
     { kind: 'positional', index: 2, value: 'ppp' },
   ];
@@ -661,7 +661,7 @@ test('tokens: strict:true string short with value inline', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '-f',
+    { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: 'BAR', inlineValue: true },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -674,7 +674,7 @@ test('tokens: strict:false string short missing value', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '-f',
+    { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: false, args, options, details: true });
@@ -688,7 +688,7 @@ test('tokens: strict:true string long with value after space', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: 'bar', inlineValue: false },
     { kind: 'positional', index: 2, value: 'ppp' },
   ];
@@ -702,7 +702,7 @@ test('tokens: strict:true string long with value inline', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: 'bar', inlineValue: true },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -712,7 +712,7 @@ test('tokens: strict:true string long with value inline', () => {
 test('tokens: strict:false string long with value inline', () => {
   const args = ['--file=bar'];
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: 'bar', inlineValue: true },
   ];
   const { tokens } = parseArgs({ strict: false, args, details: true });
@@ -725,7 +725,7 @@ test('tokens: strict:false string long missing value', () => {
     file: { short: 'f', type: 'string' }
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
   const { tokens } = parseArgs({ strict: false, args, options, details: true });
@@ -739,9 +739,9 @@ test('tokens: strict:true complex option group with value after space', () => {
     beta: { short: 'b', type: 'string' },
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'alpha', optionUsed: '-a',
+    { kind: 'option', name: 'alpha', optionUsed: '-a',
       index: 0, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'beta', optionUsed: '-b',
+    { kind: 'option', name: 'beta', optionUsed: '-b',
       index: 0, value: 'c', inlineValue: false },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -755,9 +755,9 @@ test('tokens: strict:true complex option group with inline value', () => {
     beta: { short: 'b', type: 'string' },
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'alpha', optionUsed: '-a',
+    { kind: 'option', name: 'alpha', optionUsed: '-a',
       index: 0, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'beta', optionUsed: '-b',
+    { kind: 'option', name: 'beta', optionUsed: '-b',
       index: 0, value: 'c', inlineValue: true },
   ];
   const { tokens } = parseArgs({ strict: true, args, options, details: true });
@@ -767,13 +767,13 @@ test('tokens: strict:true complex option group with inline value', () => {
 test('tokens: strict:false variety', () => {
   const args = ['-a', '1', '-bc', '2', '--ddd', '--eee=fff', '--', '3'];
   const expectedTokens = [
-    { kind: 'option', optionName: 'a', optionUsed: '-a', index: 0, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'a', optionUsed: '-a', index: 0, value: undefined, inlineValue: undefined },
     { kind: 'positional', index: 1, value: '1' },
-    { kind: 'option', optionName: 'b', optionUsed: '-b', index: 2, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'c', optionUsed: '-c', index: 2, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'b', optionUsed: '-b', index: 2, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'c', optionUsed: '-c', index: 2, value: undefined, inlineValue: undefined },
     { kind: 'positional', index: 3, value: '2' },
-    { kind: 'option', optionName: 'ddd', optionUsed: '--ddd', index: 4, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'eee', optionUsed: '--eee', index: 5, value: 'fff', inlineValue: true },
+    { kind: 'option', name: 'ddd', optionUsed: '--ddd', index: 4, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'eee', optionUsed: '--eee', index: 5, value: 'fff', inlineValue: true },
     { kind: 'option-terminator', index: 6 },
     { kind: 'positional', index: 7, value: '3' },
   ];
@@ -795,16 +795,16 @@ test('tokens: strict:true variety', () => {
     hhh: { type: 'boolean' },
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'alpha', optionUsed: '-a', index: 0, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'alpha', optionUsed: '-a', index: 0, value: undefined, inlineValue: undefined },
     { kind: 'positional', index: 1, value: '1' },
-    { kind: 'option', optionName: 'beta', optionUsed: '-b', index: 2, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'cat', optionUsed: '-c', index: 2, value: undefined, inlineValue: undefined },
-    { kind: 'option', optionName: 'delta', optionUsed: '-d', index: 3, value: 'DDD', inlineValue: true },
-    { kind: 'option', optionName: 'epsilon', optionUsed: '-e', index: 4, value: 'EEE', inlineValue: false },
+    { kind: 'option', name: 'beta', optionUsed: '-b', index: 2, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'cat', optionUsed: '-c', index: 2, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'delta', optionUsed: '-d', index: 3, value: 'DDD', inlineValue: true },
+    { kind: 'option', name: 'epsilon', optionUsed: '-e', index: 4, value: 'EEE', inlineValue: false },
     { kind: 'positional', index: 6, value: '2' },
-    { kind: 'option', optionName: 'fff', optionUsed: '--fff', index: 7, value: 'FFF', inlineValue: true },
-    { kind: 'option', optionName: 'ggg', optionUsed: '--ggg', index: 8, value: 'GGG', inlineValue: false },
-    { kind: 'option', optionName: 'hhh', optionUsed: '--hhh', index: 10, value: undefined, inlineValue: undefined },
+    { kind: 'option', name: 'fff', optionUsed: '--fff', index: 7, value: 'FFF', inlineValue: true },
+    { kind: 'option', name: 'ggg', optionUsed: '--ggg', index: 8, value: 'GGG', inlineValue: false },
+    { kind: 'option', name: 'hhh', optionUsed: '--hhh', index: 10, value: undefined, inlineValue: undefined },
     { kind: 'option-terminator', index: 11 },
     { kind: 'positional', index: 12, value: '3' },
   ];
@@ -818,7 +818,7 @@ test('tokens: strict:false with single dashes', () => {
     file: { short: 'f', type: 'string' },
   };
   const expectedTokens = [
-    { kind: 'option', optionName: 'file', optionUsed: '--file',
+    { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: '-', inlineValue: false },
     { kind: 'positional', index: 2, value: '-' },
   ];

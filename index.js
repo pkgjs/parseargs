@@ -65,17 +65,17 @@ function getMainArgs() {
  * In strict mode, throw for possible usage errors like --foo --bar
  *
  * @param {object} config - from config passed to parseArgs
- * @param {object} element- array item from parseElements returned by parseArgs
+ * @param {object} token - from tokens as available from parseArgs
  */
-function checkOptionLikeValue(config, element) {
-  if (config.strict && (element.kind === 'option') &&
-    !element.inlineValue && isOptionLikeValue(element.value)) {
+function checkOptionLikeValue(config, token) {
+  if (config.strict &&
+    !token.inlineValue && isOptionLikeValue(token.value)) {
     // Only show short example if user used short option.
-    const example = StringPrototypeStartsWith(element.optionUsed, '--') ?
-      `'${element.optionUsed}=-XYZ'` :
-      `'--${element.optionName}=-XYZ' or '${element.optionUsed}-XYZ'`;
-    const errorMessage = `Option '${element.optionUsed}' argument is ambiguous.
-Did you forget to specify the option argument for '${element.optionUsed}'?
+    const example = StringPrototypeStartsWith(token.optionUsed, '--') ?
+      `'${token.optionUsed}=-XYZ'` :
+      `'--${token.name}=-XYZ' or '${token.optionUsed}-XYZ'`;
+    const errorMessage = `Option '${token.optionUsed}' argument is ambiguous.
+Did you forget to specify the option argument for '${token.optionUsed}'?
 To specify an option argument starting with a dash use ${example}.`;
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
   }
@@ -85,24 +85,24 @@ To specify an option argument starting with a dash use ${example}.`;
  * In strict mode, throw for usage errors.
  *
  * @param {object} config - from config passed to parseArgs
- * @param {object} element- array item from parseElements returned by parseArgs
+ * @param {object} token - from tokens as available from parseArgs
  */
-function checkOptionUsage(config, element) {
+function checkOptionUsage(config, token) {
   if (!config.strict) return;
 
-  if (!ObjectHasOwn(config.options, element.optionName)) {
+  if (!ObjectHasOwn(config.options, token.name)) {
     throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(
-      element.optionUsed, config.allowPositionals);
+      token.optionUsed, config.allowPositionals);
   }
 
-  const short = optionsGetOwn(config.options, element.optionName, 'short');
-  const shortAndLong = `${short ? `-${short}, ` : ''}--${element.optionName}`;
-  const type = optionsGetOwn(config.options, element.optionName, 'type');
-  if (type === 'string' && typeof element.value !== 'string') {
+  const short = optionsGetOwn(config.options, token.name, 'short');
+  const shortAndLong = `${short ? `-${short}, ` : ''}--${token.name}`;
+  const type = optionsGetOwn(config.options, token.name, 'type');
+  if (type === 'string' && typeof token.value !== 'string') {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong} <value>' argument missing`);
   }
   // (Idiomatic test for undefined||null, expecting undefined.)
-  if (type === 'boolean' && element.value != null) {
+  if (type === 'boolean' && token.value != null) {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong}' does not take an argument`);
   }
 }
@@ -111,32 +111,32 @@ function checkOptionUsage(config, element) {
 /**
  * Store the option value in `values`.
  *
- * @param {string} optionName - long option name e.g. 'foo'
+ * @param {string} longOption - long option name e.g. 'foo'
  * @param {string|undefined} optionValue - value from user args
  * @param {object} options - option configs, from parseArgs({ options })
  * @param {object} values - option values returned in `values` by parseArgs
  */
-function storeOption(optionName, optionValue, options, values) {
-  if (optionName === '__proto__') {
+function storeOption(longOption, optionValue, options, values) {
+  if (longOption === '__proto__') {
     return; // No. Just no.
   }
 
   // We store based on the option value rather than option type,
   // preserving the users intent for author to deal with.
   const newValue = optionValue ?? true;
-  if (optionsGetOwn(options, optionName, 'multiple')) {
+  if (optionsGetOwn(options, longOption, 'multiple')) {
     // Always store value in array, including for boolean.
-    // values[optionName] starts out not present,
+    // values[longOption] starts out not present,
     // first value is added as new array [newValue],
     // subsequent values are pushed to existing array.
     // (note: values has null prototype, so simpler usage)
-    if (values[optionName]) {
-      ArrayPrototypePush(values[optionName], newValue);
+    if (values[longOption]) {
+      ArrayPrototypePush(values[longOption], newValue);
     } else {
-      values[optionName] = [newValue];
+      values[longOption] = [newValue];
     }
   } else {
-    values[optionName] = newValue;
+    values[longOption] = newValue;
   }
 }
 
@@ -178,10 +178,10 @@ function argsToTokens(args, options) {
     if (isLoneShortOption(arg)) {
       // e.g. '-f'
       const shortOption = StringPrototypeCharAt(arg, 1);
-      const optionName = findLongOptionForShort(shortOption, options);
+      const longOption = findLongOptionForShort(shortOption, options);
       let value;
       let inlineValue;
-      if (optionsGetOwn(options, optionName, 'type') === 'string' &&
+      if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '-f', 'bar'
         value = ArrayPrototypeShift(remainingArgs);
@@ -189,7 +189,7 @@ function argsToTokens(args, options) {
       }
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', optionName, optionUsed: arg,
+        { kind: 'option', name: longOption, optionUsed: arg,
           index, value, inlineValue });
       if (value != null) ++index;
       continue;
@@ -200,8 +200,8 @@ function argsToTokens(args, options) {
       const expanded = [];
       for (let index = 1; index < arg.length; index++) {
         const shortOption = StringPrototypeCharAt(arg, index);
-        const optionName = findLongOptionForShort(shortOption, options);
-        if (optionsGetOwn(options, optionName, 'type') !== 'string' ||
+        const longOption = findLongOptionForShort(shortOption, options);
+        if (optionsGetOwn(options, longOption, 'type') !== 'string' ||
           index === arg.length - 1) {
           // Boolean option, or last short in group. Well formed.
           ArrayPrototypePush(expanded, `-${shortOption}`);
@@ -220,21 +220,21 @@ function argsToTokens(args, options) {
     if (isShortOptionAndValue(arg, options)) {
       // e.g. -fFILE
       const shortOption = StringPrototypeCharAt(arg, 1);
-      const optionName = findLongOptionForShort(shortOption, options);
+      const longOption = findLongOptionForShort(shortOption, options);
       const value = StringPrototypeSlice(arg, 2);
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', optionName, optionUsed: `-${shortOption}`,
+        { kind: 'option', name: longOption, optionUsed: `-${shortOption}`,
           index, value, inlineValue: true });
       continue;
     }
 
     if (isLoneLongOption(arg)) {
       // e.g. '--foo'
-      const optionName = StringPrototypeSlice(arg, 2);
+      const longOption = StringPrototypeSlice(arg, 2);
       let value;
       let inlineValue;
-      if (optionsGetOwn(options, optionName, 'type') === 'string' &&
+      if (optionsGetOwn(options, longOption, 'type') === 'string' &&
           isOptionValue(nextArg)) {
         // e.g. '--foo', 'bar'
         value = ArrayPrototypeShift(remainingArgs);
@@ -242,7 +242,7 @@ function argsToTokens(args, options) {
       }
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', optionName, optionUsed: arg,
+        { kind: 'option', name: longOption, optionUsed: arg,
           index, value, inlineValue });
       if (value != null) ++index;
       continue;
@@ -251,11 +251,11 @@ function argsToTokens(args, options) {
     if (isLongOptionAndValue(arg)) {
       // e.g. --foo=bar
       const equalIndex = StringPrototypeIndexOf(arg, '=');
-      const optionName = StringPrototypeSlice(arg, 2, equalIndex);
+      const longOption = StringPrototypeSlice(arg, 2, equalIndex);
       const value = StringPrototypeSlice(arg, equalIndex + 1);
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', optionName, optionUsed: `--${optionName}`,
+        { kind: 'option', name: longOption, optionUsed: `--${longOption}`,
           index, value, inlineValue: true });
       continue;
     }
@@ -329,7 +329,7 @@ const parseArgs = (config = { __proto__: null }) => {
       case 'option':
         checkOptionUsage(parseConfig, token);
         checkOptionLikeValue(parseConfig, token);
-        storeOption(token.optionName, token.value, options, result.values);
+        storeOption(token.name, token.value, options, result.values);
         break;
     }
   });
