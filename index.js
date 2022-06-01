@@ -269,6 +269,7 @@ const parseArgs = (config = { __proto__: null }) => {
   const args = objectGetOwn(config, 'args') ?? getMainArgs();
   const strict = objectGetOwn(config, 'strict') ?? true;
   const allowPositionals = objectGetOwn(config, 'allowPositionals') ?? !strict;
+  const details = objectGetOwn(config, 'details') ?? false;
   const options = objectGetOwn(config, 'options') ?? { __proto__: null };
   // Bundle these up for passing to strict-mode checks.
   const parseConfig = { args, strict, options, allowPositionals };
@@ -311,8 +312,10 @@ const parseArgs = (config = { __proto__: null }) => {
   const result = {
     values: { __proto__: null },
     positionals: [],
-    tokens,
   };
+  if (details) {
+    result.tokens = tokens;
+  }
   ArrayPrototypeForEach(tokens, (token) => {
     switch (token.kind) {
       case 'option-terminator':
