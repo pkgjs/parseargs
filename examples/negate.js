@@ -1,7 +1,11 @@
 'use strict';
 
 // How might I add my own support for --no-foo?
-// (Not supporting multiples.)
+// (Not supporting multiples in this code.)
+
+// Side note: I included library-style structure here, but now thinking
+// that would be better in just one full example. Keep the code
+// smaller and more focused in other example files.
 
 // 1. const { parseArgs } = require('node:util'); // from node
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package
