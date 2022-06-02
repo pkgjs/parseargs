@@ -2,6 +2,8 @@
 
 // How might I require long options with values use '='?
 // So allow `--foo=bar`, and not allow `--foo bar`.
+//
+// NB: this is not a common restriction in CLI.
 
 // 1. const { parseArgs } = require('node:util'); // from node
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package
