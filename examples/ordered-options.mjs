@@ -1,6 +1,4 @@
 // Now might I enforce that two flags are specified in a specific order?
-//
-// NB: POSIX says that option order does not normally matter.
 
 import { parseArgs } from '../index.js';
 
