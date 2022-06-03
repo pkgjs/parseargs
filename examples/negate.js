@@ -1,46 +1,34 @@
 'use strict';
 
 // How might I add my own support for --no-foo?
-// (Not supporting multiples in this code.)
-
-// Side note: I included library-style structure here, but now thinking
-// that should be in just one full example. Keep the code
-// smaller and more focused in other example files.
 
 // 1. const { parseArgs } = require('node:util'); // from node
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package
 const { parseArgs } = require('..'); // in repo
 
-function myParseArgs(config) {
-  // Get the tokens for reprocessing.
-  const detailedConfig = Object.assign({}, config, { tokens: true });
-  const result = parseArgs(detailedConfig);
+const { values, tokens } = parseArgs({ strict: false, tokens: true });
 
-  result.tokens
-    .filter((token) => token.kind === 'option')
-    .forEach((token) => {
-      if (token.name.startsWith('no-')) {
-        // Store foo:false for --no-foo
-        const positiveName = token.name.slice(3);
-        result.values[positiveName] = false;
-        delete result.values[token.name];
-      } else {
-        // Resave value so last one wins if both --foo and --no-foo.
-        result.values[token.name] = (token.value != null) ? token.value : true;
-      }
-    });
+// Reprocess the option tokens and overwrite the returned values.
+// (NB: not supporting `multiples` in this code.)
+tokens
+  .filter((token) => token.kind === 'option')
+  .forEach((token) => {
+    if (token.name.startsWith('no-')) {
+      // Store foo:false for --no-foo
+      const positiveName = token.name.slice(3);
+      values[positiveName] = false;
+      delete values[token.name];
+    } else {
+      // Resave value so last one wins if both --foo and --no-foo.
+      values[token.name] = (token.value != null) ? token.value : true;
+    }
+  });
 
-  // Remove the tokens if caller did not ask for them.
-  if (!config.tokens) {
-    delete result.tokens;
-  }
-  return result;
-}
-
-const { values } = myParseArgs({ strict: false });
 console.log(values);
 
 // Try the following:
 //   node negate.js --foo
 //   node negate.js --foo --no-foo
 //   node negate.js --foo --no-foo --foo
+//   node negate.js --foo=FOO --no-foo
+//   node negate.js --no-foo --foo=FOO
