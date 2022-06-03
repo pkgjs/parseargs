@@ -16,10 +16,10 @@ const { values, tokens } = parseArgs({ options, tokens: true });
 
 const badToken = tokens.find((token) => token.kind === 'option' &&
  options[token.name].type === 'string' &&
- token.optionUsed.startsWith('--') &&
+ token.rawName.startsWith('--') &&
  !token.inlineValue);
 if (badToken) {
-  throw new Error(`Option value for '${badToken.optionUsed}' must be inline, like '${badToken.optionUsed}=VALUE'`);
+  throw new Error(`Option value for '${badToken.rawName}' must be inline, like '${badToken.rawName}=VALUE'`);
 }
 
 console.log(values);

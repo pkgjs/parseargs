@@ -71,11 +71,11 @@ function checkOptionLikeValue(config, token) {
   if (config.strict &&
     !token.inlineValue && isOptionLikeValue(token.value)) {
     // Only show short example if user used short option.
-    const example = StringPrototypeStartsWith(token.optionUsed, '--') ?
-      `'${token.optionUsed}=-XYZ'` :
-      `'--${token.name}=-XYZ' or '${token.optionUsed}-XYZ'`;
-    const errorMessage = `Option '${token.optionUsed}' argument is ambiguous.
-Did you forget to specify the option argument for '${token.optionUsed}'?
+    const example = StringPrototypeStartsWith(token.rawName, '--') ?
+      `'${token.rawName}=-XYZ'` :
+      `'--${token.name}=-XYZ' or '${token.rawName}-XYZ'`;
+    const errorMessage = `Option '${token.rawName}' argument is ambiguous.
+Did you forget to specify the option argument for '${token.rawName}'?
 To specify an option argument starting with a dash use ${example}.`;
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(errorMessage);
   }
@@ -92,7 +92,7 @@ function checkOptionUsage(config, token) {
 
   if (!ObjectHasOwn(config.options, token.name)) {
     throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(
-      token.optionUsed, config.allowPositionals);
+      token.rawName, config.allowPositionals);
   }
 
   const short = optionsGetOwn(config.options, token.name, 'short');
@@ -189,7 +189,7 @@ function argsToTokens(args, options) {
       }
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', name: longOption, optionUsed: arg,
+        { kind: 'option', name: longOption, rawName: arg,
           index, value, inlineValue });
       if (value != null) ++index;
       continue;
@@ -224,7 +224,7 @@ function argsToTokens(args, options) {
       const value = StringPrototypeSlice(arg, 2);
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', name: longOption, optionUsed: `-${shortOption}`,
+        { kind: 'option', name: longOption, rawName: `-${shortOption}`,
           index, value, inlineValue: true });
       continue;
     }
@@ -242,7 +242,7 @@ function argsToTokens(args, options) {
       }
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', name: longOption, optionUsed: arg,
+        { kind: 'option', name: longOption, rawName: arg,
           index, value, inlineValue });
       if (value != null) ++index;
       continue;
@@ -255,7 +255,7 @@ function argsToTokens(args, options) {
       const value = StringPrototypeSlice(arg, equalIndex + 1);
       ArrayPrototypePush(
         tokens,
-        { kind: 'option', name: longOption, optionUsed: `--${longOption}`,
+        { kind: 'option', name: longOption, rawName: `--${longOption}`,
           index, value, inlineValue: true });
       continue;
     }

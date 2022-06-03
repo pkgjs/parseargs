@@ -18,7 +18,7 @@ const repeatedTokens = Object.keys(values)
   .map((name) => tokens.filter((t) => t.kind === 'option' && t.name === name))
   .filter((used) => used.length > 1);
 if (repeatedTokens.length > 0) {
-  const optionsUsed = repeatedTokens[0].map((token) => token.optionUsed);
+  const optionsUsed = repeatedTokens[0].map((token) => token.rawName);
   throw new Error(`option used multiple times: ${optionsUsed.join(', ')}`);
 }
 
