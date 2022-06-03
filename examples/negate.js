@@ -13,7 +13,7 @@ const { parseArgs } = require('..'); // in repo
 
 function myParseArgs(config) {
   // Get the tokens for reprocessing.
-  const detailedConfig = Object.assign({}, config, { details: true });
+  const detailedConfig = Object.assign({}, config, { tokens: true });
   const result = parseArgs(detailedConfig);
 
   result.tokens
@@ -31,7 +31,7 @@ function myParseArgs(config) {
     });
 
   // Remove the tokens if caller did not ask for them.
-  if (!config.details) {
+  if (!config.tokens) {
     delete result.tokens;
   }
   return result;

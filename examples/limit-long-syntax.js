@@ -14,7 +14,7 @@ const options = {
   log: { type: 'string' },
 };
 
-const { values, tokens } = parseArgs({ options, details: true });
+const { values, tokens } = parseArgs({ options, tokens: true });
 
 const badToken = tokens.find((token) => token.kind === 'option' &&
  options[token.name].type === 'string' &&

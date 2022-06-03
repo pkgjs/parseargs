@@ -17,7 +17,7 @@ const options = {};
 options[experimentalName] = { type: 'boolean' };
 options[unstableName] = { type: 'boolean' };
 
-const { values, tokens } = parseArgs({ options, details: true });
+const { values, tokens } = parseArgs({ options, tokens: true });
 
 const experimentalIndex = findTokenIndex(tokens, experimentalName);
 const unstableIndex = findTokenIndex(tokens, unstableName);

@@ -10,7 +10,7 @@ const options = {
   ding: { type: 'boolean', short: 'd' },
   beep: { type: 'boolean', short: 'b' }
 };
-const { values, tokens } = parseArgs({ options, details: true });
+const { values, tokens } = parseArgs({ options, tokens: true });
 
 // Loop over values and find the options that were repeated.
 const repeatedTokens = Object.keys(values)

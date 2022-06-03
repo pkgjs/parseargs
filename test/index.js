@@ -568,7 +568,7 @@ test('tokens: positional', () => {
   const expectedTokens = [
     { kind: 'positional', index: 0, value: 'one' },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -578,7 +578,7 @@ test('tokens: -- followed by option-like', () => {
     { kind: 'option-terminator', index: 0 },
     { kind: 'positional', index: 1, value: '--foo' },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -591,7 +591,7 @@ test('tokens: strict:true boolean short', () => {
     { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -604,7 +604,7 @@ test('tokens: strict:true boolean long', () => {
     { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -614,7 +614,7 @@ test('tokens: strict:false boolean short', () => {
     { kind: 'option', name: 'f', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -624,7 +624,7 @@ test('tokens: strict:false boolean long', () => {
     { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -636,7 +636,7 @@ test('tokens: strict:false boolean option group', () => {
     { kind: 'option', name: 'b', optionUsed: '-b',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -651,7 +651,7 @@ test('tokens: strict:true string short with value after space', () => {
       index: 0, value: 'bar', inlineValue: false },
     { kind: 'positional', index: 2, value: 'ppp' },
   ];
-  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -664,7 +664,7 @@ test('tokens: strict:true string short with value inline', () => {
     { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: 'BAR', inlineValue: true },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -677,7 +677,7 @@ test('tokens: strict:false string short missing value', () => {
     { kind: 'option', name: 'file', optionUsed: '-f',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: false, args, options, details: true });
+  const { tokens } = parseArgs({ strict: false, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -692,7 +692,7 @@ test('tokens: strict:true string long with value after space', () => {
       index: 0, value: 'bar', inlineValue: false },
     { kind: 'positional', index: 2, value: 'ppp' },
   ];
-  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -705,7 +705,7 @@ test('tokens: strict:true string long with value inline', () => {
     { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: 'bar', inlineValue: true },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -715,7 +715,7 @@ test('tokens: strict:false string long with value inline', () => {
     { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: 'bar', inlineValue: true },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -728,7 +728,7 @@ test('tokens: strict:false string long missing value', () => {
     { kind: 'option', name: 'file', optionUsed: '--file',
       index: 0, value: undefined, inlineValue: undefined },
   ];
-  const { tokens } = parseArgs({ strict: false, args, options, details: true });
+  const { tokens } = parseArgs({ strict: false, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -744,7 +744,7 @@ test('tokens: strict:true complex option group with value after space', () => {
     { kind: 'option', name: 'beta', optionUsed: '-b',
       index: 0, value: 'c', inlineValue: false },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -760,7 +760,7 @@ test('tokens: strict:true complex option group with inline value', () => {
     { kind: 'option', name: 'beta', optionUsed: '-b',
       index: 0, value: 'c', inlineValue: true },
   ];
-  const { tokens } = parseArgs({ strict: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -777,7 +777,7 @@ test('tokens: strict:false variety', () => {
     { kind: 'option-terminator', index: 6 },
     { kind: 'positional', index: 7, value: '3' },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -808,7 +808,7 @@ test('tokens: strict:true variety', () => {
     { kind: 'option-terminator', index: 11 },
     { kind: 'positional', index: 12, value: '3' },
   ];
-  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, details: true });
+  const { tokens } = parseArgs({ strict: true, allowPositionals: true, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -822,7 +822,7 @@ test('tokens: strict:false with single dashes', () => {
       index: 0, value: '-', inlineValue: false },
     { kind: 'positional', index: 2, value: '-' },
   ];
-  const { tokens } = parseArgs({ strict: false, args, options, details: true });
+  const { tokens } = parseArgs({ strict: false, args, options, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
 
@@ -832,6 +832,6 @@ test('tokens: strict:false with -- --', () => {
     { kind: 'option-terminator', index: 0 },
     { kind: 'positional', index: 1, value: '--' },
   ];
-  const { tokens } = parseArgs({ strict: false, args, details: true });
+  const { tokens } = parseArgs({ strict: false, args, tokens: true });
   assert.deepStrictEqual(tokens, expectedTokens);
 });
