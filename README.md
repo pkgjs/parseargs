@@ -105,6 +105,50 @@ console.log(values, positionals);
 // Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
+Detailed parse information is available for adding custom behaviours.
+For example, assuming the following script for `inspect.js`, with
+automatic detection of options:
+
+```mjs
+import { parseArgs } from 'node:util';
+console.log(parseArgs({ strict: false, tokens: true }));
+```
+
+```cjs
+const { parseArgs } = require('node:util');
+console.log(parseArgs({ strict: false, tokens: true }));
+```
+
+This call shows the three kinds of token and their properties:
+
+```console
+$ node inspect.js -d --foo=BAR -- file.txt
+{
+  values: [Object: null prototype] { d: true, foo: 'BAR' },
+  positionals: [ 'file.txt' ],
+  tokens: [
+    {
+      kind: 'option',
+      name: 'd',
+      rawName: '-d',
+      index: 0,
+      value: undefined,
+      inlineValue: undefined
+    },
+    {
+      kind: 'option',
+      name: 'foo',
+      rawName: '--foo',
+      index: 1,
+      value: 'BAR',
+      inlineValue: true
+    },
+    { kind: 'option-terminator', index: 2 },
+    { kind: 'positional', index: 3, value: 'file.txt' }
+  ]
+}
+```
+
 `util.parseArgs` is experimental and behavior may change. Join the
 conversation in [pkgjs/parseargs][] to contribute to the design.
 
