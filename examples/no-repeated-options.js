@@ -12,19 +12,21 @@ const options = {
 };
 const { values, tokens } = parseArgs({ options, tokens: true });
 
-// Loop over values and find the options that were repeated.
-const repeatedTokens = Object.keys(values)
-  // Make arrays of tokens for each used option name.
-  .map((name) => tokens.filter((t) => t.kind === 'option' && t.name === name))
-  .filter((used) => used.length > 1);
-if (repeatedTokens.length > 0) {
-  const optionsUsed = repeatedTokens[0].map((token) => token.rawName);
-  throw new Error(`option used multiple times: ${optionsUsed.join(', ')}`);
-}
+const seenBefore = new Set();
+const repeatedToken = tokens
+  .filter((t) => t.kind === 'option')
+  .find((t) => {
+    if (seenBefore.has(t.name)) return true;
+    seenBefore.add(t.name);
+    return false;
+  });
+if (repeatedToken)
+  throw new Error(`option '${repeatedToken.name}' used multiple times`);
+
 
 console.log(values);
 
 // Try the following:
 //    node no-repeated-options --ding --beep
-//    node no-repeated-options -b --beep
+//    node no-repeated-options --beep -b
 //    node no-repeated-options -ddd
