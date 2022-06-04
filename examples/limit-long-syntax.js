@@ -15,9 +15,10 @@ const options = {
 const { values, tokens } = parseArgs({ options, tokens: true });
 
 const badToken = tokens.find((token) => token.kind === 'option' &&
-token.value != null &&
- token.rawName.startsWith('--') &&
- !token.inlineValue);
+  token.value != null &&
+  token.rawName.startsWith('--') &&
+  !token.inlineValue
+);
 if (badToken) {
   throw new Error(`Option value for '${badToken.rawName}' must be inline, like '${badToken.rawName}=VALUE'`);
 }
@@ -25,5 +26,5 @@ if (badToken) {
 console.log(values);
 
 // Try the following:
-//    node limited-long-syntax.js -f FILE --log=LOG
-//    node limited-long-syntax.js --file FILE
+//    node limit-long-syntax.js -f FILE --log=LOG
+//    node limit-long-syntax.js --file FILE
