@@ -15,7 +15,7 @@ const options = {
 const { values, tokens } = parseArgs({ options, tokens: true });
 
 const badToken = tokens.find((token) => token.kind === 'option' &&
- options[token.name].type === 'string' &&
+token.value != null &&
  token.rawName.startsWith('--') &&
  !token.inlineValue);
 if (badToken) {
