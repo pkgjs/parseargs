@@ -25,18 +25,41 @@ added: REPLACEME
       times. If `true`, all values will be collected in an array. If
       `false`, values for the option are last-wins. **Default:** `false`.
     * `short` {string} A single character alias for the option.
-  * `strict`: {boolean} Should an error be thrown when unknown arguments
+  * `strict` {boolean} Should an error be thrown when unknown arguments
     are encountered, or when arguments are passed that do not match the
     `type` configured in `options`.
     **Default:** `true`.
-  * `allowPositionals`: {boolean} Whether this command accepts positional
+  * `allowPositionals` {boolean} Whether this command accepts positional
     arguments.
     **Default:** `false` if `strict` is `true`, otherwise `true`.
+  * `tokens` {boolean} Return an array with the
+    parsed tokens. This is useful for extending the built-in behaviour,
+    from adding additional checks through to reprocessing the tokens
+    in different ways.
+    **Default:** `false`.
 
 * Returns: {Object} The parsed command line arguments:
   * `values` {Object} A mapping of parsed option names with their {string}
     or {boolean} values.
   * `positionals` {string\[]} Positional arguments.
+  * `tokens` {Object} Parsed tokens. Only present if requested.
+
+// Maybe leave this out?
+Tokens have properties describing the parse results for:
+  * option:
+    * `kind`: {'option'}
+    * `name`: {string} Long name of option.
+    * `rawName`: {string} How option used in args, like `-f` of `--foo`.
+    * `index`: { number } Index in `args` of option.
+    * `value`: { string | undefined } Option value specified in args. Undefined for boolean options.
+    * `inlineValue`: { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
+  * positional:
+    * `kind`: {'positional'}
+    * `index`: { number } Index in `args` of positional.
+    * `value`: { string } Positional value (i.e. `args[index]`).
+  * option-terminator
+    * `kind`: {'option-terminator'}
+    * `index`: { number } Index in `args` of `--`.
 
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
@@ -79,7 +102,7 @@ const {
   positionals
 } = parseArgs({ args, options });
 console.log(values, positionals);
-// Prints: [Object: null prototype] { foo: true, bar: 'b' } []ss
+// Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
 `util.parseArgs` is experimental and behavior may change. Join the
