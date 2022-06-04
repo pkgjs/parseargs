@@ -20,7 +20,7 @@ tokens
       delete values[token.name];
     } else {
       // Resave value so last one wins if both --foo and --no-foo.
-      values[token.name] = (token.value != null) ? token.value : true;
+      values[token.name] = token.value ?? true;
     }
   });
 
