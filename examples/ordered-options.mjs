@@ -11,9 +11,10 @@ function findTokenIndex(tokens, target) {
 const experimentalName = 'enable-experimental-options';
 const unstableName = 'some-unstable-option';
 
-const options = {};
-options[experimentalName] = { type: 'boolean' };
-options[unstableName] = { type: 'boolean' };
+const options = {
+  [experimentalName]: { type: 'boolean' },
+  [unstableName]: { type: 'boolean' },
+};
 
 const { values, tokens } = parseArgs({ options, tokens: true });
 
