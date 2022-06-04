@@ -64,12 +64,10 @@ function getMainArgs() {
 /**
  * In strict mode, throw for possible usage errors like --foo --bar
  *
- * @param {object} config - from config passed to parseArgs
  * @param {object} token - from tokens as available from parseArgs
  */
-function checkOptionLikeValue(config, token) {
-  if (config.strict &&
-    !token.inlineValue && isOptionLikeValue(token.value)) {
+function checkOptionLikeValue(token) {
+  if (!token.inlineValue && isOptionLikeValue(token.value)) {
     // Only show short example if user used short option.
     const example = StringPrototypeStartsWith(token.rawName, '--') ?
       `'${token.rawName}=-XYZ'` :
@@ -88,8 +86,6 @@ To specify an option argument starting with a dash use ${example}.`;
  * @param {object} token - from tokens as available from parseArgs
  */
 function checkOptionUsage(config, token) {
-  if (!config.strict) return;
-
   if (!ObjectHasOwn(config.options, token.name)) {
     throw new ERR_PARSE_ARGS_UNKNOWN_OPTION(
       token.rawName, config.allowPositionals);
@@ -328,8 +324,10 @@ const parseArgs = (config = { __proto__: null }) => {
         ArrayPrototypePush(result.positionals, token.value);
         break;
       case 'option':
-        checkOptionUsage(parseConfig, token);
-        checkOptionLikeValue(parseConfig, token);
+        if (strict) {
+          checkOptionUsage(parseConfig, token);
+          checkOptionLikeValue(token);
+        }
         storeOption(token.name, token.value, options, result.values);
         break;
     }
