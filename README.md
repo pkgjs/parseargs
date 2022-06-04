@@ -106,7 +106,7 @@ console.log(values, positionals);
 ```
 
 Detailed parse information is available for adding custom behaviours.
-For example, assuming the following script for `inspect.js`, with
+For example, assuming the following script for `tokens.js`, with
 automatic detection of options:
 
 ```mjs
@@ -122,7 +122,7 @@ console.log(parseArgs({ strict: false, tokens: true }));
 This call shows the three kinds of token and their properties:
 
 ```console
-$ node inspect.js -d --foo=BAR -- file.txt
+$ node tokens.js -d --foo=BAR -- file.txt
 {
   values: [Object: null prototype] { d: true, foo: 'BAR' },
   positionals: [ 'file.txt' ],
@@ -148,6 +148,9 @@ $ node inspect.js -d --foo=BAR -- file.txt
   ]
 }
 ```
+
+Short option groups like `-abc` expand to a token for each option. The source argument
+for a token is `args[token.index]`.
 
 `util.parseArgs` is experimental and behavior may change. Join the
 conversation in [pkgjs/parseargs][] to contribute to the design.
