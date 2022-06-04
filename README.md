@@ -44,23 +44,6 @@ added: REPLACEME
   * `positionals` {string\[]} Positional arguments.
   * `tokens` {Object} Parsed tokens. Only present if requested.
 
-// Maybe leave this out?
-Tokens have properties describing the parse results for:
-  * option:
-    * `kind`: {'option'}
-    * `name`: {string} Long name of option.
-    * `rawName`: {string} How option used in args, like `-f` of `--foo`.
-    * `index`: { number } Index in `args` of option.
-    * `value`: { string | undefined } Option value specified in args. Undefined for boolean options.
-    * `inlineValue`: { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
-  * positional:
-    * `kind`: {'positional'}
-    * `index`: { number } Index in `args` of positional.
-    * `value`: { string } Positional value (i.e. `args[index]`).
-  * option-terminator
-    * `kind`: {'option-terminator'}
-    * `index`: { number } Index in `args` of `--`.
-
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
 and returns a structured object with the parsed options and positionals.
@@ -105,9 +88,25 @@ console.log(values, positionals);
 // Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
-Detailed parse information is available for adding custom behaviours.
-For example, assuming the following script for `tokens.js`, with
-automatic detection of options:
+Detailed parse information is available for adding custom behaviours by specifying `tokens: true` in the configuration. The returned tokens have properties describing:
+
+* option:
+  * `kind`: {'option'}
+  * `name`: {string} Long name of option.
+  * `rawName`: {string} How option used in args, like `-f` of `--foo`.
+  * `index`: { number } Index in `args` of option.
+  * `value`: { string | undefined } Option value specified in args. Undefined for boolean options.
+  * `inlineValue`: { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
+* positional:
+  * `kind`: {'positional'}
+  * `index`: { number } Index in `args` of positional.
+  * `value`: { string } Positional value (i.e. `args[index]`).
+* option-terminator
+  * `kind`: {'option-terminator'}
+  * `index`: { number } Index in `args` of `--`.
+
+For example, assuming the following script for `tokens.js`, which uses
+automatic detection of options and no error checking:
 
 ```mjs
 import { parseArgs } from 'node:util';
@@ -152,7 +151,7 @@ $ node tokens.js -d --foo=BAR -- file.txt
 Short option groups like `-abc` expand to a token for each option. The source argument
 for a token is `args[token.index]`.
 
-`util.parseArgs` is experimental and behavior may change. Join the
+`util.parseArgs()` is experimental and behavior may change. Join the
 conversation in [pkgjs/parseargs][] to contribute to the design.
 
 -----
