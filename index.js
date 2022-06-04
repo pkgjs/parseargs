@@ -278,6 +278,7 @@ const parseArgs = (config = { __proto__: null }) => {
   validateArray(args, 'args');
   validateBoolean(strict, 'strict');
   validateBoolean(allowPositionals, 'allowPositionals');
+  validateBoolean(returnTokens, 'tokens');
   validateObject(options, 'options');
   ArrayPrototypeForEach(
     ObjectEntries(options),
