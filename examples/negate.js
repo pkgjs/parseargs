@@ -6,10 +6,15 @@
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package
 const { parseArgs } = require('..'); // in repo
 
-const { values, tokens } = parseArgs({ strict: false, tokens: true });
+const options = {
+  ['color']: { type: 'string' },
+  ['no-color']: { type: 'boolean' },
+  ['logfile']: { type: 'string' },
+  ['no-logfile']: { type: 'boolean' },
+};
+const { values, tokens } = parseArgs({ options, tokens: true });
 
 // Reprocess the option tokens and overwrite the returned values.
-// (NB: not supporting `multiples` in this code.)
 tokens
   .filter((token) => token.kind === 'option')
   .forEach((token) => {
@@ -24,11 +29,13 @@ tokens
     }
   });
 
-console.log(values);
+const color = values.color;
+const logfile = values.logfile ?? 'default.log';
+
+console.log({ logfile, color });
 
 // Try the following:
-//   node negate.js --foo
-//   node negate.js --foo --no-foo
-//   node negate.js --foo --no-foo --foo
-//   node negate.js --foo=FOO --no-foo
-//   node negate.js --no-foo --foo=FOO
+//   node negate.js
+//   node negate.js --logfile=test.log --color=red
+//   node negate.js --no-logfile --no-color
+//   node negate.js --no-logfile --logfile=test.log --color=red --no-color
