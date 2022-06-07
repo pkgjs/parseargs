@@ -3,7 +3,9 @@
 const {
   ArrayPrototypeForEach,
   ArrayPrototypeIncludes,
+  ArrayPrototypeMap,
   ArrayPrototypePush,
+  ArrayPrototypePushApply,
   ArrayPrototypeShift,
   ArrayPrototypeSlice,
   ArrayPrototypeUnshiftApply,
@@ -164,10 +166,11 @@ function argsToTokens(args, options) {
     if (arg === '--') {
       // Everything after a bare '--' is considered a positional argument.
       ArrayPrototypePush(tokens, { kind: 'option-terminator', index });
-      ArrayPrototypeForEach(remainingArgs, (arg) =>
-        ArrayPrototypePush(
-          tokens,
-          { kind: 'positional', index: ++index, value: arg }));
+      ArrayPrototypePushApply(
+        tokens, ArrayPrototypeMap(remainingArgs, (arg) => {
+          return { kind: 'positional', index: ++index, value: arg };
+        })
+      );
       break; // Finished processing args, leave while loop.
     }
 
