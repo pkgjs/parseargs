@@ -42,44 +42,44 @@ Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
 and returns a structured object with the parsed options and positionals.
 
+For example, assuming the following script for `simple.js`:
+
 ```mjs
 import { parseArgs } from 'node:util';
-const args = ['-f', '--bar', 'b'];
 const options = {
-  foo: {
-    type: 'boolean',
-    short: 'f'
-  },
-  bar: {
-    type: 'string'
-  }
+  foo: { type: 'boolean', short: 'f' },
+  bar: { type: 'string' }
 };
-const {
-  values,
-  positionals
-} = parseArgs({ args, options });
-console.log(values, positionals);
-// Prints: [Object: null prototype] { foo: true, bar: 'b' } []
+try {
+  const { values } = parseArgs({ options });
+  console.log(values);
+} catch (err) {
+  console.log(`${err.code}: ${err.message}`);
+}
 ```
 
 ```cjs
 const { parseArgs } = require('node:util');
-const args = ['-f', '--bar', 'b'];
 const options = {
-  foo: {
-    type: 'boolean',
-    short: 'f'
-  },
-  bar: {
-    type: 'string'
-  }
+  foo: { type: 'boolean', short: 'f' },
+  bar: { type: 'string' }
 };
-const {
-  values,
-  positionals
-} = parseArgs({ args, options });
-console.log(values, positionals);
-// Prints: [Object: null prototype] { foo: true, bar: 'b' } []ss
+try {
+  const { values } = parseArgs({ options });
+  console.log(values);
+} catch (err) {
+  console.log(`${err.code}: ${err.message}`);
+}
+```
+
+The command-line arguments are found implicitly, and parsed into
+the option values. Usage errors by the end-user throw an error.
+
+```console
+$ node simple.js -f --bar b
+[Object: null prototype] { foo: true, bar: 'b' }
+$ node simple.js --oops
+ERR_PARSE_ARGS_UNKNOWN_OPTION: Unknown option '--oops'
 ```
 
 `util.parseArgs` is experimental and behavior may change. Join the
