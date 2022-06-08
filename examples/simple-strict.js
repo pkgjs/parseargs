@@ -10,12 +10,8 @@ const options = {
   foo: { type: 'boolean', short: 'f' },
   bar: { type: 'string' }
 };
-try {
-  const { values } = parseArgs({ options });
-  console.log(values);
-} catch (err) {
-  console.log(`${err.code}: ${err.message}`);
-}
+const { values } = parseArgs({ options });
+console.log(values);
 
 // Try the following:
 //    node simple-strict.js -f --bar b

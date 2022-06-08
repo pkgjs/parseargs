@@ -64,22 +64,16 @@ const options = {
   foo: { type: 'boolean', short: 'f' },
   bar: { type: 'string' }
 };
-try {
-  const { values } = parseArgs({ options });
-  console.log(values);
-} catch (err) {
-  console.log(`${err.code}: ${err.message}`);
-}
+const { values } = parseArgs({ options });
+console.log(values);
 ```
 
 The command-line arguments are found implicitly, and parsed into
-the option values. Usage errors by the end-user throw an error.
+the option values.
 
 ```console
 $ node simple.js -f --bar b
 [Object: null prototype] { foo: true, bar: 'b' }
-$ node simple.js --oops
-ERR_PARSE_ARGS_UNKNOWN_OPTION: Unknown option '--oops'
 ```
 
 `util.parseArgs` is experimental and behavior may change. Join the
