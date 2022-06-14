@@ -15,4 +15,3 @@ console.log(values);
 
 // Try the following:
 //    node simple-strict.js -f --bar b
-//    node simple-strict.js --oops
