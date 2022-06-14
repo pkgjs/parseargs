@@ -9,6 +9,7 @@
   },
   "scripts": {
     "coverage": "c8 --check-coverage tape 'test/*.js'",
+    "coverup": "c8 --check-coverage --include index.js tape 'test/index.js'",
     "test": "c8 tape 'test/*.js'",
     "posttest": "eslint .",
     "fix": "npm run posttest -- --fix"
