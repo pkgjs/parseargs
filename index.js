@@ -317,22 +317,17 @@ const parseArgs = (config = { __proto__: null }) => {
     result.tokens = tokens;
   }
   ArrayPrototypeForEach(tokens, (token) => {
-    switch (token.kind) {
-      case 'option-terminator':
-        break;
-      case 'positional':
-        if (!allowPositionals) {
-          throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(token.value);
-        }
-        ArrayPrototypePush(result.positionals, token.value);
-        break;
-      case 'option':
-        if (strict) {
-          checkOptionUsage(parseConfig, token);
-          checkOptionLikeValue(token);
-        }
-        storeOption(token.name, token.value, options, result.values);
-        break;
+    if (token.kind === 'option') {
+      if (strict) {
+        checkOptionUsage(parseConfig, token);
+        checkOptionLikeValue(token);
+      }
+      storeOption(token.name, token.value, options, result.values);
+    } else if (token.kind === 'positional') {
+      if (!allowPositionals) {
+        throw new ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL(token.value);
+      }
+      ArrayPrototypePush(result.positionals, token.value);
     }
   });
 
