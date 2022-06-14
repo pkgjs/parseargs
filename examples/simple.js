@@ -14,4 +14,4 @@ const { values } = parseArgs({ options });
 console.log(values);
 
 // Try the following:
-//    node simple-strict.js -f --bar b
+//    node simple.js -f --bar b
