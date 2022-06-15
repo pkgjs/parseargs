@@ -13,16 +13,13 @@ const options = {
 const { values, tokens } = parseArgs({ options, tokens: true });
 
 const seenBefore = new Set();
-const repeatedToken = tokens
-  .filter((t) => t.kind === 'option')
-  .find((t) => {
-    if (seenBefore.has(t.name)) return true;
-    seenBefore.add(t.name);
-    return false;
-  });
-if (repeatedToken)
-  throw new Error(`option '${repeatedToken.name}' used multiple times`);
-
+tokens.forEach((token) => {
+  if (token.kind !== 'option') return;
+  if (seenBefore.has(token.name)) {
+    throw new Error(`option '${token.name}' used multiple times`);
+  }
+  seenBefore.add(token.name);
+});
 
 console.log(values);
 
