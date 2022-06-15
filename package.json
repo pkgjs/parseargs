@@ -2,6 +2,9 @@
   "name": "@pkgjs/parseargs",
   "version": "0.9.0",
   "description": "Polyfill of future proposal for `util.parseArgs()`",
+  "engines": {
+    "node": ">=14"
+  },
   "main": "index.js",
   "exports": {
     ".": "./index.js",
