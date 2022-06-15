@@ -153,8 +153,10 @@ $ node tokens.js -xy --foo=BAR -- file.txt
 }
 ```
 
-Short option groups like `-abc` expand to a token for each option. The source argument
-for a token is `args[token.index]`.
+The source argument for a token is `args[token.index]`.
+Short option groups like `-xy` expand to a token for each option.
+Note that the `x` and `y` tokens above have the same index, since
+they come from the same argument.
 
 `util.parseArgs()` is experimental and behavior may change. Join the
 conversation in [pkgjs/parseargs][] to contribute to the design.
