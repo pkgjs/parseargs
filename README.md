@@ -118,15 +118,23 @@ console.log(parseArgs({ strict: false, tokens: true }));
 This call shows the three kinds of token and their properties:
 
 ```console
-$ node tokens.js -d --foo=BAR -- file.txt
+$ node tokens.js -xy --foo=BAR -- file.txt
 {
   values: [Object: null prototype] { d: true, foo: 'BAR' },
   positionals: [ 'file.txt' ],
   tokens: [
     {
       kind: 'option',
-      name: 'd',
-      rawName: '-d',
+      name: 'x',
+      rawName: '-x',
+      index: 0,
+      value: undefined,
+      inlineValue: undefined
+    },
+    {
+      kind: 'option',
+      name: 'y',
+      rawName: '-y',
       index: 0,
       value: undefined,
       inlineValue: undefined

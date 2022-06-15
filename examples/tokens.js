@@ -9,5 +9,5 @@ const { parseArgs } = require('..'); // in repo
 console.log(parseArgs({ strict: false, tokens: true }));
 
 // Try the following:
-//    node tokens.js -d --foo=BAR -- file.txt
+//    node tokens.js -xy --foo=BAR -- file.txt
 //    node tokens.js one -abc two
