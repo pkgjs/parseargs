@@ -102,7 +102,7 @@ Detailed parse information is available for adding custom behaviours by specifyi
   * `value`: { string } Positional value (i.e. `args[index]`).
 * option-terminator token
 
-For example, assuming the following script for `tokens.js`, which uses
+For example, assuming the following script which uses
 automatic detection of options and no error checking:
 
 ```mjs
@@ -118,7 +118,7 @@ console.log(parseArgs({ strict: false, tokens: true }));
 This call shows the three kinds of token and their properties:
 
 ```console
-$ node tokens.js -xy --foo=BAR -- file.txt
+$ node tokens.cjs -xy --foo=BAR -- file.txt
 {
   values: [Object: null prototype] { d: true, foo: 'BAR' },
   positionals: [ 'file.txt' ],
