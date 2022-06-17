@@ -144,7 +144,7 @@ function storeOption(longOption, optionValue, options, values) {
  * - positional
  * - option-terminator
  *
- * @param {string[]} args, from parseArgs({ args }) or mainArgs
+ * @param {string[]} args - from parseArgs({ args }) or mainArgs
  * @param {object} options - option configs, from parseArgs({ options })
  */
 function argsToTokens(args, options) {

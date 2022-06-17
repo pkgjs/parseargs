@@ -88,7 +88,9 @@ console.log(values, positionals);
 // Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
-Detailed parse information is available for adding custom behaviours by specifying `tokens: true` in the configuration. The returned tokens have properties describing:
+Detailed parse information is available for adding custom behaviours by
+specifying `tokens: true` in the configuration. The returned tokens have
+properties describing:
 
 * all tokens
   * `kind` { string } One of 'option', 'positional', or 'option-terminator'.
@@ -96,8 +98,10 @@ Detailed parse information is available for adding custom behaviours by specifyi
 * option tokens
   * `name` { string } Long name of option.
   * `rawName` { string } How option used in args, like `-f` of `--foo`.
-  * `value` { string | undefined } Option value specified in args. Undefined for boolean options.
-  * `inlineValue` { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
+  * `value` { string | undefined } Option value specified in args.
+Undefined for boolean options.
+  * `inlineValue` { boolean | undefined } Whether option value specified inline,
+like `--foo=bar`.
 * positional tokens
   * `value` { string } Positional value (i.e. `args[index]`).
 * option-terminator token
@@ -155,7 +159,7 @@ $ node tokens.cjs -xy --foo=BAR -- file.txt
 
 The source argument for a token is `args[token.index]`.
 Short option groups like `-xy` expand to a token for each option.
-Note that the `x` and `y` tokens above have the same index, since
+The `x` and `y` tokens above have the same index, since
 they come from the same argument.
 
 `util.parseArgs()` is experimental and behavior may change. Join the
