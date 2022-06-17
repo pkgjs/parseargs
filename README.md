@@ -91,15 +91,15 @@ console.log(values, positionals);
 Detailed parse information is available for adding custom behaviours by specifying `tokens: true` in the configuration. The returned tokens have properties describing:
 
 * all tokens
-  * `kind`: { string } One of 'option', 'positional', or 'option-terminator'.
-  * `index`: { number } Index of element in `args` containing token.
+  * `kind` { string } One of 'option', 'positional', or 'option-terminator'.
+  * `index` { number } Index of element in `args` containing token.
 * option tokens
-  * `name`: { string } Long name of option.
-  * `rawName`: { string } How option used in args, like `-f` of `--foo`.
-  * `value`: { string | undefined } Option value specified in args. Undefined for boolean options.
-  * `inlineValue`: { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
+  * `name` { string } Long name of option.
+  * `rawName` { string } How option used in args, like `-f` of `--foo`.
+  * `value` { string | undefined } Option value specified in args. Undefined for boolean options.
+  * `inlineValue` { boolean | undefined } Whether option value specified inline, like `--foo=bar`.
 * positional tokens
-  * `value`: { string } Positional value (i.e. `args[index]`).
+  * `value` { string } Positional value (i.e. `args[index]`).
 * option-terminator token
 
 For example, assuming the following script which uses
