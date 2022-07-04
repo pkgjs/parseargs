@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/pkgjs/parseargs/compare/v0.9.0...v0.9.1) (2022-06-20)
+
+
+### Bug Fixes
+
+* **runtime:** support node 14+ ([#135](https://github.com/pkgjs/parseargs/issues/135)) ([6a1c5a6](https://github.com/pkgjs/parseargs/commit/6a1c5a6f7cadf2f035e004027e2742e3c4ce554b))
+
 ## [0.9.0](https://github.com/pkgjs/parseargs/compare/v0.8.0...v0.9.0) (2022-05-23)
 
 
