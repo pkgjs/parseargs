@@ -7,7 +7,7 @@
 const { parseArgs } = require('..'); // in repo
 
 const options = {
-  ['color']: { type: 'string' },
+  ['color']: { type: 'boolean' },
   ['no-color']: { type: 'boolean' },
   ['logfile']: { type: 'string' },
   ['no-logfile']: { type: 'boolean' },
@@ -36,6 +36,6 @@ console.log({ logfile, color });
 
 // Try the following:
 //   node negate.js
-//   node negate.js --logfile=test.log --color=red
+//   node negate.js --logfile=test.log --color
 //   node negate.js --no-logfile --no-color
-//   node negate.js --no-logfile --logfile=test.log --color=red --no-color
+//   node negate.js --no-logfile --logfile=test.log --color --no-color
