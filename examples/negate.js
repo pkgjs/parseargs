@@ -7,10 +7,10 @@
 const { parseArgs } = require('..'); // in repo
 
 const options = {
-  ['color']: { type: 'string' },
-  ['no-color']: { type: 'boolean' },
-  ['logfile']: { type: 'string' },
-  ['no-logfile']: { type: 'boolean' },
+  'color': { type: 'string' },
+  'no-color': { type: 'boolean' },
+  'logfile': { type: 'string' },
+  'no-logfile': { type: 'boolean' },
 };
 const { values, tokens } = parseArgs({ options, tokens: true });
 
