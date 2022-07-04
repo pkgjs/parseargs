@@ -95,7 +95,8 @@ properties describing:
 
 * all tokens
   * `kind` { string } One of 'option', 'positional', or 'option-terminator'.
-  * `index` { number } Index of element in `args` containing token. So the source argument for a token is `args[token.index]`.
+  * `index` { number } Index of element in `args` containing token. So the
+source argument for a token is `args[token.index]`.
 * option tokens
   * `name` { string } Long name of option.
   * `rawName` { string } How option used in args, like `-f` of `--foo`.
@@ -107,22 +108,23 @@ like `--foo=bar`.
   * `value` { string } The value of the positional argument in args (i.e. `args[index]`).
 * option-terminator token
 
-The returned tokens are in the order encountered in the input args. Options that appear
-more than once in args produce a token for each use.
-Short option groups like `-xy` expand to a token for each option. So `-xxx` produces
+The returned tokens are in the order encountered in the input args. Options
+that appear more than once in args produce a token for each use. Short option
+groups like `-xy` expand to a token for each option. So `-xxx` produces
 three tokens.
 
-For example to use the returned tokens to add support for a negated option like `--no-color`, the tokens
-can be reprocessed to change the value stored for the negated option.
+For example to use the returned tokens to add support for a negated option
+like `--no-color`, the tokens can be reprocessed to change the value stored
+for the negated option.
 
 ```mjs
 import { parseArgs } from 'node:util';
 
 const options = {
-  ['color']: { type: 'boolean' },
-  ['no-color']: { type: 'boolean' },
-  ['logfile']: { type: 'string' },
-  ['no-logfile']: { type: 'boolean' },
+  'color': { type: 'boolean' },
+  'no-color': { type: 'boolean' },
+  'logfile': { type: 'string' },
+  'no-logfile': { type: 'boolean' },
 };
 const { values, tokens } = parseArgs({ options, tokens: true });
 
@@ -151,10 +153,10 @@ console.log({ logfile, color });
 const { parseArgs } = require('node:util');
 
 const options = {
-  ['color']: { type: 'boolean' },
-  ['no-color']: { type: 'boolean' },
-  ['logfile']: { type: 'string' },
-  ['no-logfile']: { type: 'boolean' },
+  'color': { type: 'boolean' },
+  'no-color': { type: 'boolean' },
+  'logfile': { type: 'string' },
+  'no-logfile': { type: 'boolean' },
 };
 const { values, tokens } = parseArgs({ options, tokens: true });
 
@@ -179,7 +181,8 @@ const logfile = values.logfile ?? 'default.log';
 console.log({ logfile, color });
 ```
 
-Example usage showing negated options, and when option use multiple times then last one wins.
+Example usage showing negated options, and when an option is used
+multiple ways then last one wins.
 
 ```console
 $ node negate.js
