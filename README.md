@@ -32,17 +32,17 @@ added: REPLACEME
   * `allowPositionals` {boolean} Whether this command accepts positional
     arguments.
     **Default:** `false` if `strict` is `true`, otherwise `true`.
-  * `tokens` {boolean} Return an array with the
+  * `tokens` {boolean} Return the
     parsed tokens. This is useful for extending the built-in behaviour,
     from adding additional checks through to reprocessing the tokens
     in different ways.
-    **Default:** `false`.
 
 * Returns: {Object} The parsed command line arguments:
   * `values` {Object} A mapping of parsed option names with their {string}
     or {boolean} values.
   * `positionals` {string\[]} Positional arguments.
-  * `tokens` {Object} Parsed tokens. Only present if requested.
+  * `tokens` {Object} [tokens] Detailed parse information (see below for details).
+    Only returned if `config` includes `tokens: true`.
 
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
