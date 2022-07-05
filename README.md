@@ -3,12 +3,12 @@
 
 [![Coverage][coverage-image]][coverage-url]
 
-Polyfill of proposal for `util.parseArgs()`
+Polyfill of `util.parseArgs()`
 
 ## `util.parseArgs([config])`
 
 <!-- YAML
-added: REPLACEME
+added: v18.3.0
 changes:
   - version: REPLACEME
     pr-url: https://github.com/nodejs/node/pull/43459
@@ -37,17 +37,17 @@ changes:
   * `allowPositionals` {boolean} Whether this command accepts positional
     arguments.
     **Default:** `false` if `strict` is `true`, otherwise `true`.
-  * `tokens` {boolean} Return the
-    parsed tokens. This is useful for extending the built-in behaviour,
-    from adding additional checks through to reprocessing the tokens
-    in different ways.
+  * `tokens` {boolean} Return the parsed tokens. This is useful for extending
+    the built-in behavior, from adding additional checks through to reprocessing
+    the tokens in different ways.
+    **Default:** `false`.
 
 * Returns: {Object} The parsed command line arguments:
   * `values` {Object} A mapping of parsed option names with their {string}
     or {boolean} values.
   * `positionals` {string\[]} Positional arguments.
-  * `tokens` {Object} Array of parsed tokens with detailed information
-    (see below for more). Only returned if `config` includes `tokens: true`.
+  * `tokens` {Object\[] | undefined} See [parseArgs tokens](#parseargs-tokens)
+    section. Only returned if `config` includes `tokens: true`.
 
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
@@ -93,24 +93,28 @@ console.log(values, positionals);
 // Prints: [Object: null prototype] { foo: true, bar: 'b' } []
 ```
 
+`util.parseArgs` is experimental and behavior may change. Join the
+conversation in [pkgjs/parseargs][] to contribute to the design.
+
+### `parseArgs` `tokens`
+
 Detailed parse information is available for adding custom behaviours by
 specifying `tokens: true` in the configuration.
-The returned tokens have
-properties describing:
+The returned tokens have properties describing:
 
 * all tokens
-  * `kind` { string } One of 'option', 'positional', or 'option-terminator'.
-  * `index` { number } Index of element in `args` containing token. So the
-source argument for a token is `args[token.index]`.
+  * `kind` {string} One of 'option', 'positional', or 'option-terminator'.
+  * `index` {number} Index of element in `args` containing token. So the
+    source argument for a token is `args[token.index]`.
 * option tokens
-  * `name` { string } Long name of option.
-  * `rawName` { string } How option used in args, like `-f` of `--foo`.
-  * `value` { string | undefined } Option value specified in args.
-Undefined for boolean options.
-  * `inlineValue` { boolean | undefined } Whether option value specified inline,
-like `--foo=bar`.
+  * `name` {string} Long name of option.
+  * `rawName` {string} How option used in args, like `-f` of `--foo`.
+  * `value` {string | undefined} Option value specified in args.
+    Undefined for boolean options.
+  * `inlineValue` {boolean | undefined} Whether option value specified inline,
+    like `--foo=bar`.
 * positional tokens
-  * `value` { string } The value of the positional argument in args (i.e. `args[index]`).
+  * `value` {string} The value of the positional argument in args (i.e. `args[index]`).
 * option-terminator token
 
 The returned tokens are in the order encountered in the input args. Options
@@ -199,9 +203,6 @@ $ node negate.js --logfile=test.log --color
 $ node negate.js --no-logfile --logfile=test.log --color --no-color
 { logfile: 'test.log', color: false }
 ```
-
-`util.parseArgs()` is experimental and behavior may change. Join the
-conversation in [pkgjs/parseargs][] to contribute to the design.
 
 -----
 
