@@ -9,6 +9,11 @@ Polyfill of proposal for `util.parseArgs()`
 
 <!-- YAML
 added: REPLACEME
+changes:
+  - version: REPLACEME
+    pr-url: https://github.com/nodejs/node/pull/43459
+    description: add support for returning detailed parse information
+                 using `tokens` in input `config` and returned properties.
 -->
 
 > Stability: 1 - Experimental
@@ -41,8 +46,8 @@ added: REPLACEME
   * `values` {Object} A mapping of parsed option names with their {string}
     or {boolean} values.
   * `positionals` {string\[]} Positional arguments.
-  * `tokens` {Object} [tokens] Detailed parse information (see below for details).
-    Only returned if `config` includes `tokens: true`.
+  * `tokens` {Object} Array of parsed tokens with detailed information
+    (see below for more). Only returned if `config` includes `tokens: true`.
 
 Provides a higher level API for command-line argument parsing than interacting
 with `process.argv` directly. Takes a specification for the expected arguments
