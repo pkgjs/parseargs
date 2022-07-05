@@ -15,7 +15,7 @@ const {
   StringPrototypeIndexOf,
   StringPrototypeSlice,
   StringPrototypeStartsWith,
-} = require('./primordials');
+} = require('./internal/primordials');
 
 const {
   validateArray,
@@ -23,7 +23,11 @@ const {
   validateObject,
   validateString,
   validateUnion,
-} = require('./validators');
+} = require('./internal/validators');
+
+const {
+  kEmptyObject,
+} = require('./internal/util');
 
 const {
   findLongOptionForShort,
@@ -45,7 +49,7 @@ const {
     ERR_PARSE_ARGS_UNKNOWN_OPTION,
     ERR_PARSE_ARGS_UNEXPECTED_POSITIONAL,
   },
-} = require('./errors');
+} = require('./internal/errors');
 
 function getMainArgs() {
   // Work out where to slice process.argv for user supplied arguments.
@@ -264,7 +268,7 @@ function argsToTokens(args, options) {
   return tokens;
 }
 
-const parseArgs = (config = { __proto__: null }) => {
+const parseArgs = (config = kEmptyObject) => {
   const args = objectGetOwn(config, 'args') ?? getMainArgs();
   const strict = objectGetOwn(config, 'strict') ?? true;
   const allowPositionals = objectGetOwn(config, 'allowPositionals') ?? !strict;
