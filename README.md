@@ -90,7 +90,8 @@ conversation in [pkgjs/parseargs][] to contribute to the design.
 <!-- omit in toc -->
 ## Table of Contents
 - [`util.parseArgs([config])`](#utilparseargsconfig)
-  - [Scope](#scope)
+- [Scope](#scope)
+- [Version Matchups](#version-matchups)
 - [🚀 Getting Started](#-getting-started)
 - [🙌 Contributing](#-contributing)
 - [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
