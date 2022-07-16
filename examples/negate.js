@@ -1,5 +1,7 @@
 'use strict';
 
+// This example is used in the documentation.
+
 // How might I add my own support for --no-foo?
 
 // 1. const { parseArgs } = require('node:util'); // from node
