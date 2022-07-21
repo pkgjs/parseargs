@@ -35,7 +35,6 @@ const logfile = values.logfile ?? 'default.log';
 console.log({ logfile, color });
 
 // Try the following:
-//   node negate.js
 //   node negate.js --logfile=test.log --color=red
 //   node negate.js --no-logfile --no-color
 //   node negate.js --no-logfile --logfile=test.log --color=red --no-color
