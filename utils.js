@@ -7,11 +7,11 @@ const {
   StringPrototypeCharAt,
   StringPrototypeIncludes,
   StringPrototypeStartsWith,
-} = require('./primordials');
+} = require('./internal/primordials');
 
 const {
   validateObject,
-} = require('./validators');
+} = require('./internal/validators');
 
 // These are internal utilities to make the parsing logic easier to read, and
 // add lots of detail for the curious. They are in a separate file to allow
