@@ -209,15 +209,15 @@ $ node negate.js --no-logfile --logfile=test.log --color --no-color
 <!-- omit in toc -->
 ## Table of Contents
 - [`util.parseArgs([config])`](#utilparseargsconfig)
-  - [Scope](#scope)
-  - [Links & Resources](#links--resources)
+- [Scope](#scope)
+- [Version Matchups](#version-matchups)
 - [🚀 Getting Started](#-getting-started)
 - [🙌 Contributing](#-contributing)
 - [💡 `process.mainArgs` Proposal](#-processmainargs-proposal)
   - [Implementation:](#implementation)
-- [💡 `util.parseArgs([config])` Proposal](#-utilparseargsconfig-proposal)
 - [📃 Examples](#-examples)
-  - [F.A.Qs](#faqs)
+- [F.A.Qs](#faqs)
+- [Links & Resources](#links--resources)
 
 -----
 
@@ -226,6 +226,16 @@ $ node negate.js --no-logfile --logfile=test.log --color --no-color
 It is already possible to build great arg parsing modules on top of what Node.js provides; the prickly API is abstracted away by these modules. Thus, process.parseArgs() is not necessarily intended for library authors; it is intended for developers of simple CLI tools, ad-hoc scripts, deployed Node.js applications, and learning materials.
 
 It is exceedingly difficult to provide an API which would both be friendly to these Node.js users while being extensible enough for libraries to build upon. We chose to prioritize these use cases because these are currently not well-served by Node.js' API.
+
+----
+
+## Version Matchups
+
+| Node.js | @pkgjs/parseArgs |
+| -- | -- |
+| [v18.3.0](https://nodejs.org/docs/latest-v18.x/api/util.html#utilparseargsconfig) | [v0.9.1](https://github.com/pkgjs/parseargs/tree/v0.9.1#utilparseargsconfig) |
+
+----
 
 ## 🚀 Getting Started
 
@@ -264,24 +274,6 @@ This package was implemented using [tape](https://www.npmjs.com/package/tape) as
 ```javascript
 process.mainArgs = process.argv.slice(process._exec ? 1 : 2)
 ```
-
-----
-
-## 💡 `util.parseArgs([config])` Proposal
-
-* `config` {Object} (Optional) The `config` parameter is an
-  object supporting the following properties:
-  * `args` {string[]} (Optional) Array of argument strings; defaults
-    to [`process.mainArgs`](process_argv)
-  * `options` {Object} (Optional) An object describing the known options to look for in `args`; `options` keys are the long names of the known options, and the values are objects with the following properties:
-    * `type` {'string'|'boolean'} (Required) Type of known option
-    * `multiple` {boolean} (Optional) If true, when appearing one or more times in `args`, results are collected in an `Array`
-    * `short` {string} (Optional) A single character alias for an option; When appearing one or more times in `args`; Respects the `multiple` configuration
-  * `strict` {Boolean} (Optional) A `Boolean` for whether or not to throw an error when unknown options are encountered, `type:'string'` options are missing an options-argument, or `type:'boolean'` options are passed an options-argument; defaults to `true`
-  * `allowPositionals` {Boolean} (Optional) Whether this command accepts positional arguments. Defaults `false` if `strict` is `true`, otherwise defaults to `true`.
-* Returns: {Object} An object having properties:
-  * `values` {Object}, key:value for each option found. Value is a string for string options, or `true` for boolean options, or an array (of strings or booleans) for options configured as `multiple:true`.
-  * `positionals` {string[]}, containing [Positionals][]
 
 ----
 
@@ -344,8 +336,9 @@ const { values, positionals } = parseArgs({ strict: false, args, options, allowP
 // positionals = ['b']
 ```
 
+----
 
-### F.A.Qs
+## F.A.Qs
 
 - Is `cmd --foo=bar baz` the same as `cmd baz --foo=bar`?
   - yes
