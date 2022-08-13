@@ -4,6 +4,8 @@ const {
   ArrayPrototypeForEach,
   ArrayPrototypeIncludes,
   ArrayPrototypeMap,
+  ArrayPrototypeFilter,
+  ArrayPrototypeSome,
   ArrayPrototypePush,
   ArrayPrototypePushApply,
   ArrayPrototypeShift,
@@ -104,7 +106,7 @@ function checkOptionUsage(config, token) {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong} <value>' argument missing`);
   }
   // (Idiomatic test for undefined||null, expecting undefined.)
-  if (type === 'boolean' && token.value != null) {
+  if (type === 'boolean' && token.value != null && !token.isDefaultValue) {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong}' does not take an argument`);
   }
 }
@@ -265,7 +267,34 @@ function argsToTokens(args, options) {
 
     ArrayPrototypePush(tokens, { kind: 'positional', index, value: arg });
   }
+
+  const defaultValueOptions = ArrayPrototypeFilter(
+    ObjectEntries(options), (option) => {
+      return isDefaultValueOptionUsed(option, tokens);
+    });
+
+  if (defaultValueOptions.length > 0) {
+    ArrayPrototypePushApply(
+      tokens, ArrayPrototypeMap(defaultValueOptions, ({ 0: longOption,
+                                                        1: optionConfig }) => {
+        return { kind: 'option',
+                 index: ++index,
+                 name: longOption,
+                 value: optionConfig.defaultValue,
+                 inlineValue: false,
+                 isDefaultValue: true };
+      })
+    );
+  }
+
   return tokens;
+}
+
+function isDefaultValueOptionUsed({ 0: longOption, 1: optionConfig }, tokens) {
+  return optionConfig.defaultValue !== undefined &&
+  !ArrayPrototypeSome(tokens, (token) => {
+    return token.kind === 'option' && token.name === longOption;
+  });
 }
 
 const parseArgs = (config = kEmptyObject) => {
@@ -289,7 +318,17 @@ const parseArgs = (config = kEmptyObject) => {
       validateObject(optionConfig, `options.${longOption}`);
 
       // type is required
-      validateUnion(objectGetOwn(optionConfig, 'type'), `options.${longOption}.type`, ['string', 'boolean']);
+      const optionType = objectGetOwn(optionConfig, 'type');
+      validateUnion(optionType, `options.${longOption}.type`, ['string', 'boolean']);
+
+      if (ObjectHasOwn(optionConfig, 'defaultValue')) {
+        const defaultValue = objectGetOwn(optionConfig, 'defaultValue');
+        if (optionType === 'string') {
+          validateString(defaultValue, `options.${longOption}.defaultValue`);
+        } else if (optionType === 'boolean') {
+          validateBoolean(defaultValue, `options.${longOption}.defaultValue`);
+        }
+      }
 
       if (ObjectHasOwn(optionConfig, 'short')) {
         const shortOption = optionConfig.short;
