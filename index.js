@@ -5,7 +5,6 @@ const {
   ArrayPrototypeIncludes,
   ArrayPrototypeMap,
   ArrayPrototypeFilter,
-  ArrayPrototypeSome,
   ArrayPrototypePush,
   ArrayPrototypePushApply,
   ArrayPrototypeShift,
@@ -268,33 +267,19 @@ function argsToTokens(args, options) {
     ArrayPrototypePush(tokens, { kind: 'positional', index, value: arg });
   }
 
-  const defaultValueOptions = ArrayPrototypeFilter(
-    ObjectEntries(options), (option) => {
-      return isDefaultValueOptionUsed(option, tokens);
-    });
-
-  if (defaultValueOptions.length > 0) {
-    ArrayPrototypePushApply(
-      tokens, ArrayPrototypeMap(defaultValueOptions, ({ 0: longOption,
-                                                        1: optionConfig }) => {
-        return { kind: 'option',
-                 index: ++index,
-                 name: longOption,
-                 value: optionConfig.defaultValue,
-                 inlineValue: false,
-                 isDefaultValue: true };
-      })
-    );
-  }
-
   return tokens;
 }
 
-function isDefaultValueOptionUsed({ 0: longOption, 1: optionConfig }, tokens) {
+/**
+ * Check if the given option that includes a default value
+ * has been set by the input args.
+ *
+ * @param {array} options - option configs entry, from parseArgs({ options })
+ * @param {object} values - option values returned in `values` by parseArgs
+ */
+function isDefaultValueOptionUsed({ 0: longOption, 1: optionConfig }, values) {
   return optionConfig.defaultValue !== undefined &&
-  !ArrayPrototypeSome(tokens, (token) => {
-    return token.kind === 'option' && token.name === longOption;
-  });
+  !objectGetOwn(values, longOption);
 }
 
 const parseArgs = (config = kEmptyObject) => {
@@ -373,6 +358,23 @@ const parseArgs = (config = kEmptyObject) => {
       ArrayPrototypePush(result.positionals, token.value);
     }
   });
+
+  // Phase 3: fill in default values for missing args
+  const defaultValueOptions = ArrayPrototypeFilter(
+    ObjectEntries(options), (option) => {
+      return isDefaultValueOptionUsed(option, result.values);
+    });
+
+  if (defaultValueOptions.length > 0) {
+    ArrayPrototypeForEach(defaultValueOptions, ({ 0: longOption,
+                                                  1: optionConfig }) => {
+      storeOption(longOption,
+                  optionConfig.defaultValue,
+                  options,
+                  result.values);
+    });
+
+  }
 
   return result;
 };
