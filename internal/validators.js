@@ -36,6 +36,20 @@ function validateArray(value, name) {
   }
 }
 
+function validateStringArray(value, name) {
+  validateArray(value, name);
+  for (let i = 0; i < value.length; i++) {
+    validateString(value[i], `${name}[${i}]`);
+  }
+}
+
+function validateBooleanArray(value, name) {
+  validateArray(value, name);
+  for (let i = 0; i < value.length; i++) {
+    validateBoolean(value[i], `${name}[${i}]`);
+  }
+}
+
 /**
  * @param {unknown} value
  * @param {string} name
@@ -63,6 +77,8 @@ module.exports = {
   validateArray,
   validateObject,
   validateString,
+  validateStringArray,
   validateUnion,
   validateBoolean,
+  validateBooleanArray,
 };

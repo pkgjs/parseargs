@@ -21,14 +21,15 @@ const {
 const {
   validateArray,
   validateBoolean,
+  validateBooleanArray,
   validateObject,
   validateString,
+  validateStringArray,
   validateUnion,
 } = require('./internal/validators');
 
 const {
-  kEmptyObject,
-  isDefaultValueOptionUsed,
+  kEmptyObject
 } = require('./internal/util');
 
 const {
@@ -40,6 +41,7 @@ const {
   isOptionLikeValue,
   isShortOptionAndValue,
   isShortOptionGroup,
+  useDefaultValueOption,
   objectGetOwn,
   optionsGetOwn,
 } = require('./utils');
@@ -142,6 +144,25 @@ function storeOption(longOption, optionValue, options, values) {
   } else {
     values[longOption] = newValue;
   }
+}
+
+/**
+ * Store the default option value in `values`.
+ *
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {string
+ *         | boolean
+ *         | string[]
+ *         | boolean[]} optionValue - default value from option config
+ * @param {object} options - option configs, from parseArgs({ options })
+ * @param {object} values - option values returned in `values` by parseArgs
+ */
+function storeDefaultOption(longOption, optionValue, options, values) {
+  if (longOption === '__proto__') {
+    return; // No. Just no.
+  }
+
+  values[longOption] = optionValue;
 }
 
 /**
@@ -295,15 +316,6 @@ const parseArgs = (config = kEmptyObject) => {
       const optionType = objectGetOwn(optionConfig, 'type');
       validateUnion(optionType, `options.${longOption}.type`, ['string', 'boolean']);
 
-      if (ObjectHasOwn(optionConfig, 'defaultValue')) {
-        const defaultValue = objectGetOwn(optionConfig, 'defaultValue');
-        if (optionType === 'string') {
-          validateString(defaultValue, `options.${longOption}.defaultValue`);
-        } else if (optionType === 'boolean') {
-          validateBoolean(defaultValue, `options.${longOption}.defaultValue`);
-        }
-      }
-
       if (ObjectHasOwn(optionConfig, 'short')) {
         const shortOption = optionConfig.short;
         validateString(shortOption, `options.${longOption}.short`);
@@ -316,8 +328,22 @@ const parseArgs = (config = kEmptyObject) => {
         }
       }
 
-      if (ObjectHasOwn(optionConfig, 'multiple')) {
+      const hasMultipleFlag = ObjectHasOwn(optionConfig, 'multiple');
+      if (hasMultipleFlag) {
         validateBoolean(optionConfig.multiple, `options.${longOption}.multiple`);
+      }
+
+      if (ObjectHasOwn(optionConfig, 'defaultValue')) {
+        const defaultValue = objectGetOwn(optionConfig, 'defaultValue');
+        if (optionType === 'string' && !hasMultipleFlag) {
+          validateString(defaultValue, `options.${longOption}.defaultValue`);
+        } else if (optionType === 'string' && hasMultipleFlag) {
+          validateStringArray(defaultValue, `options.${longOption}.defaultValue`);
+        } else if (optionType === 'boolean' && !hasMultipleFlag) {
+          validateBoolean(defaultValue, `options.${longOption}.defaultValue`);
+        } else if (optionType === 'boolean' && hasMultipleFlag) {
+          validateBooleanArray(defaultValue, `options.${longOption}.defaultValue`);
+        }
       }
     }
   );
@@ -351,16 +377,16 @@ const parseArgs = (config = kEmptyObject) => {
   // Phase 3: fill in default values for missing args
   const defaultValueOptions = ArrayPrototypeFilter(
     ObjectEntries(options), (option) => {
-      return isDefaultValueOptionUsed(option, result.values);
+      return useDefaultValueOption(option, result.values);
     });
 
   if (defaultValueOptions.length > 0) {
     ArrayPrototypeForEach(defaultValueOptions, ({ 0: longOption,
                                                   1: optionConfig }) => {
-      storeOption(longOption,
-                  optionConfig.defaultValue,
-                  options,
-                  result.values);
+      storeDefaultOption(longOption,
+                         optionConfig.defaultValue,
+                         options,
+                         result.values);
     });
 
   }
