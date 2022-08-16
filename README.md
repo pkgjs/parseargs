@@ -114,7 +114,6 @@ The returned tokens have properties describing:
     Undefined for boolean options.
   * `inlineValue` {boolean | undefined} Whether option value specified inline,
     like `--foo=bar`.
-  * `isDefaultValue` {boolean | undefined} Whether option value is the default one.
 * positional tokens
   * `value` {string} The value of the positional argument in args (i.e. `args[index]`).
 * option-terminator token

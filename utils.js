@@ -170,6 +170,19 @@ function findLongOptionForShort(shortOption, options) {
   return longOptionEntry?.[0] ?? shortOption;
 }
 
+/**
+ * Check if the given option includes a default value
+ * and that option has not been set by the input args.
+ *
+ * @param {array} options - option configs entry, from parseArgs({ options })
+ * @param {object} values - option values returned in `values` by parseArgs
+ */
+function useDefaultValueOption({ 0: longOption,
+                                 1: optionConfig }, values) {
+  return optionConfig.defaultValue !== undefined &&
+  values[longOption] === undefined;
+}
+
 module.exports = {
   findLongOptionForShort,
   isLoneLongOption,
@@ -179,6 +192,7 @@ module.exports = {
   isOptionLikeValue,
   isShortOptionAndValue,
   isShortOptionGroup,
+  useDefaultValueOption,
   objectGetOwn,
   optionsGetOwn,
 };

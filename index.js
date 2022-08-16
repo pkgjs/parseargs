@@ -28,6 +28,7 @@ const {
 
 const {
   kEmptyObject,
+  isDefaultValueOptionUsed,
 } = require('./internal/util');
 
 const {
@@ -105,7 +106,7 @@ function checkOptionUsage(config, token) {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong} <value>' argument missing`);
   }
   // (Idiomatic test for undefined||null, expecting undefined.)
-  if (type === 'boolean' && token.value != null && !token.isDefaultValue) {
+  if (type === 'boolean' && token.value != null) {
     throw new ERR_PARSE_ARGS_INVALID_OPTION_VALUE(`Option '${shortAndLong}' does not take an argument`);
   }
 }
@@ -268,18 +269,6 @@ function argsToTokens(args, options) {
   }
 
   return tokens;
-}
-
-/**
- * Check if the given option that includes a default value
- * has been set by the input args.
- *
- * @param {array} options - option configs entry, from parseArgs({ options })
- * @param {object} values - option values returned in `values` by parseArgs
- */
-function isDefaultValueOptionUsed({ 0: longOption, 1: optionConfig }, values) {
-  return optionConfig.defaultValue !== undefined &&
-  !objectGetOwn(values, longOption);
 }
 
 const parseArgs = (config = kEmptyObject) => {
