@@ -164,3 +164,14 @@ test('proto as default value must be ignored', (t) => {
   t.deepEqual(result, expected);
   t.end();
 });
+
+
+test('multiple as false should not expect an array', (t) => {
+  const args = [];
+  const options = { alpha: { type: 'string', multiple: false, defaultValue: 42 } };
+  t.throws(() => {
+    parseArgs({ args, options });
+  }, /alpha\.defaultValue must be String/
+  );
+  t.end();
+});
