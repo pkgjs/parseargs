@@ -328,11 +328,13 @@ const parseArgs = (config = kEmptyObject) => {
         }
       }
 
-      validateBoolean(ObjectHasOwn(optionConfig, 'multiple'), `options.${longOption}.multiple`);
+      const multipleOption = objectGetOwn(optionConfig, 'multiple');
+      if (ObjectHasOwn(optionConfig, 'multiple')) {
+        validateBoolean(multipleOption, `options.${longOption}.multiple`);
+      }
 
       if (ObjectHasOwn(optionConfig, 'defaultValue')) {
         const defaultValue = objectGetOwn(optionConfig, 'defaultValue');
-        const multipleOption = objectGetOwn(optionConfig, 'multiple');
         if (optionType === 'string' && !multipleOption) {
           validateString(defaultValue, `options.${longOption}.defaultValue`);
         } else if (optionType === 'string' && multipleOption) {
