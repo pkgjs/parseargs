@@ -7,7 +7,7 @@
 const { parseArgs } = require('..'); // in repo
 
 const options = {
-  file: { short: 'f', type: 'string', defaultValue: 'FOO' },
+  file: { short: 'f', type: 'string', default: 'FOO' },
 };
 
 const { values, tokens } = parseArgs({ options, tokens: true });

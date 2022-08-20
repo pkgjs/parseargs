@@ -179,7 +179,7 @@ function findLongOptionForShort(shortOption, options) {
  * @param {object} values - option values returned in `values` by parseArgs
  */
 function useDefaultValueOption(longOption, optionConfig, values) {
-  return objectGetOwn(optionConfig, 'defaultValue') !== undefined &&
+  return objectGetOwn(optionConfig, 'default') !== undefined &&
   values[longOption] === undefined;
 }
 

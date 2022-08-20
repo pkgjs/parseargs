@@ -4,7 +4,6 @@ const {
   ArrayPrototypeForEach,
   ArrayPrototypeIncludes,
   ArrayPrototypeMap,
-  ArrayPrototypeFilter,
   ArrayPrototypePush,
   ArrayPrototypePushApply,
   ArrayPrototypeShift,
@@ -332,16 +331,16 @@ const parseArgs = (config = kEmptyObject) => {
         validateBoolean(multipleOption, `options.${longOption}.multiple`);
       }
 
-      if (ObjectHasOwn(optionConfig, 'defaultValue')) {
-        const defaultValue = objectGetOwn(optionConfig, 'defaultValue');
+      if (ObjectHasOwn(optionConfig, 'default')) {
+        const defaultValue = objectGetOwn(optionConfig, 'default');
         if (optionType === 'string' && !multipleOption) {
-          validateString(defaultValue, `options.${longOption}.defaultValue`);
+          validateString(defaultValue, `options.${longOption}.default`);
         } else if (optionType === 'string' && multipleOption) {
-          validateStringArray(defaultValue, `options.${longOption}.defaultValue`);
+          validateStringArray(defaultValue, `options.${longOption}.default`);
         } else if (optionType === 'boolean' && !multipleOption) {
-          validateBoolean(defaultValue, `options.${longOption}.defaultValue`);
+          validateBoolean(defaultValue, `options.${longOption}.default`);
         } else if (optionType === 'boolean' && multipleOption) {
-          validateBooleanArray(defaultValue, `options.${longOption}.defaultValue`);
+          validateBooleanArray(defaultValue, `options.${longOption}.default`);
         }
       }
     }
@@ -374,21 +373,18 @@ const parseArgs = (config = kEmptyObject) => {
   });
 
   // Phase 3: fill in default values for missing args
-  const defaultValueOptions = ArrayPrototypeFilter(
-    ObjectEntries(options), ({ 0: longOption,
-                               1: optionConfig }) => {
-      return useDefaultValueOption(longOption, optionConfig, result.values);
-    });
-
-  if (defaultValueOptions.length > 0) {
-    ArrayPrototypeForEach(defaultValueOptions, ({ 0: longOption,
-                                                  1: optionConfig }) => {
+  ArrayPrototypeForEach(ObjectEntries(options), ({ 0: longOption,
+                                                   1: optionConfig }) => {
+    const mustSetDefault = useDefaultValueOption(longOption,
+                                                 optionConfig,
+                                                 result.values);
+    if (mustSetDefault) {
       storeDefaultOption(longOption,
-                         optionConfig.defaultValue,
+                         objectGetOwn(optionConfig, 'default'),
                          result.values);
-    });
+    }
+  });
 
-  }
 
   return result;
 };

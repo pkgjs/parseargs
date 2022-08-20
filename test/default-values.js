@@ -5,75 +5,75 @@
 const test = require('tape');
 const { parseArgs } = require('../index.js');
 
-test('defaultValue must be a boolean when option type is boolean', (t) => {
+test('default must be a boolean when option type is boolean', (t) => {
   const args = [];
-  const options = { alpha: { type: 'boolean', defaultValue: 'not a boolean' } };
+  const options = { alpha: { type: 'boolean', default: 'not a boolean' } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue must be Boolean/
+  }, /alpha\.default must be Boolean/
   );
   t.end();
 });
 
-test('defaultValue must be a boolean array when option type is boolean and multiple', (t) => {
+test('default must be a boolean array when option type is boolean and multiple', (t) => {
   const args = [];
-  const options = { alpha: { type: 'boolean', multiple: true, defaultValue: 'not an array' } };
+  const options = { alpha: { type: 'boolean', multiple: true, default: 'not an array' } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue must be Array/
+  }, /alpha\.default must be Array/
   );
   t.end();
 });
 
-test('defaultValue must be a boolean array when option type is string and multiple is true', (t) => {
+test('default must be a boolean array when option type is string and multiple is true', (t) => {
   const args = [];
-  const options = { alpha: { type: 'boolean', multiple: true, defaultValue: [true, true, 42] } };
+  const options = { alpha: { type: 'boolean', multiple: true, default: [true, true, 42] } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue\[2\] must be Boolean/
+  }, /alpha\.default\[2\] must be Boolean/
   );
   t.end();
 });
 
-test('defaultValue must be a string when option type is string', (t) => {
+test('default must be a string when option type is string', (t) => {
   const args = [];
-  const options = { alpha: { type: 'string', defaultValue: true } };
+  const options = { alpha: { type: 'string', default: true } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue must be String/
+  }, /alpha\.default must be String/
   );
   t.end();
 });
 
-test('defaultValue must be an array when option type is string and multiple is true', (t) => {
+test('default must be an array when option type is string and multiple is true', (t) => {
   const args = [];
-  const options = { alpha: { type: 'string', multiple: true, defaultValue: 'not an array' } };
+  const options = { alpha: { type: 'string', multiple: true, default: 'not an array' } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue must be Array/
+  }, /alpha\.default must be Array/
   );
   t.end();
 });
 
-test('defaultValue must be a string array when option type is string and multiple is true', (t) => {
+test('default must be a string array when option type is string and multiple is true', (t) => {
   const args = [];
-  const options = { alpha: { type: 'string', multiple: true, defaultValue: ['str', 42] } };
+  const options = { alpha: { type: 'string', multiple: true, default: ['str', 42] } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue\[1\] must be String/
+  }, /alpha\.default\[1\] must be String/
   );
   t.end();
 });
 
-test('defaultValue accepted input when multiple is true', (t) => {
+test('default accepted input when multiple is true', (t) => {
   const args = ['--inputStringArr', 'c', '--inputStringArr', 'd', '--inputBoolArr', '--inputBoolArr'];
   const options = {
-    inputStringArr: { type: 'string', multiple: true, defaultValue: ['a', 'b'] },
-    emptyStringArr: { type: 'string', multiple: true, defaultValue: [] },
-    fullStringArr: { type: 'string', multiple: true, defaultValue: ['a', 'b'] },
-    inputBoolArr: { type: 'boolean', multiple: true, defaultValue: [false, true, false] },
-    emptyBoolArr: { type: 'boolean', multiple: true, defaultValue: [] },
-    fullBoolArr: { type: 'boolean', multiple: true, defaultValue: [false, true, false] },
+    inputStringArr: { type: 'string', multiple: true, default: ['a', 'b'] },
+    emptyStringArr: { type: 'string', multiple: true, default: [] },
+    fullStringArr: { type: 'string', multiple: true, default: ['a', 'b'] },
+    inputBoolArr: { type: 'boolean', multiple: true, default: [false, true, false] },
+    emptyBoolArr: { type: 'boolean', multiple: true, default: [] },
+    fullBoolArr: { type: 'boolean', multiple: true, default: [false, true, false] },
   };
   const expected = { values: { __proto__: null,
                                inputStringArr: ['c', 'd'],
@@ -88,12 +88,12 @@ test('defaultValue accepted input when multiple is true', (t) => {
   t.end();
 });
 
-test('when defaultValue is set, the option must be added as result', (t) => {
+test('when default is set, the option must be added as result', (t) => {
   const args = [];
   const options = {
-    a: { type: 'string', defaultValue: 'HELLO' },
-    b: { type: 'boolean', defaultValue: false },
-    c: { type: 'boolean', defaultValue: true }
+    a: { type: 'string', default: 'HELLO' },
+    b: { type: 'boolean', default: false },
+    c: { type: 'boolean', default: true }
   };
   const expected = { values: { __proto__: null, a: 'HELLO', b: false, c: true }, positionals: [] };
 
@@ -103,12 +103,12 @@ test('when defaultValue is set, the option must be added as result', (t) => {
   t.end();
 });
 
-test('when defaultValue is set, the args value takes precedence', (t) => {
+test('when default is set, the args value takes precedence', (t) => {
   const args = ['--a', 'WORLD', '--b', '-c'];
   const options = {
-    a: { type: 'string', defaultValue: 'HELLO' },
-    b: { type: 'boolean', defaultValue: false },
-    c: { type: 'boolean', defaultValue: true }
+    a: { type: 'string', default: 'HELLO' },
+    b: { type: 'boolean', default: false },
+    c: { type: 'boolean', default: true }
   };
   const expected = { values: { __proto__: null, a: 'WORLD', b: true, c: true }, positionals: [] };
 
@@ -118,12 +118,12 @@ test('when defaultValue is set, the args value takes precedence', (t) => {
   t.end();
 });
 
-test('tokens should not include the defaultValue options', (t) => {
+test('tokens should not include the default options', (t) => {
   const args = [];
   const options = {
-    a: { type: 'string', defaultValue: 'HELLO' },
-    b: { type: 'boolean', defaultValue: false },
-    c: { type: 'boolean', defaultValue: true }
+    a: { type: 'string', default: 'HELLO' },
+    b: { type: 'boolean', default: false },
+    c: { type: 'boolean', default: true }
   };
 
   const expectedTokens = [];
@@ -133,13 +133,13 @@ test('tokens should not include the defaultValue options', (t) => {
   t.end();
 });
 
-test('tokens:true should not include the defaultValue options after the args input', (t) => {
+test('tokens:true should not include the default options after the args input', (t) => {
   const args = ['--z', 'zero', 'positional-item'];
   const options = {
     z: { type: 'string' },
-    a: { type: 'string', defaultValue: 'HELLO' },
-    b: { type: 'boolean', defaultValue: false },
-    c: { type: 'boolean', defaultValue: true }
+    a: { type: 'string', default: 'HELLO' },
+    b: { type: 'boolean', default: false },
+    c: { type: 'boolean', default: true }
   };
 
   const expectedTokens = [
@@ -157,7 +157,7 @@ test('proto as default value must be ignored', (t) => {
   const options = Object.create(null);
 
   // eslint-disable-next-line no-proto
-  options.__proto__ = { type: 'string', defaultValue: 'HELLO' };
+  options.__proto__ = { type: 'string', default: 'HELLO' };
 
   const result = parseArgs({ args, options, allowPositionals: true });
   const expected = { values: { __proto__: null }, positionals: [] };
@@ -168,10 +168,10 @@ test('proto as default value must be ignored', (t) => {
 
 test('multiple as false should expect a String and not an array', (t) => {
   const args = [];
-  const options = { alpha: { type: 'string', multiple: false, defaultValue: 42 } };
+  const options = { alpha: { type: 'string', multiple: false, default: 42 } };
   t.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.defaultValue must be String/
+  }, /alpha\.default must be String/
   );
   t.end();
 });

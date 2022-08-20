@@ -30,7 +30,7 @@ changes:
       times. If `true`, all values will be collected in an array. If
       `false`, values for the option are last-wins. **Default:** `false`.
     * `short` {string} A single character alias for the option.
-    * `defaultValue` {string | boolean | string[] | boolean[]} The default option value when it is not set by args.
+    * `default` {string | boolean | string[] | boolean[]} The default option value when it is not set by args.
   * `strict` {boolean} Should an error be thrown when unknown arguments
     are encountered, or when arguments are passed that do not match the
     `type` configured in `options`.
