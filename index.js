@@ -29,7 +29,7 @@ const {
 } = require('./internal/validators');
 
 const {
-  kEmptyObject
+  kEmptyObject,
 } = require('./internal/util');
 
 const {
@@ -154,10 +154,9 @@ function storeOption(longOption, optionValue, options, values) {
  *         | boolean
  *         | string[]
  *         | boolean[]} optionValue - default value from option config
- * @param {object} options - option configs, from parseArgs({ options })
  * @param {object} values - option values returned in `values` by parseArgs
  */
-function storeDefaultOption(longOption, optionValue, options, values) {
+function storeDefaultOption(longOption, optionValue, values) {
   if (longOption === '__proto__') {
     return; // No. Just no.
   }
@@ -376,8 +375,9 @@ const parseArgs = (config = kEmptyObject) => {
 
   // Phase 3: fill in default values for missing args
   const defaultValueOptions = ArrayPrototypeFilter(
-    ObjectEntries(options), (option) => {
-      return useDefaultValueOption(option, result.values);
+    ObjectEntries(options), ({ 0: longOption,
+                               1: optionConfig }) => {
+      return useDefaultValueOption(longOption, optionConfig, result.values);
     });
 
   if (defaultValueOptions.length > 0) {
@@ -385,7 +385,6 @@ const parseArgs = (config = kEmptyObject) => {
                                                   1: optionConfig }) => {
       storeDefaultOption(longOption,
                          optionConfig.defaultValue,
-                         options,
                          result.values);
     });
 

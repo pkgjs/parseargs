@@ -174,12 +174,12 @@ function findLongOptionForShort(shortOption, options) {
  * Check if the given option includes a default value
  * and that option has not been set by the input args.
  *
- * @param {array} options - option configs entry, from parseArgs({ options })
+ * @param {string} longOption - long option name e.g. 'foo'
+ * @param {object} optionConfig - the option configuration properties
  * @param {object} values - option values returned in `values` by parseArgs
  */
-function useDefaultValueOption({ 0: longOption,
-                                 1: optionConfig }, values) {
-  return optionConfig.defaultValue !== undefined &&
+function useDefaultValueOption(longOption, optionConfig, values) {
+  return objectGetOwn(optionConfig, 'defaultValue') !== undefined &&
   values[longOption] === undefined;
 }
 

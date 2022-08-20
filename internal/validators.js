@@ -1,5 +1,10 @@
 'use strict';
 
+// This file is a proxy of the original file located at:
+// https://github.com/nodejs/node/blob/main/lib/internal/validators.js
+// Every addition or modification to this file must be evaluated
+// during the PR review.
+
 const {
   ArrayIsArray,
   ArrayPrototypeIncludes,
