@@ -166,9 +166,9 @@ test('proto as default value must be ignored', (t) => {
 });
 
 
-test('multiple as false should expect a String and not an array', (t) => {
+test('multiple as false should expect a String', (t) => {
   const args = [];
-  const options = { alpha: { type: 'string', multiple: false, default: 42 } };
+  const options = { alpha: { type: 'string', multiple: false, default: ['array'] } };
   t.throws(() => {
     parseArgs({ args, options });
   }, /alpha\.default must be String/
