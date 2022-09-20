@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/pkgjs/parseargs/compare/v0.9.1...v0.10.0) (2022-07-21)
+
+
+### Features
+
+* add parsed meta-data to returned properties ([#129](https://github.com/pkgjs/parseargs/issues/129)) ([91bfb4d](https://github.com/pkgjs/parseargs/commit/91bfb4d3f7b6937efab1b27c91c45d1205f1497e))
+
 ## [0.9.1](https://github.com/pkgjs/parseargs/compare/v0.9.0...v0.9.1) (2022-06-20)
 
 
