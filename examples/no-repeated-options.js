@@ -1,6 +1,8 @@
 'use strict';
 
-// How might I throw if an option is repeated?
+// This is an example of using tokens to add a custom behaviour.
+//
+// Throw an error if an option is used more than once.
 
 // 1. const { parseArgs } = require('node:util'); // from node
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package

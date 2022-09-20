@@ -1,7 +1,12 @@
 'use strict';
 
-// How might I require long options with values use '='?
+// This is an example of using tokens to add a custom behaviour.
+//
+// Require the use of `=` for long options and values by blocking
+// the use of space separated values.
 // So allow `--foo=bar`, and not allow `--foo bar`.
+//
+// Note: this is not a common behaviour, most CLIs allow both forms.
 
 // 1. const { parseArgs } = require('node:util'); // from node
 // 2. const { parseArgs } = require('@pkgjs/parseargs'); // from package

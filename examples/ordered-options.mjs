@@ -1,4 +1,10 @@
-// Now might I enforce that two flags are specified in a specific order?
+// This is an example of using tokens to add a custom behaviour.
+//
+// This adds a option order check so that --some-unstable-option
+// may only be used after --enable-experimental-options
+//
+// Note: this is not a common behaviour, the order of different options
+// does not usually matter.
 
 import { parseArgs } from '../index.js';
 
