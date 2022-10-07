@@ -331,17 +331,19 @@ const parseArgs = (config = kEmptyObject) => {
         validateBoolean(multipleOption, `options.${longOption}.multiple`);
       }
 
-      if (ObjectHasOwn(optionConfig, 'default')) {
-        const defaultValue = objectGetOwn(optionConfig, 'default');
-        if (optionType === 'string' && !multipleOption) {
-          validateString(defaultValue, `options.${longOption}.default`);
-        } else if (optionType === 'string' && multipleOption) {
-          validateStringArray(defaultValue, `options.${longOption}.default`);
-        } else if (optionType === 'boolean' && !multipleOption) {
-          validateBoolean(defaultValue, `options.${longOption}.default`);
-        } else if (optionType === 'boolean' && multipleOption) {
-          validateBooleanArray(defaultValue, `options.${longOption}.default`);
+      const defaultValue = objectGetOwn(optionConfig, 'default');
+      if (defaultValue !== undefined) {
+        let validator;
+        switch (optionType) {
+          case 'string':
+            validator = multipleOption ? validateStringArray : validateString;
+            break;
+
+          case 'boolean':
+            validator = multipleOption ? validateBooleanArray : validateBoolean;
+            break;
         }
+        validator(defaultValue, `options.${longOption}.default`);
       }
     }
   );

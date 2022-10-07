@@ -180,7 +180,7 @@ function findLongOptionForShort(shortOption, options) {
  */
 function useDefaultValueOption(longOption, optionConfig, values) {
   return objectGetOwn(optionConfig, 'default') !== undefined &&
-  values[longOption] === undefined;
+    values[longOption] === undefined;
 }
 
 module.exports = {

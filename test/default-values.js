@@ -1,71 +1,78 @@
+/* global assert */
+/* eslint max-len: 0 */
 'use strict';
 
-/* eslint max-len: 0 */
-
-const test = require('tape');
+const { test } = require('./utils');
 const { parseArgs } = require('../index.js');
 
-test('default must be a boolean when option type is boolean', (t) => {
+test('default must be a boolean when option type is boolean', () => {
   const args = [];
   const options = { alpha: { type: 'boolean', default: 'not a boolean' } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default must be Boolean/
+  }, /options\.alpha\.default must be Boolean/
   );
-  t.end();
 });
 
-test('default must be a boolean array when option type is boolean and multiple', (t) => {
+test('default must accept undefined value', () => {
+  const args = [];
+  const options = { alpha: { type: 'boolean', default: undefined } };
+  const result = parseArgs({ args, options });
+  const expected = {
+    values: {
+      __proto__: null,
+    },
+    positionals: []
+  };
+  assert.deepStrictEqual(result, expected);
+});
+
+test('default must be a boolean array when option type is boolean and multiple', () => {
   const args = [];
   const options = { alpha: { type: 'boolean', multiple: true, default: 'not an array' } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default must be Array/
+  }, /options\.alpha\.default must be Array/
   );
-  t.end();
 });
 
-test('default must be a boolean array when option type is string and multiple is true', (t) => {
+test('default must be a boolean array when option type is string and multiple is true', () => {
   const args = [];
   const options = { alpha: { type: 'boolean', multiple: true, default: [true, true, 42] } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default\[2\] must be Boolean/
+  }, /options\.alpha\.default\[2\] must be Boolean/
   );
-  t.end();
 });
 
-test('default must be a string when option type is string', (t) => {
+test('default must be a string when option type is string', () => {
   const args = [];
   const options = { alpha: { type: 'string', default: true } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default must be String/
+  }, /options\.alpha\.default must be String/
   );
-  t.end();
 });
 
-test('default must be an array when option type is string and multiple is true', (t) => {
+test('default must be an array when option type is string and multiple is true', () => {
   const args = [];
   const options = { alpha: { type: 'string', multiple: true, default: 'not an array' } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default must be Array/
+  }, /options\.alpha\.default must be Array/
   );
-  t.end();
 });
 
-test('default must be a string array when option type is string and multiple is true', (t) => {
+test('default must be a string array when option type is string and multiple is true', () => {
   const args = [];
   const options = { alpha: { type: 'string', multiple: true, default: ['str', 42] } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default\[1\] must be String/
+  }, /options\.alpha\.default\[1\] must be String/
   );
-  t.end();
 });
 
-test('default accepted input when multiple is true', (t) => {
+test('default accepted input when multiple is true', () => {
   const args = ['--inputStringArr', 'c', '--inputStringArr', 'd', '--inputBoolArr', '--inputBoolArr'];
   const options = {
     inputStringArr: { type: 'string', multiple: true, default: ['a', 'b'] },
@@ -84,11 +91,10 @@ test('default accepted input when multiple is true', (t) => {
                                fullBoolArr: [false, true, false] },
                      positionals: [] };
   const result = parseArgs({ args, options });
-  t.deepEqual(result, expected);
-  t.end();
+  assert.deepStrictEqual(result, expected);
 });
 
-test('when default is set, the option must be added as result', (t) => {
+test('when default is set, the option must be added as result', () => {
   const args = [];
   const options = {
     a: { type: 'string', default: 'HELLO' },
@@ -98,12 +104,10 @@ test('when default is set, the option must be added as result', (t) => {
   const expected = { values: { __proto__: null, a: 'HELLO', b: false, c: true }, positionals: [] };
 
   const result = parseArgs({ args, options });
-
-  t.deepEqual(result, expected);
-  t.end();
+  assert.deepStrictEqual(result, expected);
 });
 
-test('when default is set, the args value takes precedence', (t) => {
+test('when default is set, the args value takes precedence', () => {
   const args = ['--a', 'WORLD', '--b', '-c'];
   const options = {
     a: { type: 'string', default: 'HELLO' },
@@ -113,12 +117,10 @@ test('when default is set, the args value takes precedence', (t) => {
   const expected = { values: { __proto__: null, a: 'WORLD', b: true, c: true }, positionals: [] };
 
   const result = parseArgs({ args, options });
-
-  t.deepEqual(result, expected);
-  t.end();
+  assert.deepStrictEqual(result, expected);
 });
 
-test('tokens should not include the default options', (t) => {
+test('tokens should not include the default options', () => {
   const args = [];
   const options = {
     a: { type: 'string', default: 'HELLO' },
@@ -129,11 +131,10 @@ test('tokens should not include the default options', (t) => {
   const expectedTokens = [];
 
   const { tokens } = parseArgs({ args, options, tokens: true });
-  t.deepEqual(tokens, expectedTokens);
-  t.end();
+  assert.deepStrictEqual(tokens, expectedTokens);
 });
 
-test('tokens:true should not include the default options after the args input', (t) => {
+test('tokens:true should not include the default options after the args input', () => {
   const args = ['--z', 'zero', 'positional-item'];
   const options = {
     z: { type: 'string' },
@@ -148,11 +149,10 @@ test('tokens:true should not include the default options after the args input', 
   ];
 
   const { tokens } = parseArgs({ args, options, tokens: true, allowPositionals: true });
-  t.deepEqual(tokens, expectedTokens);
-  t.end();
+  assert.deepStrictEqual(tokens, expectedTokens);
 });
 
-test('proto as default value must be ignored', (t) => {
+test('proto as default value must be ignored', () => {
   const args = [];
   const options = Object.create(null);
 
@@ -161,17 +161,14 @@ test('proto as default value must be ignored', (t) => {
 
   const result = parseArgs({ args, options, allowPositionals: true });
   const expected = { values: { __proto__: null }, positionals: [] };
-  t.deepEqual(result, expected);
-  t.end();
+  assert.deepStrictEqual(result, expected);
 });
 
 
-test('multiple as false should expect a String', (t) => {
+test('multiple as false should expect a String', () => {
   const args = [];
   const options = { alpha: { type: 'string', multiple: false, default: ['array'] } };
-  t.throws(() => {
+  assert.throws(() => {
     parseArgs({ args, options });
-  }, /alpha\.default must be String/
-  );
-  t.end();
+  }, / must be String got array/);
 });
