@@ -1,5 +1,10 @@
 'use strict';
 
+// This file is a proxy of the original file located at:
+// https://github.com/nodejs/node/blob/main/lib/internal/validators.js
+// Every addition or modification to this file must be evaluated
+// during the PR review.
+
 const {
   ArrayIsArray,
   ArrayPrototypeIncludes,
@@ -36,6 +41,20 @@ function validateArray(value, name) {
   }
 }
 
+function validateStringArray(value, name) {
+  validateArray(value, name);
+  for (let i = 0; i < value.length; i++) {
+    validateString(value[i], `${name}[${i}]`);
+  }
+}
+
+function validateBooleanArray(value, name) {
+  validateArray(value, name);
+  for (let i = 0; i < value.length; i++) {
+    validateBoolean(value[i], `${name}[${i}]`);
+  }
+}
+
 /**
  * @param {unknown} value
  * @param {string} name
@@ -63,6 +82,8 @@ module.exports = {
   validateArray,
   validateObject,
   validateString,
+  validateStringArray,
   validateUnion,
   validateBoolean,
+  validateBooleanArray,
 };
