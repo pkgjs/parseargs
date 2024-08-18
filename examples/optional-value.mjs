@@ -5,24 +5,30 @@ import { parseArgs } from 'node:util';
 import process from 'node:process';
 
 const options = {
-  'host': { type: 'string', preset: 'localhost', short: 'h', default: 'default.com' },
-  'debug': { type: 'boolean', short:'d' },
+  'host': {
+    type: 'string', short: 'h', default: 'default.com',
+    preset: 'localhost'
+  },
+  'debug': { type: 'boolean', short: 'd' },
 };
 
-let args = process.argv.slice(2);
+const args = process.argv.slice(2);
 
 do {
-  const { tokens } = parseArgs({ args, options, strict:false, tokens: true });
+  const { tokens } = parseArgs({ args, options, strict: false, tokens: true });
   // Insert preset if:
   // - missing value, like: --host
-  // - value came from following argument we want to process as option, like: --host --debug
+  // - value came from following option argument, like: --host --debug
   // An empty string is a valid value for a string-type option.
   const needsPreset = tokens.find((token) =>
-    token.kind === 'option'
-    && options[token.name]
-    && options[token.name].type === 'string'
-    && options[token.name].preset !== undefined
-    && (token.value === undefined || (token.value.startsWith('-') && !token.inlineValue)));
+    token.kind === 'option' &&
+    options[token.name] &&
+    options[token.name].type === 'string' &&
+    options[token.name].preset !== undefined &&
+    (
+      token.value === undefined ||
+      (token.value.startsWith('-') && !token.inlineValue)
+    ));
 
   if (!needsPreset) break;
 
@@ -33,7 +39,7 @@ do {
 } while (true);
 
 
-const { values } = parseArgs({args, options, allowPositionals: true });
+const { values } = parseArgs({ args, options });
 console.log(values);
 
 // Try the following:
