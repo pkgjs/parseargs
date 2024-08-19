@@ -6,7 +6,9 @@ import process from 'node:process';
 
 const options = {
   'host': {
-    type: 'string', short: 'h', default: 'default.com',
+    type: 'string',
+    short: 'h',
+    default: 'default.com',
     preset: 'localhost'
   },
   'debug': { type: 'boolean', short: 'd' },
