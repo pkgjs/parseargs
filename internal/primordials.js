@@ -21,6 +21,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
+
+A modification is made to always reference `globalThis` instead of referencing
+both `global` and `globalThis`. See #157.
 */
 
 'use strict';
@@ -189,7 +192,7 @@ function copyPrototype(src, dest, prefix) {
   'Reflect',
 ].forEach((name) => {
   // eslint-disable-next-line no-restricted-globals
-  copyPropsRenamed(global[name], primordials, name);
+  copyPropsRenamed(globalThis[name], primordials, name);
 });
 
 // Create copies of intrinsic objects
@@ -230,7 +233,7 @@ function copyPrototype(src, dest, prefix) {
   'WeakSet',
 ].forEach((name) => {
   // eslint-disable-next-line no-restricted-globals
-  const original = global[name];
+  const original = globalThis[name];
   primordials[name] = original;
   copyPropsRenamed(original, primordials, name);
   copyPrototype(original.prototype, primordials, `${name}Prototype`);
@@ -243,7 +246,7 @@ function copyPrototype(src, dest, prefix) {
   'Promise',
 ].forEach((name) => {
   // eslint-disable-next-line no-restricted-globals
-  const original = global[name];
+  const original = globalThis[name];
   primordials[name] = original;
   copyPropsRenamedBound(original, primordials, name);
   copyPrototype(original.prototype, primordials, `${name}Prototype`);
